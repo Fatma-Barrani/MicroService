@@ -34,4 +34,6 @@ public class Examen {
     private String matiere;
 
     private String statut;
+
+    private Long enseignantId;
 }
