@@ -15,4 +15,10 @@ public interface enseignantService {
     enseignantResponseDto update(Long id, enseignantRequestDto dto);
 
     void delete(Long id);
+
+    // 🔵 SYNC
+      public enseignantResponseDto assignExamen(Long enseignantId, Long examenId);
+
+      // 🟢 ASYNC (NEW)
+    void assignExamenAsync(Long enseignantId, Long examenId);
 }

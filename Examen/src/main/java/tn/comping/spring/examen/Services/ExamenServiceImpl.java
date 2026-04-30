@@ -13,8 +13,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ExamenServiceImpl implements ExamenService{
+public class ExamenServiceImpl implements ExamenService {
     private final ExamenRepository examenRepository;
+
     @Override
     public ExamenResponseDTO create(ExamenRequestDTO dto) {
         Examen examen = ExamenMapper.toEntity(dto);
@@ -58,4 +59,17 @@ public class ExamenServiceImpl implements ExamenService{
     public void delete(Long id) {
         examenRepository.deleteById(id);
     }
+
+    @Override
+public void assignExamenToEnseignant(Long examenId, Long enseignantId) {
+
+    Examen examen = examenRepository.findById(examenId)
+            .orElseThrow(() -> new RuntimeException("Examen introuvable"));
+
+    examen.setEnseignantId(enseignantId);
+
+    examenRepository.save(examen);
+
+    System.out.println("✅ Enseignant assigné à l'examen !");
+}
 }

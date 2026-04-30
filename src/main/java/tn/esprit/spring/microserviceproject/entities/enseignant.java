@@ -1,5 +1,7 @@
 package tn.esprit.spring.microserviceproject.entities;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,4 +22,7 @@ public class enseignant {
     private String email;
     private String telephone;
     private String specialite;
+
+    @ElementCollection
+    private List<Long> examensIds;
 }
