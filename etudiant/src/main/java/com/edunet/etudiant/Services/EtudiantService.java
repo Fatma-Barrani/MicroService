@@ -15,4 +15,8 @@ public interface EtudiantService {
     List<Etudiant> getAllEtudiants();
 
     Etudiant getEtudiantById(Long id);
+
+    Map<String, Object> getStatistiques();
+
+    Map<String, Object> getStatistiquesParMatiere(String matiere);
 }

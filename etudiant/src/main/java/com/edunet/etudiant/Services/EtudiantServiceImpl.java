@@ -1,5 +1,6 @@
 package com.edunet.etudiant.Services;
 
+import com.edunet.etudiant.Dtos.ExamenDTO;
 import com.edunet.etudiant.Entities.Etudiant;
 import com.edunet.etudiant.Repositories.EtudiantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,23 +8,38 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.stream.Collectors;
 
 @Service
 public class EtudiantServiceImpl implements EtudiantService {
+
     @Autowired
     private EtudiantRepository etudiantRepository;
 
+    // Injection du client Feign pour appeler le microservice Examen
+    @Autowired
+    private ExamenClient examenClient;
+
+    // ==================== CRUD ====================
+
+    @Override
     public Etudiant addEtudiant(Etudiant etudiant) {
         return etudiantRepository.save(etudiant);
     }
 
+    @Override
     public List<Etudiant> getAllEtudiants() {
         return etudiantRepository.findAll();
     }
 
+    @Override
+    public Etudiant getEtudiantById(Long id) {
+        return etudiantRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public Etudiant updateEtudiant(Long id, Etudiant newEtudiant) {
-        if (etudiantRepository.findById(id).isPresent()) {
-            Etudiant existing = etudiantRepository.findById(id).get();
+        return etudiantRepository.findById(id).map(existing -> {
             existing.setNom(newEtudiant.getNom());
             existing.setPrenom(newEtudiant.getPrenom());
             existing.setEmail(newEtudiant.getEmail());
@@ -31,15 +47,10 @@ public class EtudiantServiceImpl implements EtudiantService {
             existing.setAnneeInscription(newEtudiant.getAnneeInscription());
             existing.setMoyenneGenerale(newEtudiant.getMoyenneGenerale());
             return etudiantRepository.save(existing);
-        } else {
-            return null;
-        }
+        }).orElse(null);
     }
 
-    public Etudiant getEtudiantById(Long id) {
-        return etudiantRepository.findById(id).orElse(null);
-    }
-
+    @Override
     public String deleteEtudiant(Long id) {
         if (etudiantRepository.findById(id).isPresent()) {
             etudiantRepository.deleteById(id);
@@ -49,5 +60,54 @@ public class EtudiantServiceImpl implements EtudiantService {
         }
     }
 
+    // ==================== STATISTIQUES AVEC APPEL SYNCHRONE (Feign) ====================
 
+    @Override
+    public Map<String, Object> getStatistiques() {
+        Map<String, Object> stats = new HashMap<>();
+        List<Etudiant> etudiants = etudiantRepository.findAll();
+
+        // Statistiques sur les étudiants
+        double moyenneGlobale = etudiants.stream()
+                .mapToDouble(Etudiant::getMoyenneGenerale)
+                .average().orElse(0.0);
+        stats.put("moyenneGlobale", moyenneGlobale);
+        stats.put("totalEtudiants", etudiants.size());
+
+        Map<String, Long> parFiliere = etudiants.stream()
+                .collect(Collectors.groupingBy(Etudiant::getFiliere, Collectors.counting()));
+        stats.put("repartitionParFiliere", parFiliere);
+
+        // Appel synchrone vers le microservice Examen (OpenFeign)
+        try {
+            List<ExamenDTO> examens = examenClient.getAllExamens();
+            stats.put("totalExamens", examens.size());
+            double coeffMoyen = examens.stream()
+                    .mapToDouble(ExamenDTO::getCoefficient)
+                    .average().orElse(0.0);
+            stats.put("coefficientMoyenExamens", coeffMoyen);
+        } catch (Exception e) {
+            stats.put("examenServiceError", "Service des examens indisponible");
+        }
+
+        return stats;
+    }
+
+    @Override
+    public Map<String, Object> getStatistiquesParMatiere(String matiere) {
+        Map<String, Object> stats = new HashMap<>();
+        try {
+            // Appel Feign vers l'endpoint /filter du microservice Examen
+            List<ExamenDTO> examens = examenClient.getExamensByMatiere(matiere);
+            stats.put("examens", examens);
+            stats.put("totalExamens", examens.size());
+            double coeffMoyen = examens.stream()
+                    .mapToDouble(ExamenDTO::getCoefficient)
+                    .average().orElse(0.0);
+            stats.put("coefficientMoyenExamens", coeffMoyen);
+        } catch (Exception e) {
+            stats.put("error", "Service des examens indisponible pour la matière " + matiere);
+        }
+        return stats;
+    }
 }

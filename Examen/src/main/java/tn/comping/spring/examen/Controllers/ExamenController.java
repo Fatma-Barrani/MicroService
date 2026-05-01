@@ -38,4 +38,7 @@ public class ExamenController {
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
+
+
+
 }
