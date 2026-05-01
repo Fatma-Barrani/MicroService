@@ -31,7 +31,6 @@ public class Cours {
 
     private Integer nbPlaces;
 
-    // Référence vers l'enseignant (service externe)
     @Column(name = "enseignant_id")
     private Long enseignantId;
 

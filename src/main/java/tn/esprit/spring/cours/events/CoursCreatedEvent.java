@@ -13,7 +13,9 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CoursCreatedEvent implements Serializable {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;  //Utilité :tu reçois un objet, vérifie que la version correspond. Évite les incompatibilités.
+
+
 
     private Long coursId;
     private String titre;

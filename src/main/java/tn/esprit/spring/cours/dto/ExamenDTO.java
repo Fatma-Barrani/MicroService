@@ -24,6 +24,6 @@ public class ExamenDTO {
     private String niveau;
     private String matiere;
     private String statut;
-    private Long coursId;        // Liaison avec le cours
-    private String coursTitre;   // Titre du cours associé
+    private Long coursId;
+    private String coursTitre;
 }

@@ -10,11 +10,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    /**
-     * 🟢 COMMUNICATION ASYNCHRONE avec le service EXAMEN
-     * Queue unique (conforme atelier Candidat/Job)
-     * Le consommateur (Examen) déclare la même queue
-     */
+    //COMMUNICATION ASYNCHRONE avec le service EXAMEN
+
     public static final String COURS_QUEUE = "cours_queue";
 
     @Bean //elle qui crée la queue dans RabbitMQ
@@ -22,12 +19,12 @@ public class RabbitMQConfig {
         return new Queue(COURS_QUEUE, true);
     }
 
-    @Bean
+    @Bean //Convertit CoursCreatedEvent en JSON
     public Jackson2JsonMessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    @Bean
+    @Bean //Objet qui envoie les messages
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(messageConverter());

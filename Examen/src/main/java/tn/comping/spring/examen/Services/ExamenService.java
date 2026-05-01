@@ -15,4 +15,6 @@ public interface ExamenService {
     ExamenResponseDTO update(Long id, ExamenRequestDTO dto);
 
     void delete(Long id);
+    
+     void assignExamenToEnseignant(Long examenId, Long enseignantId);
 }
