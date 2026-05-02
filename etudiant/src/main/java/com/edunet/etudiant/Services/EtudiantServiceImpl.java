@@ -1,5 +1,6 @@
 package com.edunet.etudiant.Services;
 
+import com.edunet.etudiant.Dtos.EtudiantEventDTO;
 import com.edunet.etudiant.Dtos.ExamenDTO;
 import com.edunet.etudiant.Entities.Etudiant;
 import com.edunet.etudiant.Repositories.EtudiantRepository;
@@ -15,17 +16,27 @@ public class EtudiantServiceImpl implements EtudiantService {
 
     @Autowired
     private EtudiantRepository etudiantRepository;
-
     // Injection du client Feign pour appeler le microservice Examen
     @Autowired
     private ExamenClient examenClient;
 
-    // ==================== CRUD ====================
+    @Autowired
+    private EtudiantProducer etudiantProducer; //RabbitProducer
 
+
+    // ==================== CRUD ====================
     @Override
     public Etudiant addEtudiant(Etudiant etudiant) {
-        return etudiantRepository.save(etudiant);
+        Etudiant saved = etudiantRepository.save(etudiant);
+        try {
+        // SCÉNARIO communication ASYNCHRONE : publier l'événement dans RabbitMQ
+        etudiantProducer.sendEtudiantEvent(toEventDTO(saved));
+        } catch (Exception e) {
+            System.err.println("Erreur asynchrone (RabbitMQ) : " + e.getMessage());
+        }
+        return saved;
     }
+
 
     @Override
     public List<Etudiant> getAllEtudiants() {
@@ -46,10 +57,25 @@ public class EtudiantServiceImpl implements EtudiantService {
             existing.setFiliere(newEtudiant.getFiliere());
             existing.setAnneeInscription(newEtudiant.getAnneeInscription());
             existing.setMoyenneGenerale(newEtudiant.getMoyenneGenerale());
-            return etudiantRepository.save(existing);
+            Etudiant updated = etudiantRepository.save(existing);
+
+            // SCÉNARIO Asynchrone : publier l'événement de mise à jour
+            etudiantProducer.sendEtudiantEvent(toEventDTO(updated));
+            return updated;
         }).orElse(null);
     }
 
+    private EtudiantEventDTO toEventDTO(Etudiant e) {
+        EtudiantEventDTO dto = new EtudiantEventDTO();
+        dto.setId(e.getId());
+        dto.setNom(e.getNom());
+        dto.setPrenom(e.getPrenom());
+        dto.setEmail(e.getEmail());
+        dto.setFiliere(e.getFiliere());
+        dto.setAnneeInscription(e.getAnneeInscription());
+        dto.setMoyenneGenerale(e.getMoyenneGenerale());
+        return dto;
+    }
     @Override
     public String deleteEtudiant(Long id) {
         if (etudiantRepository.findById(id).isPresent()) {
@@ -93,6 +119,7 @@ public class EtudiantServiceImpl implements EtudiantService {
         return stats;
     }
 
+    // ==================== STATISTIQUES PAR MATIÈRE ====================
     @Override
     public Map<String, Object> getStatistiquesParMatiere(String matiere) {
         Map<String, Object> stats = new HashMap<>();

@@ -5,6 +5,7 @@ import com.edunet.etudiant.Dtos.EtudiantResponseDTO;
 import com.edunet.etudiant.Entities.Etudiant;
 import com.edunet.etudiant.Services.EtudiantService;
 import com.edunet.etudiant.Utils.EtudiantMapper;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
