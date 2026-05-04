@@ -12,6 +12,12 @@ import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 @Configuration
 public class RabbitConfig {
 
+
+    @Bean
+    public Queue etudiantQueue() {
+        return new Queue("etudiant.queue", true);
+    }
+
     @Bean
     public Queue queue() {
         return new Queue("examen.queue", true);

@@ -1,6 +1,6 @@
 package com.edunet.etudiant.Services;
 
-import com.edunet.etudiant.config.RabbitMQConfig;
+import com.edunet.etudiant.Config.RabbitMQConfig;
 import com.edunet.etudiant.Dtos.EtudiantEventDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
