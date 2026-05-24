@@ -49,5 +49,22 @@ public class EtudiantServiceImpl implements EtudiantService {
         }
     }
 
+    @Override
+    public List<Etudiant> findByFiliere(String filiere) {
+
+        // 1️⃣ Validate input
+        if (filiere == null || filiere.trim().isEmpty()) {
+            throw new IllegalArgumentException("Filiere must not be empty");
+        }
+
+        // 2️⃣ Normalize input (avoid case issues)
+        String normalizedFiliere = filiere.trim().toLowerCase();
+
+        // 3️⃣ Fetch data
+        List<Etudiant> etudiants = etudiantRepository.findByFiliere(normalizedFiliere);
+
+        // 4️⃣ Safe fallback (never return null)
+        return etudiants != null ? etudiants : List.of();
+    }
 
 }

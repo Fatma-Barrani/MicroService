@@ -15,4 +15,6 @@ public interface EtudiantService {
     List<Etudiant> getAllEtudiants();
 
     Etudiant getEtudiantById(Long id);
+
+    List<Etudiant> findByFiliere(String filiere);
 }

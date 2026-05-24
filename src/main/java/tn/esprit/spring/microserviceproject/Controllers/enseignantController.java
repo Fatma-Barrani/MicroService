@@ -86,5 +86,11 @@ public class enseignantController {
 
         return "Message envoyé via RabbitMQ";
     }
+
+    @GetMapping("/filtreEnseignant/by-examen/{examenId}")
+    public enseignantResponseDto getEnseignantByExamen(@PathVariable Long examenId) {
+        return service.getEnseignantByExamen(examenId);
+    }
+
 }
 

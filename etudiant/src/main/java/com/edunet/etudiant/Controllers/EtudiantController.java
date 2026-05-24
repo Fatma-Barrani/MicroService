@@ -56,5 +56,11 @@ public class EtudiantController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
+    @GetMapping("/by-filiere/{filiere}")
+    public ResponseEntity<List<Etudiant>> getByFiliere(@PathVariable String filiere) {
+        return new ResponseEntity<>(
+                etudiantService.findByFiliere(filiere),
+                HttpStatus.OK);
+    }
 
 }

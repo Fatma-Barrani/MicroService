@@ -3,6 +3,7 @@ package tn.esprit.spring.microserviceproject.Services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import tn.esprit.spring.microserviceproject.Dtos.EtudiantDto;
 import tn.esprit.spring.microserviceproject.Dtos.ExamenDto;
 import tn.esprit.spring.microserviceproject.Dtos.enseignantRequestDto;
 import tn.esprit.spring.microserviceproject.Dtos.enseignantResponseDto;
@@ -23,6 +24,8 @@ public class enseignantServiceImpl implements enseignantService {
     private final enseignantMapper mapper;
     private final ExamenClient examenClient;
     private final ExamenProducer examenProducer; // ✅ AJOUT RABBITMQ PRODUCER
+    private final EmailService emailService;
+    private final EtudiantClient etudiantClient;
 
     // CREATE
     @Override
@@ -64,34 +67,102 @@ public class enseignantServiceImpl implements enseignantService {
         repository.deleteById(id);
     }
 
-    // ============================================
-    // 🔵 SYNCHRONE (Feign - EXISTANT)
-    // ============================================
+    private String mapMatiereToFiliere(String matiere) {
+
+        switch (matiere.toLowerCase()) {
+            case "java":
+            case "spring":
+            case "microservices":
+                return "informatique";
+
+            case "accounting":
+                return "finance";
+
+            case "marketing":
+                return "business";
+
+            default:
+                throw new RuntimeException("No filiere mapped for matiere: " + matiere);
+        }
+    }
+
+    // ============================================================
+    // ⭐ SYNCHRONOUS METHOD (UPDATED)
+    // Assign exam + fetch students + trigger async email sending
+    // ============================================================
+    @Override
     public enseignantResponseDto assignExamen(Long enseignantId, Long examenId) {
 
-        // 1. check examen via Feign
-        ExamenDto examen = examenClient.getExamenById(examenId);
+        enseignant ens;
+        ExamenDto examen;
+        List<EtudiantDto> etudiants = new ArrayList<>();
 
-        if (examen == null) {
-            throw new RuntimeException("Examen not found");
+        try {
+
+            // 1️⃣ Get teacher
+            ens = repository.findById(enseignantId)
+                    .orElseThrow(() -> new RuntimeException("Enseignant not found"));
+
+            // 2️⃣ Get exam from Examen MS
+            examen = examenClient.getExamenById(examenId);
+
+            if (examen == null) {
+                throw new RuntimeException("Examen not found");
+            }
+
+            // 3️⃣ Save exam in teacher
+            if (ens.getExamensIds() == null) {
+                ens.setExamensIds(new ArrayList<>());
+            }
+
+            ens.getExamensIds().add(examenId);
+            repository.save(ens);
+
+            // =====================================================
+            // 4️⃣ FIXED: MATIERE → FILIERE mapping
+            // =====================================================
+            try {
+                String matiere = examen.getMatiere();
+
+                if (matiere != null && !matiere.isBlank()) {
+
+                    String filiere = mapMatiereToFiliere(matiere.trim().toLowerCase());
+
+                    System.out.println("👉 Matiere: " + matiere);
+                    System.out.println("👉 Filiere mapped: " + filiere);
+
+                    etudiants = etudiantClient.getByFiliere(filiere);
+
+                } else {
+                    System.out.println("⚠️ Matiere is null or empty");
+                }
+
+            } catch (Exception e) {
+                System.out.println("⚠️ Etudiant service failed: " + e.getMessage());
+            }
+
+            // =====================================================
+            // 5️⃣ Send emails only if students exist
+            // =====================================================
+            if (!etudiants.isEmpty()) {
+                emailService.sendExamNotification(etudiants, examen, ens);
+            } else {
+                System.out.println("⚠️ No students found → skipping emails");
+            }
+
+            System.out.println("✅ Exam assigned successfully");
+
+            return mapper.toDTO(ens);
+
+        } catch (Exception e) {
+
+            System.out.println("❌ assignExamen failed: " + e.getMessage());
+
+            enseignant fallback = repository.findById(enseignantId)
+                    .orElseThrow(() -> new RuntimeException("Enseignant not found"));
+
+            return mapper.toDTO(fallback);
         }
-
-        // 2. get enseignant
-        enseignant ens = repository.findById(enseignantId)
-                .orElseThrow(() -> new RuntimeException("Enseignant not found"));
-
-        // 3. init list if null
-        if (ens.getExamensIds() == null) {
-            ens.setExamensIds(new ArrayList<>());
-        }
-
-        // 4. add examen
-        ens.getExamensIds().add(examenId);
-
-        // 5. save
-        repository.save(ens);
-
-        return mapper.toDTO(ens);
     }
 
     // ============================================
@@ -99,9 +170,23 @@ public class enseignantServiceImpl implements enseignantService {
     // ============================================
     public void assignExamenAsync(Long enseignantId, Long examenId) {
 
-        AssignExamenEvent event =
-                new AssignExamenEvent(enseignantId, examenId);
+        AssignExamenEvent event = new AssignExamenEvent(enseignantId, examenId);
 
         examenProducer.sendAssignExamen(event);
     }
+     //filtre
+    @Override
+    public enseignantResponseDto getEnseignantByExamen(Long examenId) {
+
+        enseignant ens = repository.findAll()
+                .stream()
+                .filter(e -> e.getExamensIds() != null
+                        && e.getExamensIds().contains(examenId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException(
+                        "No enseignant found for examenId: " + examenId));
+
+        return mapper.toDTO(ens);
+    }
+
 }
