@@ -80,6 +80,7 @@ public class ExamenController {
         List<Examen> examens = examenRepository.findAll();
         return service.sortExamens(examens, sortBy, direction);
     }
+
     @PostMapping("/participer")
     public Participation participer(@RequestParam Long etudiantId,
                                     @RequestParam Long examenId) {
@@ -103,3 +104,4 @@ public class ExamenController {
         return ResponseEntity.ok().headers(headers).body(pdf);
     }
 }
+

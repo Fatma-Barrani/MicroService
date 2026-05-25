@@ -16,5 +16,11 @@ public interface EtudiantService {
 
     Etudiant getEtudiantById(Long id);
 
+
     List<Etudiant> findByFiliere(String filiere);
+
+    Map<String, Object> getStatistiques();
+
+    Map<String, Object> getStatistiquesParMatiere(String matiere);
+
 }
