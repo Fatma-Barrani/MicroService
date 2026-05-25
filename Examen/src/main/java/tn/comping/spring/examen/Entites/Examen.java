@@ -1,9 +1,6 @@
 package tn.comping.spring.examen.Entites;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -14,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "examen")
 public class Examen {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +32,7 @@ public class Examen {
     private String matiere;
 
     private String statut;
+
 
     private Long enseignantId;
 }

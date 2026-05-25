@@ -1,11 +1,16 @@
 package tn.comping.spring.examen.Controllers;
 
+import com.itextpdf.text.DocumentException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import tn.comping.spring.examen.Entites.Examen;
+import tn.comping.spring.examen.Entites.Participation;
 import tn.comping.spring.examen.Repositories.ExamenRepository;
 import tn.comping.spring.examen.Services.ExamenService;
+import tn.comping.spring.examen.Services.ExportService;
 import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
 
@@ -17,6 +22,7 @@ import java.util.List;
 public class ExamenController {
     private final ExamenService service;
     private final ExamenRepository examenRepository;
+    private  final ExportService exportService;
 
     @PostMapping("/createExamen")
     public ExamenResponseDTO create(@RequestBody ExamenRequestDTO dto) {
@@ -73,5 +79,27 @@ public class ExamenController {
     ) {
         List<Examen> examens = examenRepository.findAll();
         return service.sortExamens(examens, sortBy, direction);
+    }
+    @PostMapping("/participer")
+    public Participation participer(@RequestParam Long etudiantId,
+                                    @RequestParam Long examenId) {
+        return service.ajouterParticipation(etudiantId, examenId);
+    }
+    @PutMapping("/noter")
+    public Participation noter(@RequestParam Long etudiantId,
+                               @RequestParam Long examenId,
+                               @RequestParam Double note,
+     @RequestParam String commentaire) {
+        return service.noterEtudiant(etudiantId, examenId, note,commentaire);
+    }
+    @GetMapping("/export/pdf/{examenId}")
+    public ResponseEntity<byte[]> exportPdf(@PathVariable Long examenId) throws DocumentException {
+        byte[] pdf = exportService.exportNotesParExamen(examenId);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_PDF);
+        headers.setContentDispositionFormData("attachment", "notes_examen_" + examenId + ".pdf");
+
+        return ResponseEntity.ok().headers(headers).body(pdf);
     }
 }
