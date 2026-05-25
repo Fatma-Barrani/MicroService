@@ -16,12 +16,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class ExamenServiceImpl implements ExamenService{
+public class ExamenServiceImpl implements ExamenService {
     private final ExamenRepository examenRepository;
     private final EnseignantClient enseignantClient;
     private final EtudiantClient etudiantClient;
     private final ExamProducer examProducer;
     private final ParticipationRepository participationRepository;
+
     @Override
     public ExamenResponseDTO create(ExamenRequestDTO dto) {
         Examen examen = ExamenMapper.toEntity(dto);
@@ -160,4 +161,17 @@ public class ExamenServiceImpl implements ExamenService{
 
         return participationRepository.save(p);
     }
+
+public void assignExamenToEnseignant(Long examenId, Long enseignantId) {
+
+    Examen examen = examenRepository.findById(examenId)
+            .orElseThrow(() -> new RuntimeException("Examen introuvable"));
+
+    examen.setEnseignantId(enseignantId);
+
+    examenRepository.save(examen);
+
+    System.out.println("✅ Enseignant assigné à l'examen !");
+}
+
 }
