@@ -5,11 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { EnseignantAddComponent } from "../enseignant-add/enseignant-add.component";
 import { EnseignantEditComponent } from "../enseignant-edit/enseignant-edit.component";
+import { SidebarComponent } from "../../layouts/sidebar/sidebar.component";
 
 @Component({
   selector: 'app-enseignant-table',
   standalone: true,
-  imports: [FormsModule, CommonModule, EnseignantAddComponent, EnseignantEditComponent],
+  imports: [FormsModule, CommonModule, EnseignantAddComponent, EnseignantEditComponent, SidebarComponent],
   templateUrl: './enseignant-table.component.html',
   styleUrls: ['./enseignant-table.component.css']
 })
