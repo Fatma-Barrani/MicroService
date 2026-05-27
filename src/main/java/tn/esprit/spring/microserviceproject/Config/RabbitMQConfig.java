@@ -1,9 +1,9 @@
 package tn.esprit.spring.microserviceproject.Config;
 
 import org.springframework.amqp.core.*;
-import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    public static final String QUEUE = "exam.assign.queue";
-    public static final String EXCHANGE = "exam.exchange";
-    public static final String ROUTING_KEY = "exam.assign.routing";
+    public static final String QUEUE = "assign_examen_queue";
+    public static final String EXCHANGE = "examen_exchange";
+    public static final String ROUTING_KEY = "assign_examen_key";
 
     @Bean
     public Queue queue() {
@@ -43,19 +43,5 @@ public class RabbitMQConfig {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(converter);
         return template;
-    }
-
-    @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
-            ConnectionFactory connectionFactory,
-            Jackson2JsonMessageConverter converter) {
-
-        SimpleRabbitListenerContainerFactory factory =
-                new SimpleRabbitListenerContainerFactory();
-
-        factory.setConnectionFactory(connectionFactory);
-        factory.setMessageConverter(converter);
-
-        return factory;
     }
 }
