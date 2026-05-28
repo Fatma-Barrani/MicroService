@@ -1,0 +1,34 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs/internal/Observable';
+import { Examen } from '../models/examen';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class ExamenService {
+
+ 
+  private apiUrl = 'http://localhost:8956/api/examens';
+
+  constructor(private http: HttpClient) { }
+
+getExamens(): Observable<Examen[]> {
+  return this.http.get<Examen[]>(`${this.apiUrl}/GetAllExamens`);
+}
+getExamensByEnseignant(enseignantId: number): Observable<Examen[]> {
+  return this.http.get<Examen[]>(`${this.apiUrl}/enseignant/${enseignantId}`);
+}
+deleteExamen(id: number): Observable<void> {
+  return this.http.delete<void>(`${this.apiUrl}/DeleteExamen/${id}`);
+}
+ getExamenById(id: number): Observable<Examen> {
+    return this.http.get<Examen>(`${this.apiUrl}/ExamenById/${id}`);
+  }
+  createExamen(examen: Examen): Observable<any> {
+    return this.http.post(`${this.apiUrl}/createExamen`, examen);
+  }
+    updateExamen(id: number, examen: Examen): Observable<any> {
+    return this.http.put(`${this.apiUrl}/UpdateExamenBYId/${id}`, examen);
+  }
+}

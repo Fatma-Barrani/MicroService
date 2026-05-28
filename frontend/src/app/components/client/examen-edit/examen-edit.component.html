@@ -1,0 +1,62 @@
+<div class="page">
+
+  <div class="header">
+    <h2>Modifier l’examen</h2>
+    <p>Mettez à jour les informations de l’examen</p>
+  </div>
+
+  <div class="card" *ngIf="examen">
+
+    <div class="grid">
+
+      <div class="field">
+        <label>Titre</label>
+        <input [(ngModel)]="examen.titre" />
+      </div>
+
+      <div class="field">
+        <label>Matière</label>
+        <input [(ngModel)]="examen.matiere" />
+      </div>
+
+      <div class="field">
+        <label>Niveau</label>
+        <input [(ngModel)]="examen.niveau" />
+      </div>
+
+      <div class="field">
+        <label>Date</label>
+        <input type="datetime-local" [(ngModel)]="examen.dateExamen" />
+      </div>
+
+      <div class="field">
+        <label>Durée</label>
+        <input type="number" [(ngModel)]="examen.duree" />
+      </div>
+
+      <div class="field">
+        <label>Coefficient</label>
+        <input type="number" [(ngModel)]="examen.coefficient" />
+      </div>
+
+      <div class="field full">
+        <label>Statut</label>
+        <select [(ngModel)]="examen.statut">
+          <option>En attente</option>
+          <option>Actif</option>
+          <option>Terminé</option>
+        </select>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary">Annuler</button>
+      <button class="btn-primary" (click)="updateExamen()">
+        Enregistrer les modifications
+      </button>
+    </div>
+
+  </div>
+
+</div>

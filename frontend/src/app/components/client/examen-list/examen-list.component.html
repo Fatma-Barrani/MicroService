@@ -1,0 +1,77 @@
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <h1>Examens Management</h1>
+      <p>Gestion des examens</p>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats">
+    <div class="stat-card">
+      <span>Total examens</span>
+      <h2>{{ totalExamens }}</h2>
+    </div>
+  </div>
+
+  <!-- CARDS GRID -->
+  <div class="grid">
+
+    <div *ngFor="let examen of examens" class="card">
+
+      <!-- TITLE -->
+      <div class="card-header">
+        <h3>{{ examen.titre }}</h3>
+        <p>{{ examen.matiere }} • {{ examen.niveau }}</p>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="card-body">
+
+        <div class="row">
+          <span>Date</span>
+          <span>{{ examen.dateExamen | date:'dd/MM/yyyy - HH:mm' }}</span>
+        </div>
+
+        <div class="row">
+          <span>Durée</span>
+          <span>{{ examen.duree }} min</span>
+        </div>
+
+        <div class="row">
+          <span>Coefficient</span>
+          <span>{{ examen.coefficient }}</span>
+        </div>
+
+        <div class="row">
+          <span>Statut</span>
+          <span class="badge"
+            [ngClass]="{
+              'pending': examen.statut === 'En attente',
+              'active': examen.statut === 'Actif',
+              'done': examen.statut === 'Terminé'
+            }">
+            {{ examen.statut }}
+          </span>
+        </div>
+
+      </div>
+
+      <!-- ACTIONS -->
+      <div class="card-footer">
+        <button class="btn-edit" (click)="editExamen(examen)">
+    Modifier
+  </button>
+
+  <button class="btn-delete" (click)="deleteExamen(examen.id)">
+    Supprimer
+  </button>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
