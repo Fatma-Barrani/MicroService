@@ -1,77 +1,111 @@
-<div class="page">
+<div class="wrap">
 
-  <!-- HEADER -->
-  <div class="header">
+  <div class="top-bar">
     <div>
-      <h1>Examens Management</h1>
-      <p>Gestion des examens</p>
+      <div class="breadcrumb">
+        <i class="ti ti-layout-dashboard"></i> Tableau de bord
+        <i class="ti ti-chevron-right"></i> Examens
+      </div>
+      <div class="page-title">Examens <span>Management</span></div>
+      <div class="page-sub">Gérez et assignez vos examens en temps réel</div>
+    </div>
+    <button class="btn-add" (click)="addExamen()">
+      <i class="ti ti-plus"></i> Ajouter un examen
+    </button>
+  </div>
+
+  <div class="metrics">
+    <div class="metric">
+      <div class="metric-label">Total examens</div>
+      <div class="metric-value">{{ examens.length }}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">En attente</div>
+      <div class="metric-value amber">{{ countByStatus('En attente') }}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Actifs</div>
+      <div class="metric-value blue">{{ countByStatus('Actif') }}</div>
+    </div>
+    <div class="metric">
+      <div class="metric-label">Terminés</div>
+      <div class="metric-value green">{{ countByStatus('Terminé') }}</div>
     </div>
   </div>
 
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat-card">
-      <span>Total examens</span>
-      <h2>{{ totalExamens }}</h2>
+  <div class="controls">
+    <div class="search-wrap">
+      <i class="ti ti-search"></i>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher un examen..." />
     </div>
+    <button class="filter-btn" [class.active]="activeFilter === 'all'" (click)="activeFilter = 'all'">Tous</button>
+    <button class="filter-btn" [class.active]="activeFilter === 'En attente'" (click)="activeFilter = 'En attente'">
+      <i class="ti ti-clock"></i> En attente
+    </button>
+    <button class="filter-btn" [class.active]="activeFilter === 'Actif'" (click)="activeFilter = 'Actif'">
+      <i class="ti ti-circle-check"></i> Actifs
+    </button>
+    <button class="filter-btn" [class.active]="activeFilter === 'Terminé'" (click)="activeFilter = 'Terminé'">
+      <i class="ti ti-flag"></i> Terminés
+    </button>
+    <span class="count-tag">{{ filteredExamens.length }} examen(s)</span>
   </div>
 
-  <!-- CARDS GRID -->
   <div class="grid">
+    <div *ngFor="let examen of filteredExamens" class="card">
 
-    <div *ngFor="let examen of examens" class="card">
-
-      <!-- TITLE -->
-      <div class="card-header">
-        <h3>{{ examen.titre }}</h3>
-        <p>{{ examen.matiere }} • {{ examen.niveau }}</p>
-      </div>
-
-      <!-- CONTENT -->
-      <div class="card-body">
-
-        <div class="row">
-          <span>Date</span>
-          <span>{{ examen.dateExamen | date:'dd/MM/yyyy - HH:mm' }}</span>
+      <div class="card-top">
+        <div class="card-top-left">
+          <div class="card-title">{{ examen.titre }}</div>
+          <div class="card-sub">{{ examen.matiere }} · {{ examen.niveau }}</div>
         </div>
-
-        <div class="row">
-          <span>Durée</span>
-          <span>{{ examen.duree }} min</span>
-        </div>
-
-        <div class="row">
-          <span>Coefficient</span>
-          <span>{{ examen.coefficient }}</span>
-        </div>
-
-        <div class="row">
-          <span>Statut</span>
-          <span class="badge"
+        <span class="badge"
+          [ngClass]="{
+            'badge-pending': examen.statut === 'En attente',
+            'badge-active':  examen.statut === 'Actif',
+            'badge-done':    examen.statut === 'Terminé'
+          }">
+          <i class="ti"
             [ngClass]="{
-              'pending': examen.statut === 'En attente',
-              'active': examen.statut === 'Actif',
-              'done': examen.statut === 'Terminé'
+              'ti-clock':        examen.statut === 'En attente',
+              'ti-circle-check': examen.statut === 'Actif',
+              'ti-flag':         examen.statut === 'Terminé'
             }">
-            {{ examen.statut }}
-          </span>
-        </div>
-
+          </i>
+          {{ examen.statut }}
+        </span>
       </div>
 
-      <!-- ACTIONS -->
+      <div class="card-body">
+        <div class="row">
+          <span class="row-label"><i class="ti ti-calendar"></i> Date</span>
+          <span class="row-val">{{ examen.dateExamen | date:'dd/MM/yyyy · HH:mm' }}</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><i class="ti ti-clock"></i> Durée</span>
+          <span class="row-val">{{ examen.duree }} min</span>
+        </div>
+        <div class="row">
+          <span class="row-label"><i class="ti ti-award"></i> Coefficient</span>
+          <span class="row-val">{{ examen.coefficient }}</span>
+        </div>
+      </div>
+
       <div class="card-footer">
         <button class="btn-edit" (click)="editExamen(examen)">
-    Modifier
-  </button>
-
-  <button class="btn-delete" (click)="deleteExamen(examen.id)">
-    Supprimer
-  </button>
+          <i class="ti ti-edit"></i> Modifier
+        </button>
+        <button class="btn-del" (click)="deleteExamen(examen.id)">
+          <i class="ti ti-trash"></i> Supprimer
+        </button>
       </div>
 
     </div>
 
+    <div *ngIf="filteredExamens.length === 0" class="empty">
+      <i class="ti ti-file-off"></i>
+      Aucun examen trouvé
+    </div>
   </div>
 
 </div>

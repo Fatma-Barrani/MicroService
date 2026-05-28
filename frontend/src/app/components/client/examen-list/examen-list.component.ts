@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { Examen } from '../../../models/examen';
 import { ExamenService } from '../../../services/examen.service';
 import { Router } from '@angular/router';
@@ -7,108 +8,93 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-examen-list',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './examen-list.component.html',
   styleUrls: ['./examen-list.component.css']
 })
-export class ExamenListComponent implements OnInit{
-constructor(private examenService: ExamenService,
-   private router: Router
-) {}
-  // LISTE
-  examens: Examen[] = [];
- 
-  ngOnInit(): void {
-  this.loadExamens();
-}
+export class ExamenListComponent implements OnInit {
 
-loadExamens(): void {
-  this.examenService.getExamens().subscribe({
-    next: (data) => {
-      this.examens = data;
-    },
-    error: (err) => {
-      console.error('Erreur chargement examens', err);
-    }
-  });
-}
-  // MODAL
+  constructor(
+    private examenService: ExamenService,
+    private router: Router
+  ) {}
+
+  examens: Examen[] = [];
+  searchQuery = '';
+  activeFilter = 'all';
   isModalOpen = false;
   isEditMode = false;
-
-  // FORM OBJECT
   currentExamen: Examen = this.initEmptyExamen();
 
-  // STATS
-  get totalExamens() {
-    return this.examens.length;
+  ngOnInit(): void {
+    this.loadExamens();
   }
 
-  // OPEN ADD
-  openAddModal() {
+  loadExamens(): void {
+    this.examenService.getExamens().subscribe({
+      next: (data) => { this.examens = data; },
+      error: (err) => { console.error('Erreur chargement examens', err); }
+    });
+  }
+
+  get filteredExamens() {
+    return this.examens.filter(e => {
+      const matchFilter = this.activeFilter === 'all' || e.statut === this.activeFilter;
+      const q = this.searchQuery.toLowerCase();
+      const matchSearch = !q ||
+        e.titre.toLowerCase().includes(q) ||
+        e.matiere.toLowerCase().includes(q) ||
+        e.niveau.toLowerCase().includes(q);
+      return matchFilter && matchSearch;
+    });
+  }
+
+  countByStatus(statut: string): number {
+    return this.examens.filter(e => e.statut === statut).length;
+  }
+
+  addExamen() {
     this.isEditMode = false;
     this.currentExamen = this.initEmptyExamen();
     this.isModalOpen = true;
   }
 
-  // OPEN EDIT
   openEditModal(examen: Examen) {
     this.isEditMode = true;
     this.currentExamen = { ...examen };
     this.isModalOpen = true;
   }
 
-  // CLOSE MODAL
   closeModal() {
     this.isModalOpen = false;
   }
 
-  // SAVE
   saveExamen() {
-
     if (!this.currentExamen.titre) return;
-
     if (this.isEditMode) {
-
       const index = this.examens.findIndex(e => e.id === this.currentExamen.id);
-
-      if (index !== -1) {
-        this.examens[index] = { ...this.currentExamen };
-      }
-
+      if (index !== -1) this.examens[index] = { ...this.currentExamen };
     } else {
-
       this.currentExamen.id = Date.now();
       this.examens.push({ ...this.currentExamen });
-
     }
-
     this.closeModal();
   }
 
-  // DELETE
-deleteExamen(id?: number) {
-  if (!id) return;
-
-  if (confirm('Voulez-vous vraiment supprimer cet examen ?')) {
-
-    this.examenService.deleteExamen(id).subscribe({
-      next: () => {
-        // supprimer aussi côté UI
-        this.examens = this.examens.filter(e => e.id !== id);
-      },
-      error: (err) => {
-        console.error('Erreur suppression', err);
-      }
-    });
-
+  deleteExamen(id?: number) {
+    if (!id) return;
+    if (confirm('Voulez-vous vraiment supprimer cet examen ?')) {
+      this.examenService.deleteExamen(id).subscribe({
+        next: () => { this.examens = this.examens.filter(e => e.id !== id); },
+        error: (err) => { console.error('Erreur suppression', err); }
+      });
+    }
   }
-}
-editExamen(examen: Examen) {
-  this.router.navigate(['/examens/edit', examen.id]);
-}
 
-  // INIT EMPTY OBJECT
+  editExamen(examen: Examen) {
+    this.router.navigate(['/examens/edit', examen.id]);
+  }
+
   private initEmptyExamen(): Examen {
     return {
       id: undefined,
