@@ -25,7 +25,7 @@ public interface ExamenService {
     Participation ajouterParticipation(Long etudiantId, Long examenId);
     Participation noterEtudiant(Long etudiantId, Long examenId, Double note,String commentaire);
 
-    
+    List<ExamenResponseDTO> getExamensByEnseignant(Long enseignantId);
      void assignExamenToEnseignant(Long examenId, Long enseignantId);
 
 }

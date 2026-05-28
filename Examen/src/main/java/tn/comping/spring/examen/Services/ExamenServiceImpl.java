@@ -162,7 +162,16 @@ public class ExamenServiceImpl implements ExamenService {
         return participationRepository.save(p);
     }
 
-public void assignExamenToEnseignant(Long examenId, Long enseignantId) {
+    @Override
+    public List<ExamenResponseDTO> getExamensByEnseignant(Long enseignantId) {
+        return examenRepository.findAll()
+                .stream()
+                .filter(e -> e.getEnseignantId() != null && e.getEnseignantId().equals(enseignantId))
+                .map(ExamenMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    public void assignExamenToEnseignant(Long examenId, Long enseignantId) {
 
     Examen examen = examenRepository.findById(examenId)
             .orElseThrow(() -> new RuntimeException("Examen introuvable"));

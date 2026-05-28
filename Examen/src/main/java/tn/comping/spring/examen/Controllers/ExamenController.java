@@ -15,7 +15,6 @@ import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/examens")
 @RequiredArgsConstructor
@@ -102,6 +101,10 @@ public class ExamenController {
         headers.setContentDispositionFormData("attachment", "notes_examen_" + examenId + ".pdf");
 
         return ResponseEntity.ok().headers(headers).body(pdf);
+    }
+    @GetMapping("/enseignant/{id}")
+    public List<ExamenResponseDTO> getByEnseignant(@PathVariable Long id) {
+        return service.getExamensByEnseignant(id);
     }
 }
 
