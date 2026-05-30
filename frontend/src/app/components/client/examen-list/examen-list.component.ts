@@ -54,6 +54,7 @@ export class ExamenListComponent implements OnInit {
   }
 
   addExamen() {
+    this.router.navigate(['/examens/add']);
     this.isEditMode = false;
     this.currentExamen = this.initEmptyExamen();
     this.isModalOpen = true;
