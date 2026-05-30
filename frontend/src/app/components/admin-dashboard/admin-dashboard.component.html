@@ -1,0 +1,162 @@
+<!-- SIDEBAR COMPONENT -->
+<app-sidebar></app-sidebar>
+
+<div class="main-content">
+
+  <!-- TOPBAR -->
+  <div class="header-bar">
+    <div class="header-bar-left">
+      <div class="header-eyebrow">
+        <span class="eyebrow-dot"></span>
+        Administration
+      </div>
+      <h1>Tableau de bord <span class="h1-accent">Overview</span></h1>
+      <p class="header-sub">Bienvenue dans votre espace de gestion en temps réel</p>
+    </div>
+    <div class="header-bar-right">
+      <div class="topbar-icon-btn notif-dot">
+        <i class="ti ti-bell"></i>
+      </div>
+      <div class="topbar-icon-btn">
+        <i class="ti ti-search"></i>
+      </div>
+      <div class="topbar-avatar">A</div>
+    </div>
+  </div>
+
+  <div class="page-container">
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-label">Enseignants</div>
+            <div class="stat-value">{{ totalEnseignants }}</div>
+          </div>
+          <div class="stat-icon icon-blue">
+            <i class="ti ti-chalkboard"></i>
+          </div>
+        </div>
+        <div class="stat-footer">
+          <span class="badge-up">+3</span> ce mois-ci
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-label">Étudiants</div>
+            <div class="stat-value">{{ totalEtudiants }}</div>
+          </div>
+          <div class="stat-icon icon-green">
+            <i class="ti ti-user-graduate"></i>
+          </div>
+        </div>
+        <div class="stat-footer">
+          <span class="badge-up">+28</span> inscrits
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-label">Classes</div>
+            <div class="stat-value">{{ totalClasses }}</div>
+          </div>
+          <div class="stat-icon icon-purple">
+            <i class="ti ti-building-community"></i>
+          </div>
+        </div>
+        <div class="stat-footer">Toutes actives</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-label">Examens</div>
+            <div class="stat-value">{{ totalExamens }}</div>
+          </div>
+          <div class="stat-icon icon-orange">
+            <i class="ti ti-file-description"></i>
+          </div>
+        </div>
+        <div class="stat-footer">Programmés</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div>
+            <div class="stat-label">Cours</div>
+            <div class="stat-value">{{ totalCours }}</div>
+          </div>
+          <div class="stat-icon icon-rose">
+            <i class="ti ti-books"></i>
+          </div>
+        </div>
+        <div class="stat-footer">Disponibles</div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM GRID -->
+    <div class="bottom-grid">
+
+      <!-- QUICK ACTIONS -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+            <span class="card-title">Actions rapides</span>
+          </div>
+          <span class="card-action">Voir tout</span>
+        </div>
+        <div class="quick-actions">
+          <button class="action-btn">
+            <i class="ti ti-user-plus"></i>
+            Ajouter Enseignant
+          </button>
+          <button class="action-btn">
+            <i class="ti ti-file-plus"></i>
+            Ajouter Examen
+          </button>
+          <button class="action-btn">
+            <i class="ti ti-building-plus"></i>
+            Ajouter Classe
+          </button>
+          <button class="action-btn">
+            <i class="ti ti-chart-pie"></i>
+            Voir Rapports
+          </button>
+        </div>
+      </div>
+
+      <!-- RECENT ACTIVITY -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title-group">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="card-title">Activité récente</span>
+          </div>
+          <span class="card-action">Tout voir</span>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let item of recentActivity">
+            <div class="act-dot" [ngClass]="item.dotClass"></div>
+            <div>
+              <div class="act-text" [innerHTML]="item.text"></div>
+              <div class="act-time">{{ item.time }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
