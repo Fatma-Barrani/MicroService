@@ -183,4 +183,9 @@ public class ExamenServiceImpl implements ExamenService {
     System.out.println("✅ Enseignant assigné à l'examen !");
 }
 
+    @Override
+    public Long countByStatut(String statut) {
+        return examenRepository.countByStatut(statut);
+    }
+
 }

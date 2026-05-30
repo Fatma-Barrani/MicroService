@@ -31,4 +31,15 @@ deleteExamen(id: number): Observable<void> {
     updateExamen(id: number, examen: Examen): Observable<any> {
     return this.http.put(`${this.apiUrl}/UpdateExamenBYId/${id}`, examen);
   }
+  getCountEnCours(): Observable<number> {
+  return this.http.get<number>(`${this.apiUrl}/count/en-cours`);
+}
+
+getCountEnAttente(): Observable<number> {
+  return this.http.get<number>(`${this.apiUrl}/count/en-attente`);
+}
+
+getCountCorrige(): Observable<number> {
+  return this.http.get<number>(`${this.apiUrl}/count/terminee`);
+}
 }

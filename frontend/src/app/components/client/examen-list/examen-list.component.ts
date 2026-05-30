@@ -24,10 +24,14 @@ export class ExamenListComponent implements OnInit {
   activeFilter = 'all';
   isModalOpen = false;
   isEditMode = false;
+  nbEnCours = 0;
+nbEnAttente = 0;
+nbCorrige = 0;
   currentExamen: Examen = this.initEmptyExamen();
 
   ngOnInit(): void {
     this.loadExamens();
+   this.loadStats();
   }
 
   loadExamens(): void {
@@ -95,7 +99,36 @@ export class ExamenListComponent implements OnInit {
   editExamen(examen: Examen) {
     this.router.navigate(['/examens/edit', examen.id]);
   }
+loadStats(): void {
 
+  this.examenService.getCountEnCours().subscribe({
+    next: (data) => {
+      this.nbEnCours = data;
+    },
+    error: (err) => {
+      console.error('Erreur stats en cours', err);
+    }
+  });
+
+  this.examenService.getCountEnAttente().subscribe({
+    next: (data) => {
+      this.nbEnAttente = data;
+    },
+    error: (err) => {
+      console.error('Erreur stats en attente', err);
+    }
+  });
+
+  this.examenService.getCountCorrige().subscribe({
+    next: (data) => {
+      this.nbCorrige = data;
+    },
+    error: (err) => {
+      console.error('Erreur stats corrigé', err);
+    }
+  });
+
+}
   private initEmptyExamen(): Examen {
     return {
       id: undefined,

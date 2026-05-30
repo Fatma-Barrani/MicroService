@@ -35,26 +35,45 @@
       <div class="mc-val v-amber">{{ countByStatus('En attente') }}</div>
       <div class="mc-hint">à planifier</div>
     </div>
-    <div class="mc">
-      <div class="mc-bar bar-purple"></div>
-      <div class="mc-top">
-        <span class="mc-label">En cours</span>
-        <div class="mc-icon ico-purple"><i class="ti ti-circle-check"></i></div>
-      </div>
-      <div class="mc-val v-purple">{{ countByStatus('En cours') }}</div>
-      <div class="mc-hint">actifs aujourd'hui</div>
-    </div>
-    <div class="mc">
-      <div class="mc-bar bar-green"></div>
-      <div class="mc-top">
-        <span class="mc-label">Terminés</span>
-        <div class="mc-icon ico-green"><i class="ti ti-flag"></i></div>
-      </div>
-      <div class="mc-val v-green">{{ countByStatus('Terminé') }}</div>
-      <div class="mc-hint">corrigés</div>
+  <div class="mc">
+  <div class="mc-bar bar-purple"></div>
+
+  <div class="mc-top">
+    <span class="mc-label">En cours</span>
+    <div class="mc-icon ico-purple">
+      <i class="ti ti-circle-check"></i>
     </div>
   </div>
 
+  <div class="mc-val v-purple">
+    {{ nbEnCours }}
+  </div>
+
+  <div class="mc-hint">
+    actifs aujourd'hui
+  </div>
+</div>
+
+<div class="mc">
+  <div class="mc-bar bar-green"></div>
+
+  <div class="mc-top">
+    <span class="mc-label">Terminés</span>
+
+    <div class="mc-icon ico-green">
+      <i class="ti ti-flag"></i>
+    </div>
+  </div>
+
+  <div class="mc-val v-green">
+    {{ nbCorrige }}
+  </div>
+
+  <div class="mc-hint">
+    corrigés
+  </div>
+</div>
+</div>
   <div class="controls">
     <div class="srch">
       <i class="ti ti-search"></i>

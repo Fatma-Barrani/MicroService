@@ -106,5 +106,19 @@ public class ExamenController {
     public List<ExamenResponseDTO> getByEnseignant(@PathVariable Long id) {
         return service.getExamensByEnseignant(id);
     }
+    @GetMapping("/count/en-cours")
+    public Long countExamensEnCours() {
+        return service.countByStatut("EN_COURS");
+    }
+
+    @GetMapping("/count/en-attente")
+    public Long countExamensEnAttente() {
+        return service.countByStatut("EN_ATTENTE");
+    }
+
+    @GetMapping("/count/terminee")
+    public Long countExamensCorriges() {
+        return service.countByStatut("TERMINE");
+    }
 }
 
