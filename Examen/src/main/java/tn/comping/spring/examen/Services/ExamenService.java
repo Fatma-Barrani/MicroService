@@ -1,5 +1,7 @@
 package tn.comping.spring.examen.Services;
 
+import tn.comping.spring.examen.Entites.Examen;
+import tn.comping.spring.examen.Entites.Participation;
 import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
 
@@ -15,6 +17,15 @@ public interface ExamenService {
     ExamenResponseDTO update(Long id, ExamenRequestDTO dto);
 
     void delete(Long id);
-    
+
+    Examen affecterEnseignant(Long examenId, Long enseignantId);
+    void affecterEnseignantAsync(Long examenId, Long enseignantId);
+    List<ExamenResponseDTO> filterExamen(String matiere, String niveau, String statut);
+    List<ExamenResponseDTO> sortExamens(List<Examen> examens, String sortBy, String direction);
+    Participation ajouterParticipation(Long etudiantId, Long examenId);
+    Participation noterEtudiant(Long etudiantId, Long examenId, Double note,String commentaire);
+
+    List<ExamenResponseDTO> getExamensByEnseignant(Long enseignantId);
      void assignExamenToEnseignant(Long examenId, Long enseignantId);
+    Long countByStatut(String statut);
 }

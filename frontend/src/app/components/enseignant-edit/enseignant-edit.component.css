@@ -1,0 +1,291 @@
+/* ================================================
+   enseignant-edit.component.css
+   Clean white · refined · matches table component
+   Font: Outfit — same as parent component
+   ================================================ */
+
+:host {
+  --white:      #ffffff;
+  --gray-50:    #F9FAFB;
+  --gray-100:   #F3F4F6;
+  --gray-200:   #E5E7EB;
+  --gray-300:   #D1D5DB;
+  --gray-400:   #9CA3AF;
+  --gray-500:   #6B7280;
+  --gray-600:   #4B5563;
+  --gray-700:   #374151;
+  --gray-800:   #1F2937;
+  --gray-900:   #0F172A;
+
+  --blue:       #2563EB;
+  --blue-50:    #EFF6FF;
+  --blue-100:   #DBEAFE;
+  --blue-600:   #1D4ED8;
+
+  --green:      #16A34A;
+  --green-50:   #F0FDF4;
+  --green-100:  #DCFCE7;
+  --green-600:  #15803D;
+
+  --red:        #DC2626;
+  --red-50:     #FEF2F2;
+  --red-100:    #FECACA;
+
+  --radius-sm:  8px;
+  --radius-md:  12px;
+  --radius-lg:  16px;
+  --radius-xl:  22px;
+
+  --shadow-lg:  0 20px 60px rgba(15, 23, 42, 0.18), 0 8px 20px rgba(15, 23, 42, 0.08);
+
+  --font: 'Outfit', 'Segoe UI', sans-serif;
+}
+
+/* ── BACKDROP ────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 1000;
+  animation: backdropIn 0.2s ease;
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── MODAL CONTAINER ─────────────────────────────── */
+.modal-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-200);
+  z-index: 1001;
+  overflow: hidden;
+  font-family: var(--font);
+  animation: modalIn 0.25s cubic-bezier(0.34, 1.4, 0.64, 1);
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -46%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* ── HEADER ──────────────────────────────────────── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px 18px;
+  border-bottom: 1px solid var(--gray-100);
+  gap: 12px;
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.modal-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  background: #FFFBEB;
+  color: #D97706;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--gray-900);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.modal-subtitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--gray-400);
+  font-weight: 400;
+}
+
+/* ── CLOSE BUTTON ────────────────────────────────── */
+.close-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  color: var(--gray-500);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+
+.close-btn:hover {
+  background: var(--red-50);
+  color: var(--red);
+  border-color: var(--red-100);
+}
+
+/* ── BODY ────────────────────────────────────────── */
+.modal-body {
+  padding: 24px 22px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* reset — spacing handled per-child with margin-bottom below */
+}
+
+/* ── SPACING: every direct child gets bottom margin ──
+   This works for both .form-group and .form-row alike */
+.modal-body > .form-group,
+.modal-body > .form-row {
+  margin-bottom: 20px;
+}
+
+.modal-body > .form-group:last-child,
+.modal-body > .form-row:last-child {
+  margin-bottom: 0;
+}
+
+/* ── FORM ROW (2-col grid) ───────────────────────── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px; /* horizontal gap between the two side-by-side fields */
+}
+
+/* ── FORM GROUP ──────────────────────────────────── */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* space between label and input */
+}
+
+/* ── LABEL ───────────────────────────────────────── */
+.form-group label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.form-group label svg {
+  color: var(--gray-400);
+  flex-shrink: 0;
+}
+
+/* ── INPUT ───────────────────────────────────────── */
+.form-group input {
+  padding: 10px 13px;
+  border: 1.5px solid var(--gray-200);
+  border-radius: var(--radius-sm);
+  background: var(--gray-50);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--gray-800);
+  outline: none;
+  transition: border-color 0.16s, box-shadow 0.16s, background 0.16s;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-group input::placeholder {
+  color: var(--gray-300);
+}
+
+.form-group input:hover {
+  border-color: var(--gray-300);
+}
+
+.form-group input:focus {
+  border-color: var(--blue);
+  background: var(--white);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+/* ── FOOTER ──────────────────────────────────────── */
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 22px 20px;
+  border-top: 1px solid var(--gray-100);
+  background: var(--gray-50);
+}
+
+/* ── BUTTONS ─────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1;
+}
+
+.btn:active { transform: scale(0.97); }
+
+/* Cancel */
+.btn.cancel {
+  background: var(--white);
+  color: var(--gray-600);
+  border-color: var(--gray-200);
+}
+
+.btn.cancel:hover {
+  background: var(--red-50);
+  color: var(--red);
+  border-color: var(--red-100);
+}
+
+/* Save / Update */
+.btn.save {
+  background: var(--gray-900);
+  color: var(--white);
+  border-color: var(--gray-900);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.20);
+}
+
+.btn.save:hover {
+  background: var(--gray-700);
+  border-color: var(--gray-700);
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.24);
+  transform: translateY(-1px);
+}

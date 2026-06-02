@@ -1,24 +1,27 @@
-package tn.comping.spring.examen.messaging;
-import tn.comping.spring.examen.dto.CoursCreatedEvent;
+package tn.comping.spring.examen.Services;
+
 import com.rabbitmq.client.Channel;
 import org.springframework.amqp.core.Message;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
-import tn.comping.spring.examen.Services.ExamenService;
 import tn.comping.spring.examen.events.AssignExamenEvent;
-import java.io.IOException; // <-- Add this import
+import tn.comping.spring.examen.events.CoursCreatedEvent;
+import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class ExamenConsumer {
 
     private final ExamenService examenService;
 
-    @RabbitListener(queues = "cours_queue")  //MÊME NOM QUE TA QUEUE
+    @RabbitListener(queues = "cours_queue")
     public void receiveCoursEvent(CoursCreatedEvent event) {
         log.info("📥 Réception événement: Nouveau cours créé - ID: {}, Titre: {}",
                 event.getCoursId(), event.getTitre());
+    }
 
     @RabbitListener(queues = "assign_examen_queue", ackMode = "MANUAL")
 public void receive(AssignExamenEvent event, Channel channel, Message message) {

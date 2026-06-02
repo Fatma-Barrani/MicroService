@@ -1,0 +1,205 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="bc">
+        <i class="ti ti-layout-dashboard"></i>
+        Tableau de bord
+        <i class="ti ti-chevron-right"></i>
+        <span (click)="goBack()" class="bc-link">Examens</span>
+        <i class="ti ti-chevron-right"></i>
+        Ajouter
+      </div>
+      <div class="pg-title">Nouvel <span>Examen</span></div>
+      <div class="pg-sub">Remplissez les informations pour créer un nouvel examen</div>
+    </div>
+    <button class="btn-back" (click)="goBack()">
+      <i class="ti ti-arrow-left"></i> Retour
+    </button>
+  </div>
+
+  <!-- Alertes -->
+  <div class="alert alert-success" *ngIf="successMsg">
+    <i class="ti ti-circle-check"></i> {{ successMsg }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMsg">
+    <i class="ti ti-alert-circle"></i> {{ errorMsg }}
+  </div>
+
+  <div class="form-card">
+
+    <!-- Section : Informations générales -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon ico-blue">
+          <i class="ti ti-file-description"></i>
+        </div>
+        <div>
+          <div class="section-title">Informations générales</div>
+          <div class="section-sub">Titre, matière et niveau de l'examen</div>
+        </div>
+      </div>
+
+      <div class="fields">
+        <div class="field full">
+          <label>Titre de l'examen <span class="req">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="examen.titre"
+            placeholder="Ex : Examen final Algorithmique"
+            [class.invalid]="!examen.titre" />
+        </div>
+
+        <div class="field full">
+          <label>Description</label>
+          <textarea
+            [(ngModel)]="examen.description"
+            placeholder="Décrivez le contenu ou les consignes de l'examen…"
+            rows="3">
+          </textarea>
+        </div>
+
+        <div class="field">
+          <label>Matière <span class="req">*</span></label>
+          <input
+            type="text"
+            [(ngModel)]="examen.matiere"
+            placeholder="Ex : Algorithmique, Java, Angular…"
+            [class.invalid]="!examen.matiere" />
+        </div>
+
+        <div class="field">
+          <label>Niveau <span class="req">*</span></label>
+          <select [(ngModel)]="examen.niveau" [class.invalid]="!examen.niveau">
+            <option value="" disabled>Sélectionner un niveau</option>
+            <option *ngFor="let n of niveaux" [value]="n">{{ n }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- Section : Planification -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon ico-purple">
+          <i class="ti ti-calendar"></i>
+        </div>
+        <div>
+          <div class="section-title">Planification</div>
+          <div class="section-sub">Date, durée et coefficient</div>
+        </div>
+      </div>
+
+      <div class="fields">
+        <div class="field">
+          <label>Date et heure <span class="req">*</span></label>
+          <input
+            type="datetime-local"
+            [(ngModel)]="examen.dateExamen"
+            [class.invalid]="!examen.dateExamen" />
+        </div>
+
+        <div class="field">
+          <label>Statut</label>
+          <select [(ngModel)]="examen.statut">
+            <option *ngFor="let s of statuts" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Durée (minutes) <span class="req">*</span></label>
+          <div class="input-with-unit">
+            <input
+              type="number"
+              [(ngModel)]="examen.duree"
+              min="1"
+              placeholder="60"
+              [class.invalid]="examen.duree <= 0" />
+            <span class="unit">min</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Coefficient <span class="req">*</span></label>
+          <div class="input-with-unit">
+            <input
+              type="number"
+              [(ngModel)]="examen.coefficient"
+              min="0.5"
+              step="0.5"
+              placeholder="1"
+              [class.invalid]="examen.coefficient <= 0" />
+            <span class="unit">coeff.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <!-- Aperçu rapide -->
+    <div class="preview" *ngIf="examen.titre || examen.matiere">
+      <div class="preview-label">
+        <i class="ti ti-eye"></i> Aperçu de la carte
+      </div>
+      <div class="preview-card">
+        <div class="preview-bar"
+          [ngClass]="{
+            'tb-amber':  examen.statut === 'En attente',
+            'tb-purple': examen.statut === 'En cours',
+            'tb-green':  examen.statut === 'Terminé',
+            'tb-blue':   examen.statut === 'Planifié'
+          }">
+        </div>
+        <div class="preview-body">
+          <div class="preview-top">
+            <div>
+              <div class="preview-title">{{ examen.titre || '—' }}</div>
+              <div class="preview-sub">{{ examen.matiere || '—' }} · {{ examen.niveau || '—' }}</div>
+            </div>
+            <span class="badge"
+              [ngClass]="{
+                'b-attente':  examen.statut === 'En attente',
+                'b-cours':    examen.statut === 'En cours',
+                'b-done':     examen.statut === 'Terminé',
+                'b-planifie': examen.statut === 'Planifié'
+              }">
+              {{ examen.statut }}
+            </span>
+          </div>
+          <div class="preview-rows">
+            <div class="preview-row">
+              <span><i class="ti ti-calendar"></i> Date</span>
+              <span>{{ examen.dateExamen ? (examen.dateExamen | date:'dd/MM/yyyy · HH:mm') : '—' }}</span>
+            </div>
+            <div class="preview-row">
+              <span><i class="ti ti-clock"></i> Durée</span>
+              <span>{{ examen.duree }} min</span>
+            </div>
+            <div class="preview-row">
+              <span><i class="ti ti-award"></i> Coeff.</span>
+              <span>{{ examen.coefficient }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+      <button class="btn-cancel" (click)="goBack()">
+        <i class="ti ti-x"></i> Annuler
+      </button>
+      <button
+        class="btn-submit"
+        (click)="onSubmit()"
+        [disabled]="!isFormValid() || isSubmitting">
+        <i class="ti" [ngClass]="isSubmitting ? 'ti-loader-2' : 'ti-check'"></i>
+        {{ isSubmitting ? 'Enregistrement…' : 'Créer l\'examen' }}
+      </button>
+    </div>
+
+  </div>
+</div>

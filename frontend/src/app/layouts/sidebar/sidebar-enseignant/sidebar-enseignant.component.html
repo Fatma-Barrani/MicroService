@@ -1,0 +1,68 @@
+<aside class="sb" [class.collapsed]="isCollapsed">
+
+  <div class="sb-head">
+    <div class="sb-icon"><i class="ti ti-school"></i></div>
+    <div class="sb-wrap">
+      <div class="sb-name">EduNetAdmin</div>
+      <div class="sb-sub">Espace Enseignant</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <a class="sb-a" routerLink="/enseignant/dashboard" routerLinkActive="on">
+      <i class="ti ti-layout-dashboard"></i>
+      <span class="sb-label">Tableau de bord</span>
+    </a>
+
+    <div class="sb-div"></div>
+    <span class="sb-sec">Pédagogie</span>
+
+    <a class="sb-a" routerLink="/enseignant/examens" routerLinkActive="on">
+      <i class="ti ti-file-description"></i>
+      <span class="sb-label">Mes examens</span>
+      <span class="sb-pill" *ngIf="counts.examens">{{ counts.examens }}</span>
+    </a>
+
+    <a class="sb-a" routerLink="/enseignant/classes" routerLinkActive="on">
+      <i class="ti ti-book"></i>
+      <span class="sb-label">Mes classes</span>
+      <span class="sb-pill" *ngIf="counts.classes">{{ counts.classes }}</span>
+    </a>
+
+    <a class="sb-a" routerLink="/enseignant/etudiants" routerLinkActive="on">
+      <i class="ti ti-users"></i>
+      <span class="sb-label">Mes étudiants</span>
+      <span class="sb-pill" *ngIf="counts.etudiants">{{ counts.etudiants }}</span>
+    </a>
+
+    <div class="sb-div"></div>
+    <span class="sb-sec">Suivi</span>
+
+    <a class="sb-a" routerLink="/enseignant/statistiques" routerLinkActive="on">
+      <i class="ti ti-chart-bar"></i>
+      <span class="sb-label">Statistiques</span>
+    </a>
+
+    <div class="sb-div"></div>
+    <span class="sb-sec">Compte</span>
+
+    <a class="sb-a" routerLink="/enseignant/profil" routerLinkActive="on">
+      <i class="ti ti-user-circle"></i>
+      <span class="sb-label">Mon profil</span>
+    </a>
+  </nav>
+
+  <div class="sb-foot">
+    <button class="toggle-btn" (click)="toggle()" [title]="isCollapsed ? 'Agrandir' : 'Réduire'">
+      <i class="ti ti-chevrons-left"></i>
+    </button>
+    <div class="sb-user" routerLink="/enseignant/profil">
+      <div class="av">{{ initiales }}</div>
+      <div class="sb-user-info">
+        <div class="av-name">{{ enseignant.prenom }} {{ enseignant.nom }}</div>
+        <div class="av-role">Enseignant(e)</div>
+      </div>
+    </div>
+  </div>
+
+</aside>

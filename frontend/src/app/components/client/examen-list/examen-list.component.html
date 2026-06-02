@@ -1,0 +1,169 @@
+<div class="main">
+
+  <div class="topbar">
+    <div>
+      <div class="bc">
+        <i class="ti ti-layout-dashboard"></i>
+        Tableau de bord
+        <i class="ti ti-chevron-right"></i>
+        Examens
+      </div>
+      <div class="pg-title">Examens <span>Management</span></div>
+      <div class="pg-sub">Gérez et assignez vos examens en temps réel</div>
+    </div>
+    <button class="btn-add" (click)="addExamen()">
+      <i class="ti ti-plus"></i> Ajouter un examen
+    </button>
+  </div>
+
+  <div class="metrics">
+    <div class="mc">
+      <div class="mc-bar bar-blue"></div>
+      <div class="mc-top">
+        <span class="mc-label">Total examens</span>
+        <div class="mc-icon ico-blue"><i class="ti ti-file-description"></i></div>
+      </div>
+      <div class="mc-val v-default">{{ examens.length }}</div>
+      <div class="mc-hint">tous statuts confondus</div>
+    </div>
+    <div class="mc">
+      <div class="mc-bar bar-amber"></div>
+      <div class="mc-top">
+        <span class="mc-label">En attente</span>
+        <div class="mc-icon ico-amber"><i class="ti ti-clock"></i></div>
+      </div>
+      <div class="mc-val v-amber">{{ countByStatus('En attente') }}</div>
+      <div class="mc-hint">à planifier</div>
+    </div>
+  <div class="mc">
+  <div class="mc-bar bar-purple"></div>
+
+  <div class="mc-top">
+    <span class="mc-label">En cours</span>
+    <div class="mc-icon ico-purple">
+      <i class="ti ti-circle-check"></i>
+    </div>
+  </div>
+
+  <div class="mc-val v-purple">
+    {{ nbEnCours }}
+  </div>
+
+  <div class="mc-hint">
+    actifs aujourd'hui
+  </div>
+</div>
+
+<div class="mc">
+  <div class="mc-bar bar-green"></div>
+
+  <div class="mc-top">
+    <span class="mc-label">Terminés</span>
+
+    <div class="mc-icon ico-green">
+      <i class="ti ti-flag"></i>
+    </div>
+  </div>
+
+  <div class="mc-val v-green">
+    {{ nbCorrige }}
+  </div>
+
+  <div class="mc-hint">
+    corrigés
+  </div>
+</div>
+</div>
+  <div class="controls">
+    <div class="srch">
+      <i class="ti ti-search"></i>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher un examen, une matière…" />
+    </div>
+    <button class="fb" [class.on]="activeFilter === 'all'" (click)="activeFilter = 'all'">Tous</button>
+    <button class="fb" [class.on]="activeFilter === 'En attente'" (click)="activeFilter = 'En attente'">
+      <i class="ti ti-clock"></i> En attente
+    </button>
+    <button class="fb" [class.on]="activeFilter === 'En cours'" (click)="activeFilter = 'En cours'">
+      <i class="ti ti-player-play"></i> En cours
+    </button>
+    <button class="fb" [class.on]="activeFilter === 'Terminé'" (click)="activeFilter = 'Terminé'">
+      <i class="ti ti-flag"></i> Terminés
+    </button>
+    <span class="ctag">
+      <i class="ti ti-stack-2"></i> {{ filteredExamens.length }}
+    </span>
+  </div>
+
+  <div class="grid">
+    <div *ngFor="let examen of filteredExamens" class="card">
+
+      <div class="card-top-bar"
+        [ngClass]="{
+          'tb-amber':  examen.statut === 'En attente',
+          'tb-purple': examen.statut === 'En cours',
+          'tb-green':  examen.statut === 'Terminé',
+          'tb-blue':   examen.statut === 'Planifié'
+        }">
+      </div>
+
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="c-title">{{ examen.titre }}</div>
+            <div class="c-sub">{{ examen.matiere }} · {{ examen.niveau }}</div>
+          </div>
+          <span class="badge"
+            [ngClass]="{
+              'b-attente':  examen.statut === 'En attente',
+              'b-cours':    examen.statut === 'En cours',
+              'b-done':     examen.statut === 'Terminé',
+              'b-planifie': examen.statut === 'Planifié'
+            }">
+            <i class="ti"
+              [ngClass]="{
+                'ti-clock':       examen.statut === 'En attente',
+                'ti-player-play': examen.statut === 'En cours',
+                'ti-flag':        examen.statut === 'Terminé',
+                'ti-circle-dot':  examen.statut === 'Planifié'
+              }">
+            </i>
+            {{ examen.statut }}
+          </span>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="rows">
+          <div class="row">
+            <span class="rl"><i class="ti ti-calendar"></i> Date</span>
+            <span class="rv">{{ examen.dateExamen | date:'dd/MM/yyyy · HH:mm' }}</span>
+          </div>
+          <div class="row">
+            <span class="rl"><i class="ti ti-clock"></i> Durée</span>
+            <span class="rv">{{ examen.duree }} min</span>
+          </div>
+          <div class="row">
+            <span class="rl"><i class="ti ti-award"></i> Coeff.</span>
+            <span class="rv">{{ examen.coefficient }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-foot">
+        <button class="btn-edit" (click)="editExamen(examen)">
+          <i class="ti ti-edit"></i> Modifier
+        </button>
+        <button class="btn-del" (click)="deleteExamen(examen.id)">
+          <i class="ti ti-trash"></i> Supprimer
+        </button>
+      </div>
+
+    </div>
+
+    <div *ngIf="filteredExamens.length === 0" class="empty">
+      <i class="ti ti-file-off"></i>
+      Aucun examen trouvé
+    </div>
+  </div>
+
+</div>
