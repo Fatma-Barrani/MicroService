@@ -1,95 +1,120 @@
 package tn.esprit.spring.microserviceproject.Controllers;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import tn.esprit.spring.microserviceproject.Dtos.enseignantRequestDto;
-import tn.esprit.spring.microserviceproject.Dtos.enseignantResponseDto;
 import tn.esprit.spring.microserviceproject.Services.ExamenClient;
 import tn.esprit.spring.microserviceproject.Services.enseignantService;
-import tn.esprit.spring.microserviceproject.Dtos.ExamenDto;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/enseignants")
 @RequiredArgsConstructor
 public class enseignantController {
-    private final enseignantService service;
 
+    private final enseignantService service;
     private final ExamenClient examenClient;
 
-    // CREATE
+    @Value("${welcome.message}")
+    private String message;
+
+    // ADMIN ONLY
     @PostMapping("/addEnseignant")
-    public enseignantResponseDto create(@RequestBody enseignantRequestDto dto) {
-        return service.create(dto);
-    }
-
-    // READ ALL
-    @GetMapping("/ListEnseignant")
-    public List<enseignantResponseDto> getAll() {
-        return service.getAll();
-    }
-
-    // READ BY ID
-    @GetMapping("/getEnseignant/{id}")
-    public enseignantResponseDto getById(@PathVariable Long id) {
-        return service.getById(id);
-    }
-
-    // UPDATE
-    @PutMapping("/update/{id}")
-    public enseignantResponseDto update(@PathVariable Long id,
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<?> createEnseignant(
             @RequestBody enseignantRequestDto dto) {
-        return service.update(id, dto);
+
+        return new ResponseEntity<>(
+                service.create(dto),
+                HttpStatus.CREATED
+        );
     }
 
-    // DELETE
+    // USER OR ADMIN
+    @GetMapping("/ListEnseignant")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
+    public ResponseEntity<?> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/getEnseignant/{id}")
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+
+    // ADMIN ONLY
+    @PutMapping("/update/{id}")
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<?> updateEnseignant(
+            @PathVariable Long id,
+            @RequestBody enseignantRequestDto dto) {
+
+        return ResponseEntity.ok(service.update(id, dto));
+    }
+
+    // ADMIN ONLY
     @DeleteMapping("/delete/{id}")
-    public void delete(@PathVariable Long id) {
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<?> deleteEnseignant(@PathVariable Long id) {
+
         service.delete(id);
+        return ResponseEntity.ok("Enseignant deleted successfully");
     }
 
-    // GET all examens from Examen microservice
+    // USER OR ADMIN
     @GetMapping("/ListExamen")
-    public List<ExamenDto> getAllExamens() {
-        return examenClient.getAllExamens();
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
+    public ResponseEntity<?> getAllExamens() {
+        return ResponseEntity.ok(examenClient.getAllExamens());
     }
 
-    // GET examen by id from Examen microservice
     @GetMapping("/Examen/{id}")
-    public ExamenDto getExamenById(@PathVariable Long id) {
-        return examenClient.getExamenById(id);
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
+    public ResponseEntity<?> getExamenById(@PathVariable Long id) {
+        return ResponseEntity.ok(examenClient.getExamenById(id));
     }
 
-
-    // =====================================
-    // 🔵 SYNCHRONE (Feign)
-    // =====================================
+    // ADMIN ONLY
     @PutMapping("/{enseignantId}/assignExamen/{examenId}")
-    public enseignantResponseDto assignExamenToEnseignant(
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<?> assignExamenToEnseignant(
             @PathVariable Long enseignantId,
             @PathVariable Long examenId) {
 
-        return service.assignExamen(enseignantId, examenId);
+        return ResponseEntity.ok(
+                service.assignExamen(enseignantId, examenId)
+        );
     }
 
-     // =====================================
-    // 🟢 ASYNCHRONE (RabbitMQ)
-    // =====================================
+    // ADMIN ONLY
     @PutMapping("/{enseignantId}/assignExamenAsync/{examenId}")
-    public String assignExamenAsync(
+    @PreAuthorize("hasRole('admin')")
+    public ResponseEntity<?> assignExamenAsync(
             @PathVariable Long enseignantId,
             @PathVariable Long examenId) {
 
         service.assignExamenAsync(enseignantId, examenId);
-
-        return "Message envoyé via RabbitMQ";
+        return ResponseEntity.ok("Message envoyé via RabbitMQ");
     }
 
+    // USER OR ADMIN
     @GetMapping("/filtreEnseignant/by-examen/{examenId}")
-    public enseignantResponseDto getEnseignantByExamen(@PathVariable Long examenId) {
-        return service.getEnseignantByExamen(examenId);
+    @PreAuthorize("hasRole('user') or hasRole('admin')")
+    public ResponseEntity<?> getEnseignantByExamen(
+            @PathVariable Long examenId) {
+
+        return ResponseEntity.ok(
+                service.getEnseignantByExamen(examenId)
+        );
     }
 
+    @GetMapping("/welcome")
+    public String welcome() {
+        return message;
+    }
 }
-
