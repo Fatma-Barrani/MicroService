@@ -1,5 +1,6 @@
 package tn.esprit.spring.cours.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,6 +18,7 @@ public class CoursDTO {
     private Integer dureeHeures;
     private Integer nbPlaces;
     private Long enseignantId;
+    @NotBlank(message = "Le niveau est obligatoire")
     private String niveau;
 
     // ===== Infos venues du service ENSEIGNANT (via OpenFeign - SYNCHRONE) =====

@@ -5,22 +5,22 @@ import { ExamenEditComponent } from './components/client/examen-edit/examen-edit
 import { ExamenAddComponent } from './components/client/examen-add/examen-add.component';
 import { EnseignantLayoutComponent } from './layouts/enseignant-layout/enseignant-layout.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
+import { CoursListComponent } from './components/cours/cours-list/cours-list.component';
+import { CoursAddComponent } from './components/cours/cours-add/cours-add.component';
+import { CoursEditComponent } from './components/cours/cours-edit/cours-edit.component';
 
 export const routes: Routes = [
 
-  // 👉 enseignants
   {
     path: 'enseignants',
     component: EnseignantTableComponent
   },
 
-  // 👉 admin dashboard
   {
     path: 'dashboard',
     component: AdminDashboardComponent
   },
 
-  // 👉 layout enseignant avec sous-routes examens
   {
     path: '',
     component: EnseignantLayoutComponent,
@@ -28,6 +28,9 @@ export const routes: Routes = [
       { path: 'listExamen', component: ExamenListComponent },
       { path: 'examens/edit/:id', component: ExamenEditComponent },
       { path: 'examens/add', component: ExamenAddComponent },
+      { path: 'cours', component: CoursListComponent },
+      { path: 'cours/add', component: CoursAddComponent },
+      { path: 'cours/edit/:id', component: CoursEditComponent },
       { path: '', redirectTo: 'listExamen', pathMatch: 'full' }
     ]
   }

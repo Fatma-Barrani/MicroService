@@ -17,10 +17,16 @@
     <div class="sb-div"></div>
     <span class="sb-sec">Pédagogie</span>
 
-    <a class="sb-a" routerLink="/enseignant/examens" routerLinkActive="on">
+    <a class="sb-a" routerLink="/listExamen" routerLinkActive="on">
       <i class="ti ti-file-description"></i>
       <span class="sb-label">Mes examens</span>
       <span class="sb-pill" *ngIf="counts.examens">{{ counts.examens }}</span>
+    </a>
+
+    <a class="sb-a" routerLink="/cours" routerLinkActive="on">
+      <i class="ti ti-book-2"></i>
+      <span class="sb-label">Mes cours</span>
+      <span class="sb-pill" *ngIf="counts.cours">{{ counts.cours }}</span>
     </a>
 
     <a class="sb-a" routerLink="/enseignant/classes" routerLinkActive="on">

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ExamenService } from '../../../services/examen.service';
+import { CoursService } from '../../../services/cours.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -11,7 +12,6 @@ import { RouterModule } from '@angular/router';
 })
 export class SidebarEnseignantComponent implements OnInit {
 
- 
   isCollapsed = false;
 
   enseignant = {
@@ -21,6 +21,7 @@ export class SidebarEnseignantComponent implements OnInit {
 
   counts = {
     examens: 0,
+    cours: 0,
     classes: 3,
     etudiants: 42,
   };
@@ -29,11 +30,18 @@ export class SidebarEnseignantComponent implements OnInit {
     return (this.enseignant.prenom[0] + this.enseignant.nom[0]).toUpperCase();
   }
 
-  constructor(private examenService: ExamenService) {}
+  constructor(
+    private examenService: ExamenService,
+    private coursService: CoursService
+  ) {}
 
   ngOnInit(): void {
     this.examenService.getExamens().subscribe({
       next: (data) => { this.counts.examens = data.length; },
+      error: (err) => { console.error(err); }
+    });
+    this.coursService.getAll().subscribe({
+      next: (data) => { this.counts.cours = data.length; },
       error: (err) => { console.error(err); }
     });
   }

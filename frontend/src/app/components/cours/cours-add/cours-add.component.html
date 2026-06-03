@@ -1,0 +1,114 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="bc">
+        <i class="ti ti-layout-dashboard"></i>
+        Tableau de bord
+        <i class="ti ti-chevron-right"></i>
+        <span (click)="goBack()" class="bc-link">Cours</span>
+        <i class="ti ti-chevron-right"></i>
+        Ajouter
+      </div>
+      <div class="pg-title">Nouveau <span>Cours</span></div>
+      <div class="pg-sub">Remplissez les informations pour créer un nouveau cours</div>
+    </div>
+    <button class="btn-back" (click)="goBack()">
+      <i class="ti ti-arrow-left"></i> Retour
+    </button>
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMsg">
+    <i class="ti ti-circle-check"></i> {{ successMsg }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMsg">
+    <i class="ti ti-alert-circle"></i> {{ errorMsg }}
+  </div>
+
+  <div class="form-card">
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon ico-blue"><i class="ti ti-book"></i></div>
+        <div>
+          <div class="section-title">Informations générales</div>
+          <div class="section-sub">Titre, catégorie et niveau du cours</div>
+        </div>
+      </div>
+
+      <div class="fields">
+        <div class="field full">
+          <label>Titre du cours <span class="req">*</span></label>
+          <input type="text" [(ngModel)]="cours.titre"
+            placeholder="Ex : Introduction à l'Algorithmique"
+            [class.invalid]="!cours.titre" />
+        </div>
+
+        <div class="field full">
+          <label>Description</label>
+          <textarea [(ngModel)]="cours.description"
+            placeholder="Décrivez le contenu ou les objectifs du cours…"
+            rows="3"></textarea>
+        </div>
+
+        <div class="field">
+          <label>Catégorie <span class="req">*</span></label>
+          <select [(ngModel)]="cours.categorie" [class.invalid]="!cours.categorie">
+            <option value="" disabled>Sélectionner une catégorie</option>
+            <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Niveau <span class="req">*</span></label>
+          <select [(ngModel)]="cours.niveau" [class.invalid]="!cours.niveau">
+            <option value="" disabled>Sélectionner un niveau</option>
+            <option *ngFor="let n of niveaux" [value]="n">{{ n }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="sep"></div>
+
+    <div class="section">
+      <div class="section-head">
+        <div class="section-icon ico-purple"><i class="ti ti-settings"></i></div>
+        <div>
+          <div class="section-title">Paramètres</div>
+          <div class="section-sub">Durée et capacité d'accueil</div>
+        </div>
+      </div>
+
+      <div class="fields">
+        <div class="field">
+          <label>Durée (heures)</label>
+          <div class="input-with-unit">
+            <input type="number" [(ngModel)]="cours.dureeHeures" min="1" placeholder="30" />
+            <span class="unit">h</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Nombre de places</label>
+          <div class="input-with-unit">
+            <input type="number" [(ngModel)]="cours.nbPlaces" min="1" placeholder="30" />
+            <span class="unit">places</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn-cancel" (click)="goBack()">
+        <i class="ti ti-x"></i> Annuler
+      </button>
+      <button class="btn-submit" (click)="onSubmit()"
+        [disabled]="!isFormValid() || isSubmitting">
+        <i class="ti" [ngClass]="isSubmitting ? 'ti-loader-2' : 'ti-check'"></i>
+        {{ isSubmitting ? 'Enregistrement…' : 'Créer le cours' }}
+      </button>
+    </div>
+
+  </div>
+</div>
