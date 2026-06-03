@@ -8,6 +8,7 @@ import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 import tn.comping.spring.examen.events.AssignExamenEvent;
 import tn.comping.spring.examen.events.CoursCreatedEvent;
+import tn.comping.spring.examen.Services.ExamenService;
 import java.io.IOException;
 
 @Component
@@ -24,25 +25,25 @@ public class ExamenConsumer {
     }
 
     @RabbitListener(queues = "assign_examen_queue", ackMode = "MANUAL")
-public void receive(AssignExamenEvent event, Channel channel, Message message) {
-    try {
-        System.out.println("📩 EVENT RECEIVED FROM RABBITMQ");
-        examenService.assignExamenToEnseignant(
-                event.getExamenId(),
-                event.getEnseignantId());
-        System.out.println("📩 Message processed and acknowledged");
-        // Acknowledge the message manually
-        channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
-    } catch (IOException e) {
-        e.printStackTrace();
+    public void receive(AssignExamenEvent event, Channel channel, Message message) {
         try {
-            // Optionally reject the message on failure
-            channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
-        } catch (IOException ioException) {
-            ioException.printStackTrace(); // handle failure of rejecting message
+            System.out.println("📩 EVENT RECEIVED FROM RABBITMQ");
+            examenService.assignExamenToEnseignant(
+                    event.getExamenId(),
+                    event.getEnseignantId());
+            System.out.println("📩 Message processed and acknowledged");
+            // Acknowledge the message manually
+            channel.basicAck(message.getMessageProperties().getDeliveryTag(), false);
+        } catch (IOException e) {
+            e.printStackTrace();
+            try {
+                // Optionally reject the message on failure
+                channel.basicReject(message.getMessageProperties().getDeliveryTag(), true);
+            } catch (IOException ioException) {
+                ioException.printStackTrace(); // handle failure of rejecting message
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } catch (Exception e) {
-        e.printStackTrace();
     }
-}
 }

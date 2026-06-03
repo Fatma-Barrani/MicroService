@@ -10,27 +10,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
-    // ===============================
-    // QUEUES
-    // ===============================
+ 
     public static final String ASSIGN_EXAMEN_QUEUE = "assign_examen_queue";
     public static final String ETUDIANT_QUEUE = "etudiant.queue";
     public static final String COURS_QUEUE = "cours_queue";
 
-    // ===============================
-    // EXCHANGE
-    // ===============================
     public static final String EXCHANGE = "examen_exchange";
 
-    // ===============================
-    // ROUTING KEYS
-    // ===============================
     public static final String ASSIGN_EXAMEN_KEY = "assign_examen_key";
     public static final String ETUDIANT_KEY = "etudiant_key";
 
-    // ===============================
-    // QUEUES BEANS
-    // ===============================
+   
     @Bean
     public Queue assignExamenQueue() {
         return new Queue(ASSIGN_EXAMEN_QUEUE, true);
@@ -46,17 +36,12 @@ public class RabbitMQConfig {
         return new Queue(COURS_QUEUE, true);
     }
 
-    // ===============================
-    // EXCHANGE
-    // ===============================
+   
     @Bean
     public TopicExchange exchange() {
         return new TopicExchange(EXCHANGE);
     }
 
-    // ===============================
-    // BINDINGS
-    // ===============================
     @Bean
     public Binding assignExamenBinding() {
         return BindingBuilder
@@ -73,17 +58,12 @@ public class RabbitMQConfig {
                 .with(ETUDIANT_KEY);
     }
 
-    // ===============================
-    // JSON CONVERTER
-    // ===============================
+   
     @Bean
     public Jackson2JsonMessageConverter messageConverter() {
         return new Jackson2JsonMessageConverter();
     }
 
-    // ===============================
-    // LISTENER FACTORY
-    // ===============================
     @Bean(name = "rabbitListenerContainerFactory")
     public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
             ConnectionFactory connectionFactory,
