@@ -2,16 +2,19 @@ import { ApplicationConfig, APP_INITIALIZER, provideZoneChangeDetection, importP
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
-import { provideHttpClient, withFetch, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { KeycloakAngularModule, KeycloakService } from 'keycloak-angular';
-import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { isPlatformBrowser } from '@angular/common';
+import { authInterceptor } from './services/interceptor';
+
 
 function initializeKeycloak(keycloak: KeycloakService, platformId: object) {
   return () => {
+    // TRÈS IMPORTANT : Keycloak ne doit s'initialiser que dans le navigateur
     if (!isPlatformBrowser(platformId)) {
       return Promise.resolve();
     }
+
     return keycloak.init({
       config: {
         url: 'http://localhost:8080',
@@ -19,9 +22,10 @@ function initializeKeycloak(keycloak: KeycloakService, platformId: object) {
         clientId: 'examen-client',
       },
       initOptions: {
-        onLoad: 'login-required',
+        onLoad: 'login-required', // Redirige vers Keycloak si non connecté
         checkLoginIframe: false,
       },
+      enableBearerInterceptor: false, // On met false car on utilise notre propre intercepteur personnalisé
     });
   };
 }
@@ -31,19 +35,21 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideClientHydration(withEventReplay()),
-    provideHttpClient(withFetch()),
+    
+    // Correction ici : Utilisation de withInterceptors avec la fonction
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor]) 
+    ),
+
     importProvidersFrom(KeycloakAngularModule),
     KeycloakService,
+
     {
       provide: APP_INITIALIZER,
       useFactory: initializeKeycloak,
       multi: true,
       deps: [KeycloakService, PLATFORM_ID],
-    },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
     },
   ]
 };
