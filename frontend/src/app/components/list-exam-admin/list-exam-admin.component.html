@@ -1,0 +1,80 @@
+<!-- ── TABLE EXAMENS ─────────────────────────────── -->
+<div class="card table-card">
+
+  <div class="table-header-bar">
+    <div class="table-title-group">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+        <circle cx="9" cy="7" r="4"/>
+        <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+        <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+      </svg>
+      <span>Liste des examens</span>
+    </div>
+
+    <div class="table-badge">{{ examens.length }} examens</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Titre</th>
+          <th>Matière</th>
+          <th>Niveau</th>
+          <th>Date</th>
+          <th>Durée</th>
+          <th>Coefficient</th>
+          <th>Statut</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr *ngFor="let ex of examens" class="table-row">
+
+          <td>
+            <span class="name-text">{{ ex.titre }}</span>
+          </td>
+
+          <td>
+            <span>{{ ex.matiere }}</span>
+          </td>
+
+          <td>
+            <span>{{ ex.niveau }}</span>
+          </td>
+
+          <td>
+            <span>{{ ex.dateExamen | date:'shortDate' }}</span>
+          </td>
+
+          <td>
+            <span>{{ ex.duree }} min</span>
+          </td>
+
+          <td>
+            <span>{{ ex.coefficient }}</span>
+          </td>
+
+          <td>
+            <span class="specialite-badge">{{ ex.statut }}</span>
+          </td>
+
+        </tr>
+
+        <!-- EMPTY -->
+        <tr *ngIf="examens.length === 0">
+          <td colspan="8">
+            <div class="empty-state">
+              <p>Aucun examen trouvé</p>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>

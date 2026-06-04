@@ -12,6 +12,7 @@ import { LoginComponent } from './components/login/login.component';
 import { CoursListComponent } from './components/cours/cours-list/cours-list.component';
 import { CoursAddComponent } from './components/cours/cours-add/cours-add.component';
 import { CoursEditComponent } from './components/cours/cours-edit/cours-edit.component';
+import { ListExamAdminComponent } from './components/list-exam-admin/list-exam-admin.component';
 
 
 export const routes: Routes = [
@@ -30,6 +31,10 @@ export const routes: Routes = [
     {
     path: 'inscription',
     component: InscriptionComponent
+  },
+    {
+    path: 'listExamenAdmin',
+    component: ListExamAdminComponent
   },
 
      {
