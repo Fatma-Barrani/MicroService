@@ -15,7 +15,6 @@ import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/examens")
 @RequiredArgsConstructor
@@ -102,6 +101,24 @@ public class ExamenController {
         headers.setContentDispositionFormData("attachment", "notes_examen_" + examenId + ".pdf");
 
         return ResponseEntity.ok().headers(headers).body(pdf);
+    }
+    @GetMapping("/enseignant/{id}")
+    public List<ExamenResponseDTO> getByEnseignant(@PathVariable Long id) {
+        return service.getExamensByEnseignant(id);
+    }
+    @GetMapping("/count/en-cours")
+    public Long countExamensEnCours() {
+        return service.countByStatut("EN_COURS");
+    }
+
+    @GetMapping("/count/en-attente")
+    public Long countExamensEnAttente() {
+        return service.countByStatut("EN_ATTENTE");
+    }
+
+    @GetMapping("/count/terminee")
+    public Long countExamensCorriges() {
+        return service.countByStatut("TERMINE");
     }
 }
 

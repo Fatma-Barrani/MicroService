@@ -1,3 +1,4 @@
+
 /* ─────────────────────────────────────────────────────────────────────────────
    EduNet – Inscription Component  |  Blue theme
 ───────────────────────────────────────────────────────────────────────────── */
@@ -652,3 +653,4 @@
   .oauth-buttons { grid-template-columns: 1fr; }
   .right-panel   { padding: 32px 16px; align-items: flex-start; }
 }
+

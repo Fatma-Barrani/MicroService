@@ -1,0 +1,134 @@
+<div class="main">
+
+  <div class="topbar">
+    <div>
+      <div class="bc">
+        <i class="ti ti-layout-dashboard"></i>
+        Tableau de bord
+        <i class="ti ti-chevron-right"></i>
+        Cours
+      </div>
+      <div class="pg-title">Cours <span>Management</span></div>
+      <div class="pg-sub">Gérez vos cours et leur contenu pédagogique</div>
+    </div>
+    <button class="btn-add" (click)="add()">
+      <i class="ti ti-plus"></i> Ajouter un cours
+    </button>
+  </div>
+
+  <div class="metrics">
+    <div class="mc">
+      <div class="mc-bar bar-blue"></div>
+      <div class="mc-top">
+        <span class="mc-label">Total cours</span>
+        <div class="mc-icon ico-blue"><i class="ti ti-book"></i></div>
+      </div>
+      <div class="mc-val v-default">{{ cours.length }}</div>
+      <div class="mc-hint">tous niveaux confondus</div>
+    </div>
+    <div class="mc">
+      <div class="mc-bar bar-amber"></div>
+      <div class="mc-top">
+        <span class="mc-label">Licence / Master</span>
+        <div class="mc-icon ico-amber"><i class="ti ti-school"></i></div>
+      </div>
+      <div class="mc-val v-amber">{{ countByNiveauPrefix('Licence') + countByNiveauPrefix('Master') }}</div>
+      <div class="mc-hint">formations universitaires</div>
+    </div>
+    <div class="mc">
+      <div class="mc-bar bar-purple"></div>
+      <div class="mc-top">
+        <span class="mc-label">PHD / Ingénieurie</span>
+        <div class="mc-icon ico-purple"><i class="ti ti-atom"></i></div>
+      </div>
+      <div class="mc-val v-purple">{{ countByNiveauPrefix('PHD') + countByNiveauPrefix('Ingénieurie') }}</div>
+      <div class="mc-hint">formations avancées</div>
+    </div>
+    <div class="mc">
+      <div class="mc-bar bar-green"></div>
+      <div class="mc-top">
+        <span class="mc-label">Places totales</span>
+        <div class="mc-icon ico-green"><i class="ti ti-users"></i></div>
+      </div>
+      <div class="mc-val v-green">{{ totalPlaces }}</div>
+      <div class="mc-hint">capacité d'accueil</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="srch">
+      <i class="ti ti-search"></i>
+      <input type="text" [(ngModel)]="searchQuery" placeholder="Rechercher un cours, une catégorie…" />
+    </div>
+    <button class="fb" [class.on]="activeFilter === 'all'" (click)="activeFilter = 'all'">Tous</button>
+    <button class="fb" [class.on]="activeFilter === 'Licence'" (click)="activeFilter = 'Licence'">
+      <i class="ti ti-school"></i> Licence
+    </button>
+    <button class="fb" [class.on]="activeFilter === 'Master'" (click)="activeFilter = 'Master'">
+      <i class="ti ti-certificate"></i> Master
+    </button>
+    <button class="fb" [class.on]="activeFilter === 'PHD'" (click)="activeFilter = 'PHD'">
+      <i class="ti ti-atom"></i> PHD
+    </button>
+    <button class="fb" [class.on]="activeFilter === 'Ingénieurie'" (click)="activeFilter = 'Ingénieurie'">
+      <i class="ti ti-tools"></i> Ingénieurie
+    </button>
+    <span class="ctag">
+      <i class="ti ti-stack-2"></i> {{ filtered.length }}
+    </span>
+  </div>
+
+  <div class="grid">
+    <div *ngFor="let c of filtered" class="card">
+
+      <div class="card-top-bar tb-blue"></div>
+
+      <div class="card-body">
+        <div class="card-header">
+          <div>
+            <div class="c-title">{{ c.titre }}</div>
+            <div class="c-sub">{{ c.categorie }} · {{ c.niveau }}</div>
+          </div>
+          <span class="badge b-cours" *ngIf="c.niveau">
+            <i class="ti ti-tag"></i> {{ c.niveau }}
+          </span>
+        </div>
+
+        <div class="sep"></div>
+
+        <div class="rows">
+          <div class="row">
+            <span class="rl"><i class="ti ti-clock"></i> Durée</span>
+            <span class="rv">{{ c.dureeHeures ?? '—' }} h</span>
+          </div>
+          <div class="row">
+            <span class="rl"><i class="ti ti-users"></i> Places</span>
+            <span class="rv">{{ c.nbPlaces ?? '—' }}</span>
+          </div>
+          <div class="row" *ngIf="c.enseignantNom">
+            <span class="rl"><i class="ti ti-user"></i> Enseignant</span>
+            <span class="rv">{{ c.enseignantPrenom }} {{ c.enseignantNom }}</span>
+          </div>
+        </div>
+
+        <div class="desc" *ngIf="c.description">{{ c.description }}</div>
+      </div>
+
+      <div class="card-foot">
+        <button class="btn-edit" (click)="edit(c)">
+          <i class="ti ti-edit"></i> Modifier
+        </button>
+        <button class="btn-del" (click)="delete(c.id)">
+          <i class="ti ti-trash"></i> Supprimer
+        </button>
+      </div>
+
+    </div>
+
+    <div *ngIf="filtered.length === 0" class="empty">
+      <i class="ti ti-book-off"></i>
+      Aucun cours trouvé
+    </div>
+  </div>
+
+</div>

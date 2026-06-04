@@ -23,5 +23,5 @@ public interface ExamenRepository extends JpaRepository<Examen, Long> {
             @Param("niveau") String niveau,
             @Param("statut") String statut
     );
-
+    long countByStatut(String statut);
 }
