@@ -11,4 +11,5 @@ export class RegisterDto {
   idEtudiant?: string;
 
   idEnseignant?: string;
+  username!: string;
 }
