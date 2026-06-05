@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tn.comping.spring.examen.Entites.Examen;
 import tn.comping.spring.examen.Entites.Participation;
@@ -27,45 +26,38 @@ public class ExamenController {
     private final ExportService exportService;
 
     @PostMapping("/createExamen")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public ExamenResponseDTO create(@RequestBody ExamenRequestDTO dto) {
         return service.create(dto);
     }
 
     @GetMapping("/ExamenById/{id}")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT', 'ETUDIANT')")
     public ExamenResponseDTO getById(@PathVariable Long id) {
         return service.getById(id);
     }
 
     @GetMapping("/GetAllExamens")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT', 'ETUDIANT')")
     public List<ExamenResponseDTO> getAll() {
         return service.getAll();
     }
 
     @PutMapping("/UpdateExamenBYId/{id}")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public ExamenResponseDTO update(@PathVariable Long id,
                                     @RequestBody ExamenRequestDTO dto) {
         return service.update(id, dto);
     }
 
     @DeleteMapping("/DeleteExamen/{id}")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
 
     @PutMapping("/{idExamen}/affecter/{idEns}")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public Examen affecter(@PathVariable Long idExamen,
                            @PathVariable Long idEns) {
         return service.affecterEnseignant(idExamen, idEns);
     }
 
     @PostMapping("/affecter-async")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public ResponseEntity<String> affecterAsync(@RequestParam Long examId,
                                                 @RequestParam Long teacherId) {
         service.affecterEnseignantAsync(examId, teacherId);
@@ -73,7 +65,6 @@ public class ExamenController {
     }
 
     @GetMapping("/filter")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT', 'ETUDIANT')")
     public List<ExamenResponseDTO> filter(
             @RequestParam(required = false) String matiere,
             @RequestParam(required = false) String niveau,
@@ -82,7 +73,6 @@ public class ExamenController {
     }
 
     @GetMapping("/sort")
-    @PreAuthorize("hasAnyRole('ENSEIGNANT', 'ETUDIANT')")
     public List<ExamenResponseDTO> sort(@RequestParam String sortBy,
                                         @RequestParam String direction) {
         List<Examen> examens = examenRepository.findAll();
@@ -90,14 +80,12 @@ public class ExamenController {
     }
 
     @PostMapping("/participer")
-    @PreAuthorize("hasRole('ETUDIANT')")
     public Participation participer(@RequestParam Long etudiantId,
                                     @RequestParam Long examenId) {
         return service.ajouterParticipation(etudiantId, examenId);
     }
 
     @PutMapping("/noter")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public Participation noter(@RequestParam Long etudiantId,
                                @RequestParam Long examenId,
                                @RequestParam Double note,
@@ -106,7 +94,6 @@ public class ExamenController {
     }
 
     @GetMapping("/export/pdf/{examenId}")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public ResponseEntity<byte[]> exportPdf(@PathVariable Long examenId) throws DocumentException {
         byte[] pdf = exportService.exportNotesParExamen(examenId);
         HttpHeaders headers = new HttpHeaders();
@@ -116,26 +103,26 @@ public class ExamenController {
     }
 
     @GetMapping("/enseignant/{id}")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public List<ExamenResponseDTO> getByEnseignant(@PathVariable Long id) {
         return service.getExamensByEnseignant(id);
     }
 
     @GetMapping("/count/en-cours")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public Long countExamensEnCours() {
         return service.countByStatut("EN_COURS");
     }
 
     @GetMapping("/count/en-attente")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public Long countExamensEnAttente() {
         return service.countByStatut("EN_ATTENTE");
     }
 
     @GetMapping("/count/terminee")
-    @PreAuthorize("hasRole('ENSEIGNANT')")
     public Long countExamensCorriges() {
         return service.countByStatut("TERMINE");
+    }
+    @GetMapping("/count/total")
+    public Long countTotalExamens() {
+        return service.countTotal();
     }
 }

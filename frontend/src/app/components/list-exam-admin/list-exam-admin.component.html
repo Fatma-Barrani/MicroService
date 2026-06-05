@@ -1,0 +1,111 @@
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <app-sidebar></app-sidebar>
+
+  <!-- CONTENU PRINCIPAL -->
+  <div class="main-content">
+    <div class="page-container">
+
+      <!-- HEADER -->
+      <div class="header">
+        <div class="header-left">
+          <div class="header-eyebrow">
+            <span class="eyebrow-dot"></span>
+            TABLEAU DE BORD
+          </div>
+          <h1>Examens <span class="h1-accent">Management</span></h1>
+          <p class="header-sub">Gérez et assignez vos examens en temps réel</p>
+        </div>
+    
+      </div>
+
+      <!-- TABLE CARD -->
+      <div class="card table-card">
+        <div class="table-header-bar">
+          <div class="table-title-group">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span>Liste des examens</span>
+          </div>
+          <div class="table-badge">{{ examens.length }} examens</div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>TITRE</th>
+                <th>MATIÈRE</th>
+                <th>NIVEAU</th>
+                <th>DATE</th>
+                <th>DURÉE</th>
+                <th>COEFFICIENT</th>
+                <th>STATUT</th>
+                <th>ACTIONS</th>
+              </tr>
+            </thead>
+            <tbody>
+
+              <tr *ngFor="let ex of examens; let i = index" class="table-row">
+                <td>
+                  <div class="name-cell">
+                    <div class="avatar" [attr.data-index]="i % 5">
+                      {{ ex.titre | slice:0:2 | uppercase }}
+                    </div>
+                    <span class="name-text">{{ ex.titre }}</span>
+                  </div>
+                </td>
+                <td>{{ ex.matiere }}</td>
+                <td>{{ ex.niveau }}</td>
+                <td>{{ ex.dateExamen | date:'dd/MM/yyyy' }}</td>
+                <td>{{ ex.duree }} min</td>
+                <td>{{ ex.coefficient }}</td>
+                <td>
+                  <span class="specialite-badge" [ngClass]="ex.statut | lowercase">
+                    {{ ex.statut }}
+                  </span>
+                </td>
+                <td class="actions">
+                  <div class="actions">
+                   
+                    <button class="btn small edit">
+                      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                      </svg>
+                      Modifier
+                    </button>
+                   <button class="btn small delete" (click)="deleteExamen(ex.id!)">
+  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <polyline points="3 6 5 6 21 6"/>
+    <path d="M19 6l-1 14H6L5 6"/>
+    <path d="M9 6V4h6v2"/>
+  </svg>
+</button>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="examens.length === 0">
+                <td colspan="8">
+                  <div class="empty-state">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
+                    </svg>
+                    <p>Aucun examen trouvé</p>
+                  </div>
+                </td>
+              </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

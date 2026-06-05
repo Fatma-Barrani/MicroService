@@ -42,4 +42,7 @@ getCountEnAttente(): Observable<number> {
 getCountCorrige(): Observable<number> {
   return this.http.get<number>(`${this.apiUrl}/count/terminee`);
 }
+getTotalExamens(): Observable<number> {
+  return this.http.get<number>(`${this.apiUrl}/count/total`);
+}
 }

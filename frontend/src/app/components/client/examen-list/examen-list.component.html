@@ -1,4 +1,4 @@
-<div class="main">
+<div class="main" >
 
   <div class="topbar">
     <div>
@@ -11,9 +11,16 @@
       <div class="pg-title">Examens <span>Management</span></div>
       <div class="pg-sub">Gérez et assignez vos examens en temps réel</div>
     </div>
+   <div class="top-actions">
+    <button class="btn-pdf" (click)="exportPdf()">
+      <i class="ti ti-file-type-pdf"></i>
+      Export PDF
+    </button>
+
     <button class="btn-add" (click)="addExamen()">
       <i class="ti ti-plus"></i> Ajouter un examen
     </button>
+  </div>
   </div>
 
   <div class="metrics">
