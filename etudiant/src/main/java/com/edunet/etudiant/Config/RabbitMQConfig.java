@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
  * 2 queues pour 2 communications asynchrones :
  *
  *  ASYNC 1 : etudiant.queue          → consommée par MS Examen
- *  ASYNC 2 : notif.enseignant.queue  → consommée par MS Enseignant  [NOUVELLE]
+ *  ASYNC 2 : notif.enseignant.queue  → consommée par MS Enseignant
  */
 @Configuration
 public class RabbitMQConfig {
@@ -27,7 +27,7 @@ public class RabbitMQConfig {
 
     // ── Exchange commun ────────────────────────────────────────────────────
     public static final String EXCHANGE        = "edunet.exchange";
-    public static final String ETUDIANT_KEY    = "etudiant.event";
+    public static final String ETUDIANT_KEY    = "etudiant.key";
     public static final String ENSEIGNANT_KEY  = "notif.enseignant";
 
     // ── Queue beans ────────────────────────────────────────────────────────

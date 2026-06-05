@@ -1,0 +1,118 @@
+<div class="card">
+  <div class="card-header">
+    <div class="card-title-group">
+      <i class="ti ti-users"></i>
+      <span class="card-title">Gestion des étudiants</span>
+    </div>
+    <div class="header-stats">
+      <span class="table-badge">Total : {{ filteredEtudiants.length }} étudiants</span>
+      <span class="table-badge">Moyenne générale : {{ moyenneGenerale }}</span>
+    </div>
+    <div class="header-actions">
+      <button class="btn secondary" routerLink="/dashboard">
+        <i class="ti ti-arrow-left"></i> Retour au dashboard
+      </button>
+      <button class="btn primary" (click)="openAddModal()">
+        <i class="ti ti-plus"></i> Ajouter un étudiant
+      </button>
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="search-bar">
+    <i class="ti ti-search"></i>
+    <input type="text" placeholder="Rechercher par nom, prénom, email ou filière..." [(ngModel)]="searchTerm" (input)="onSearch()" />
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="message" class="alert alert-info">{{ message }}</div>
+  <div *ngIf="isLoading" class="alert alert-info">Chargement...</div>
+
+  <div class="table-wrap">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nom</th>
+          <th>Prénom</th>
+          <th>Email</th>
+          <th>Filière</th>
+          <th>Année</th>
+          <th>Moyenne</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of filteredEtudiants; let i = index" class="hover-row">
+          <td>{{ i+1 }}</td>
+          <td>{{ e.nom }}</td>
+          <td>{{ e.prenom }}</td>
+          <td>{{ e.email }}</td>
+          <td>{{ e.filiere }}</td>
+          <td>{{ e.anneeInscription }}</td>
+          <td>
+            <span [ngClass]="getMoyenneBadgeClass(e.moyenneGenerale)">
+              {{ e.moyenneGenerale }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn small edit" (click)="openEditModal(e)">Modifier</button>
+            <button class="btn small delete" (click)="remove(e)">Supprimer</button>
+            <button class="btn small sync" (click)="inscrire(e)">Inscrire</button>
+            <button class="btn small async" (click)="selectAsCurrent(e)">Sélectionner</button>
+          </td>
+        </tr>
+        <tr *ngIf="filteredEtudiants.length === 0">
+          <td colspan="8" class="empty-row">Aucun étudiant trouvé</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODALE AJOUT / MODIFICATION -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-title">
+        <i class="ti ti-user-edit"></i>
+        {{ isEditMode ? 'Modifier' : 'Ajouter' }} un étudiant
+      </div>
+      <button class="btn close-btn" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom *</label>
+          <input class="form-control" [(ngModel)]="currentEtudiant.nom" placeholder="Nom" />
+        </div>
+        <div class="form-group">
+          <label>Prénom *</label>
+          <input class="form-control" [(ngModel)]="currentEtudiant.prenom" placeholder="Prénom" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input class="form-control" [(ngModel)]="currentEtudiant.email" type="email" placeholder="Email" />
+      </div>
+      <div class="form-group">
+        <label>Filière</label>
+        <select class="form-control" [(ngModel)]="currentEtudiant.filiere">
+          <option *ngFor="let f of uniqueFilieres" [value]="f">{{ f }}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Année d'inscription</label>
+        <input class="form-control" type="number" [(ngModel)]="currentEtudiant.anneeInscription" />
+      </div>
+      <div class="form-group">
+        <label>Moyenne générale</label>
+        <input class="form-control" type="number" step="0.1" [(ngModel)]="currentEtudiant.moyenneGenerale" />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn outline" (click)="closeModal()">Annuler</button>
+      <button class="btn primary" (click)="saveEtudiant()">Enregistrer</button>
+    </div>
+  </div>
+</div>

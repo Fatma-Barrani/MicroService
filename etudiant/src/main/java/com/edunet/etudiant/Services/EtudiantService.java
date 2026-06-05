@@ -27,5 +27,8 @@ public interface EtudiantService {
 
     // Proxy Feign pour le frontend
     List<EnseignantDTO> getAllEnseignants();
+    List<String> getAllFilieres();
+
+    List<ParticipationDTO> getParticipationsByEtudiant(Long etudiantId);
 }
 

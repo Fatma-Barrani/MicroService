@@ -1,0 +1,9 @@
+.enseignants-container { padding: 24px; background: #f8fafc; min-height: 100vh; }
+.page-header { margin-bottom: 28px; }
+.enseignants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+.enseignant-card { background: white; border-radius: 16px; padding: 20px; display: flex; gap: 16px; align-items: center; border: 1px solid #e2e8f0; transition: 0.2s; }
+.enseignant-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+.avatar { width: 60px; height: 60px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px; }
+.info h3 { margin: 0 0 4px; font-size: 18px; }
+.specialite { color: #2563eb; font-weight: 500; margin: 0; font-size: 14px; }
+.email, .tel { color: #64748b; margin: 4px 0 0; font-size: 13px; }

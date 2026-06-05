@@ -188,4 +188,19 @@ public class ExamenServiceImpl implements ExamenService {
         return examenRepository.countByStatut(statut);
     }
 
+
+    public List<ParticipationDTO> getParticipationsByEtudiant(Long etudiantId) {
+        List<Participation> participations = participationRepository.findByEtudiantId(etudiantId);
+        return participations.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+    private ParticipationDTO toDTO(Participation p) {
+        return ParticipationDTO.builder()
+                .id(p.getId())
+                .etudiantId(p.getEtudiantId())
+                .examenId(p.getExamenId())
+                .note(p.getNote())
+                .commentaire(p.getCommentaire())
+                .dateEvaluation(p.getDateEvaluation())
+                .build();
+    }
 }

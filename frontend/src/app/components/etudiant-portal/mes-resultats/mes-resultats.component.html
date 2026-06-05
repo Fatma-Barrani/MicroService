@@ -1,0 +1,85 @@
+<div class="results-container">
+  <div class="page-header">
+    <h1>Mes résultats</h1>
+    <p class="subtitle">Performance académique</p>
+  </div>
+
+  <!-- Cartes personnelles -->
+  <div class="personal-stats" *ngIf="selected">
+    <div class="stat-card">
+      <div class="stat-value">{{ moyennePersonnelle }}</div>
+      <div class="stat-label">Ma moyenne générale</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ studentRank }}<span class="small">/{{ allStudents.length }}</span></div>
+      <div class="stat-label">Mon classement</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ selected.filiere }}</div>
+      <div class="stat-label">Filière</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ generalAverage }}</div>
+      <div class="stat-label">Moyenne de la promo</div>
+    </div>
+  </div>
+
+  <!-- Tableau des notes avec filtres -->
+  <div class="notes-section" *ngIf="selected">
+    <h3>Mes examens et notes</h3>
+    <div class="filters">
+      <select [(ngModel)]="filterMatiere" (change)="onFilterChange()">
+        <option value="">Toutes matières</option>
+        <option *ngFor="let m of matieresList" [value]="m">{{ m }}</option>
+      </select>
+      <input type="number" placeholder="Note min" [(ngModel)]="filterNoteMin" (input)="onFilterChange()" step="0.5">
+      <input type="number" placeholder="Note max" [(ngModel)]="filterNoteMax" (input)="onFilterChange()" step="0.5">
+      <button class="btn-reset" (click)="resetFilters()">Réinitialiser</button>
+    </div>
+    <div class="table-responsive">
+      <table class="notes-table">
+        <thead>
+          <tr>
+            <th>Matière</th>
+            <th>Examen</th>
+            <th>Date</th>
+            <th>Note /20</th>
+            <th>Coefficient</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of filteredParticipations">
+            <td>{{ p.matiere }}</td>
+            <td>{{ p.titre }}</td>
+            <td>{{ p.date | date:'dd/MM/yyyy' }}</td>
+            <td><span [class]="getBadgeClass(p.note)">{{ formatNote(p.note) }}</span></td>
+            <td>{{ p.coefficient }}</td>
+          </tr>
+          <tr *ngIf="filteredParticipations.length === 0">
+            <td colspan="5" class="empty-row">Aucun examen trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Graphiques globaux (anonymes) -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Distribution des moyennes (promotion)</h3>
+      <canvas #histChart></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Répartition par filière</h3>
+      <canvas #donutChart></canvas>
+    </div>
+  </div>
+
+  <div class="info-note">
+    <i class="ti ti-shield"></i> Conformément à la politique de confidentialité, les données individuelles des autres étudiants ne sont pas affichées.
+  </div>
+
+  <div *ngIf="!selected" class="empty-card">
+    Veuillez sélectionner un étudiant depuis l'espace admin.
+  </div>
+</div>

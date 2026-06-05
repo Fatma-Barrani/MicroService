@@ -4,8 +4,10 @@ import tn.comping.spring.examen.Entites.Examen;
 import tn.comping.spring.examen.Entites.Participation;
 import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
+import tn.comping.spring.examen.dto.ParticipationDTO;
 
 import java.util.List;
+
 
 public interface ExamenService {
     ExamenResponseDTO create(ExamenRequestDTO dto);
@@ -26,6 +28,10 @@ public interface ExamenService {
     Participation noterEtudiant(Long etudiantId, Long examenId, Double note,String commentaire);
 
     List<ExamenResponseDTO> getExamensByEnseignant(Long enseignantId);
-     void assignExamenToEnseignant(Long examenId, Long enseignantId);
+    void assignExamenToEnseignant(Long examenId, Long enseignantId);
+    List<ParticipationDTO> getParticipationsByEtudiant(Long etudiantId);
     Long countByStatut(String statut);
+
+
 }
+

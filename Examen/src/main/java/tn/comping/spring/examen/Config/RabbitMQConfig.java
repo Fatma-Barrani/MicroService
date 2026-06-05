@@ -4,6 +4,7 @@ import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -17,15 +18,16 @@ public class RabbitMQConfig {
     public static final String ETUDIANT_QUEUE = "etudiant.queue";
 
     // ===============================
-    // EXCHANGE
+    // EXCHANGES
     // ===============================
-    public static final String EXCHANGE = "examen_exchange";
+    public static final String EXCHANGE = "edunet.exchange"; // MODIFIÉ: aligné avec Etudiant
+    public static final String ASSIGN_EXAMEN_EXCHANGE = "examen.exchange"; // AJOUTÉ: flux d'affectation async
 
     // ===============================
     // ROUTING KEYS
     // ===============================
-    public static final String ASSIGN_EXAMEN_KEY = "assign_examen_key";
-    public static final String ETUDIANT_KEY = "etudiant_key";
+    public static final String ASSIGN_EXAMEN_KEY = "examen.affecte"; // MODIFIÉ: aligné avec root service
+    public static final String ETUDIANT_KEY = "etudiant.key"; // MODIFIÉ: aligné avec Etudiant
 
     // ===============================
     // QUEUES BEANS
@@ -41,11 +43,16 @@ public class RabbitMQConfig {
     }
 
     // ===============================
-    // EXCHANGE
+    // EXCHANGES
     // ===============================
     @Bean
     public TopicExchange exchange() {
         return new TopicExchange(EXCHANGE);
+    }
+
+    @Bean
+    public TopicExchange assignExamenExchange() {
+        return new TopicExchange(ASSIGN_EXAMEN_EXCHANGE);
     }
 
     // ===============================
@@ -55,7 +62,7 @@ public class RabbitMQConfig {
     public Binding assignExamenBinding() {
         return BindingBuilder
                 .bind(assignExamenQueue())
-                .to(exchange())
+                .to(assignExamenExchange())
                 .with(ASSIGN_EXAMEN_KEY);
     }
 

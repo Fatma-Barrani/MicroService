@@ -1,0 +1,21 @@
+<div class="enseignants-container">
+  <div class="page-header">
+    <h1>Mes enseignants</h1>
+    <p class="subtitle">Équipe pédagogique de votre filière</p>
+  </div>
+
+  <div class="enseignants-grid" *ngIf="enseignants.length > 0">
+    <div class="enseignant-card" *ngFor="let ens of enseignants">
+      <div class="avatar">{{ (ens.nom[0] + ens.prenom[0]) | uppercase }}</div>
+      <div class="info">
+        <h3>{{ ens.nom }} {{ ens.prenom }}</h3>
+        <p class="specialite">{{ ens.specialite }}</p>
+        <p class="email">{{ ens.email }}</p>
+        <p class="tel">{{ ens.telephone }}</p>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="enseignants.length === 0" class="empty-state">
+    Aucun enseignant trouvé.
+  </div>
+</div>

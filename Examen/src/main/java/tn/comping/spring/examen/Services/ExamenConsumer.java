@@ -5,6 +5,7 @@ import org.springframework.amqp.core.Message;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import tn.comping.spring.examen.Config.RabbitMQConfig;
 import tn.comping.spring.examen.Services.ExamenService;
 import tn.comping.spring.examen.events.AssignExamenEvent;
 import java.io.IOException; // <-- Add this import
@@ -15,8 +16,8 @@ public class ExamenConsumer {
 
     private final ExamenService examenService;
 
-    @RabbitListener(queues = "assign_examen_queue", ackMode = "MANUAL")
-public void receive(AssignExamenEvent event, Channel channel, Message message) {
+    @RabbitListener(queues = RabbitMQConfig.ASSIGN_EXAMEN_QUEUE, ackMode = "MANUAL")
+    public void receive(AssignExamenEvent event, Channel channel, Message message) {
     try {
         System.out.println("📩 EVENT RECEIVED FROM RABBITMQ");
         examenService.assignExamenToEnseignant(

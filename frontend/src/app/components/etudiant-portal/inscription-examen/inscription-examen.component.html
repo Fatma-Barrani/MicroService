@@ -1,0 +1,42 @@
+<div class="card">
+  <h3>Inscriptions aux examens</h3>
+
+  <div *ngIf="selectedEtudiant" class="student-info">
+    Étudiant : <strong>{{ selectedEtudiant.nom }} {{ selectedEtudiant.prenom }}</strong> ({{ selectedEtudiant.filiere }})
+  </div>
+
+  <div *ngIf="!selectedEtudiant && examens.length === 0" class="alert alert-info">
+    Aucun étudiant trouvé. Veuillez d'abord ajouter des étudiants dans l'espace admin.
+  </div>
+
+  <div *ngIf="!selectedEtudiant && examens.length > 0" class="alert alert-warning">
+    Chargement des informations étudiant...
+  </div>
+
+  <table class="table" *ngIf="examens.length && selectedEtudiant">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Intitulé</th>
+        <th>Date</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let ex of examens; let i = index">
+        <td>{{ ex.id || i+1 }}</td>
+        <td>{{ ex.titre }}</td>
+        <td>{{ ex.dateExamen | date:'dd/MM/yyyy' }}</td>
+        <td><button class="btn" (click)="inscrire(ex.id)">S'inscrire</button></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div *ngIf="examens.length === 0 && selectedEtudiant" class="alert alert-info">
+    Aucun examen disponible pour le moment.
+  </div>
+
+  <div *ngIf="message" class="alert alert-success" [class.alert-error]="message.includes('Erreur')">
+    {{ message }}
+  </div>
+</div>

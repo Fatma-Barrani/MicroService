@@ -13,20 +13,23 @@ import tn.comping.spring.examen.Services.ExamenService;
 import tn.comping.spring.examen.Services.ExportService;
 import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
+import tn.comping.spring.examen.dto.ParticipationDTO;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/api/examens")
 @RequiredArgsConstructor
 public class ExamenController {
     private final ExamenService service;
     private final ExamenRepository examenRepository;
-    private  final ExportService exportService;
+    private final ExportService exportService;
 
     @PostMapping("/createExamen")
     public ExamenResponseDTO create(@RequestBody ExamenRequestDTO dto) {
         return service.create(dto);
     }
+
     @GetMapping("/ExamenById/{id}")
     public ExamenResponseDTO getById(@PathVariable Long id) {
         return service.getById(id);
@@ -47,30 +50,30 @@ public class ExamenController {
     public void delete(@PathVariable Long id) {
         service.delete(id);
     }
+
     @PutMapping("/{idExamen}/affecter/{idEns}")
     public Examen affecter(
             @PathVariable Long idExamen,
             @PathVariable Long idEns) {
-
         return service.affecterEnseignant(idExamen, idEns);
     }
+
     @PostMapping("/affecter-async")
     public ResponseEntity<String> affecterAsync(@RequestParam Long examId,
                                                 @RequestParam Long teacherId) {
-
         service.affecterEnseignantAsync(examId, teacherId);
-
-        return ResponseEntity.accepted()
-                .body("Affectation en cours (asynchrone)");
+        return ResponseEntity.accepted().body("Affectation en cours (asynchrone)");
     }
+
     @GetMapping("/filter")
     public List<ExamenResponseDTO> filter(
             @RequestParam(required = false) String matiere,
             @RequestParam(required = false) String niveau,
             @RequestParam(required = false) String statut
     ) {
-        return  service.filterExamen(matiere, niveau, statut);
+        return service.filterExamen(matiere, niveau, statut);
     }
+
     @GetMapping("/sort")
     public List<ExamenResponseDTO> sort(
             @RequestParam String sortBy,
@@ -85,27 +88,35 @@ public class ExamenController {
                                     @RequestParam Long examenId) {
         return service.ajouterParticipation(etudiantId, examenId);
     }
+
+    // ✅ = supprimé — était une erreur de syntaxe
+    @GetMapping("/participations/etudiant/{etudiantId}")
+    public List<ParticipationDTO> getParticipationsByEtudiant(@PathVariable Long etudiantId) {
+        return service.getParticipationsByEtudiant(etudiantId);
+    }
+
     @PutMapping("/noter")
     public Participation noter(@RequestParam Long etudiantId,
                                @RequestParam Long examenId,
                                @RequestParam Double note,
-     @RequestParam String commentaire) {
-        return service.noterEtudiant(etudiantId, examenId, note,commentaire);
+                               @RequestParam String commentaire) {
+        return service.noterEtudiant(etudiantId, examenId, note, commentaire);
     }
+
     @GetMapping("/export/pdf/{examenId}")
     public ResponseEntity<byte[]> exportPdf(@PathVariable Long examenId) throws DocumentException {
         byte[] pdf = exportService.exportNotesParExamen(examenId);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
         headers.setContentDispositionFormData("attachment", "notes_examen_" + examenId + ".pdf");
-
         return ResponseEntity.ok().headers(headers).body(pdf);
     }
+
     @GetMapping("/enseignant/{id}")
     public List<ExamenResponseDTO> getByEnseignant(@PathVariable Long id) {
         return service.getExamensByEnseignant(id);
     }
+
     @GetMapping("/count/en-cours")
     public Long countExamensEnCours() {
         return service.countByStatut("EN_COURS");
@@ -121,4 +132,3 @@ public class ExamenController {
         return service.countByStatut("TERMINE");
     }
 }
-

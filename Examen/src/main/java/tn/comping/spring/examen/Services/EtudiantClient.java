@@ -5,8 +5,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import tn.comping.spring.examen.dto.EtudiantDTO;
 
-@FeignClient(name = "ETUDIANT-SERVICE")
+@FeignClient(name = "etudiant-service")
 public interface EtudiantClient {
-    @GetMapping("/etudiants/{id}")
+    @GetMapping("/etudiants/getEtudiantById/{id}")
     EtudiantDTO getEtudiantById(@PathVariable Long id);
 }

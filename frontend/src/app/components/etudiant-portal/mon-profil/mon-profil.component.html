@@ -1,0 +1,74 @@
+<div class="card">
+  <h3>Mon profil</h3>
+
+  <div *ngIf="!etudiant" class="alert alert-warning">
+    Aucun étudiant sélectionné. Veuillez sélectionner un étudiant depuis l'espace admin.
+  </div>
+
+  <div *ngIf="etudiant">
+    <div class="info-grid">
+      <div class="info-item"><strong>Nom :</strong> {{ etudiant.nom }}</div>
+      <div class="info-item"><strong>Prénom :</strong> {{ etudiant.prenom }}</div>
+      <div class="info-item"><strong>Email :</strong> {{ etudiant.email }}</div>
+      <div class="info-item"><strong>Filière :</strong> {{ etudiant.filiere }}</div>
+      <div class="info-item"><strong>Année d'inscription :</strong> {{ etudiant.anneeInscription }}</div>
+      <div class="info-item"><strong>Moyenne générale :</strong> {{ etudiant.moyenneGenerale }}</div>
+    </div>
+
+    <button class="btn edit-btn" (click)="startEdit()">✏️ Modifier mon profil</button>
+
+    <div *ngIf="isEditing" class="edit-form">
+      <h4>Modifier mes informations</h4>
+      <form (ngSubmit)="save()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom</label>
+            <input name="nom" [(ngModel)]="editModel.nom" required />
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input name="prenom" [(ngModel)]="editModel.prenom" required />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Email</label>
+          <input name="email" [(ngModel)]="editModel.email" type="email" />
+        </div>
+
+        <div class="form-row">
+          <!-- ✅ Filière bloquée — non modifiable par l'étudiant -->
+          <div class="form-group">
+            <label>Filière</label>
+            <input name="filiere" [value]="etudiant.filiere" readonly
+                   style="background:#f5f5f5; cursor:not-allowed; opacity:0.7;" />
+            <small class="form-hint">La filière ne peut pas être modifiée.</small>
+          </div>
+          <div class="form-group">
+            <label>Année d'inscription</label>
+            <input name="annee" [(ngModel)]="editModel.anneeInscription" type="number" />
+          </div>
+        </div>
+
+        <!-- ✅ Moyenne bloquée — déjà readonly -->
+        <div class="form-group">
+          <label>Moyenne générale</label>
+          <input name="moyenne" [value]="etudiant.moyenneGenerale" type="number" step="0.01" readonly
+                 style="background:#f5f5f5; cursor:not-allowed; opacity:0.7;" />
+          <small class="form-hint">La moyenne est calculée automatiquement à partir de vos notes et ne peut pas être modifiée manuellement.</small>
+        </div>
+
+        <div class="form-buttons">
+          <button class="btn" type="submit">💾 Enregistrer</button>
+          <button class="btn cancel" type="button" (click)="cancelEdit()">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div *ngIf="message" class="alert"
+       [class.alert-success]="message.includes('succès')"
+       [class.alert-error]="message.includes('Erreur')">
+    {{ message }}
+  </div>
+</div>

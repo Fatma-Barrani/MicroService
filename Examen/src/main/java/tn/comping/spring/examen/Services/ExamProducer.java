@@ -3,6 +3,7 @@ package tn.comping.spring.examen.Services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import tn.comping.spring.examen.Config.RabbitMQConfig;
 import tn.comping.spring.examen.dto.ExamEvent;
 
 import java.util.HashMap;
@@ -21,8 +22,8 @@ public class ExamProducer {
             System.out.println("🔥 ENTER affecterEnseignant");
 
             rabbitTemplate.convertAndSend(
-                    "examen.exchange",
-                    "examen.affecte",
+                    RabbitMQConfig.ASSIGN_EXAMEN_EXCHANGE,
+                    RabbitMQConfig.ASSIGN_EXAMEN_KEY,
                     event
             );
             System.out.println("✅ Message envoyé vers RabbitMQ");

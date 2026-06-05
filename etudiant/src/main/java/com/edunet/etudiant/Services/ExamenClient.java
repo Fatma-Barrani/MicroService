@@ -31,6 +31,15 @@ public interface ExamenClient {
      */
     @PostMapping("/api/examens/participer")
     ParticipationDTO inscrireEtudiantAExamen(@RequestParam("etudiantId") Long etudiantId,
+
                                              @RequestParam("examenId") Long examenId);
 
+
+    /**
+     * Récupérer les participations (notes) d'un étudiant
+     * Appelle GET /api/examens/participations/etudiant/{etudiantId}
+     * → utilisé dans "Mes résultats"
+     */
+    @GetMapping("/api/examens/participations/etudiant/{etudiantId}")
+    List<ParticipationDTO> getParticipationsByEtudiant(@PathVariable("etudiantId") Long etudiantId);
 }

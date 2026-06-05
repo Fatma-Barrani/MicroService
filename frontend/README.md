@@ -57,3 +57,16 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+## Demo: Mock vs Live data (MesResultats)
+
+The `MesResultats` view supports a demo toggle to switch between mocked sample data and live backend data.
+
+- By default the demo uses **mock data** for a reliable presentation. Use the checkbox and the "Basculer" button in the page header to switch to **live** mode.
+- Live mode requests data from your backend proxy (gateway) at `http://localhost:8956/etudiants/{id}/participations`.
+
+If you want to force live mode permanently for testing, edit the component property `useMock` in:
+
+- `frontend/src/app/components/etudiant-portal/mes-resultats/mes-resultats.component.ts`
+
+Set `useMock = false` and rebuild.

@@ -146,6 +146,14 @@ public class EtudiantServiceImpl implements EtudiantService {
         return enseignantClient.getAllEnseignants();
     }
 
+    @Override
+    public List<String> getAllFilieres() {
+        return etudiantRepository.findAll().stream()
+                .map(Etudiant::getFiliere)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
     // ── HELPERS ───────────────────────────────────────────────────────────
     private EtudiantEventDTO toEvent(Etudiant e, String action) {
         return EtudiantEventDTO.builder()
@@ -159,4 +167,10 @@ public class EtudiantServiceImpl implements EtudiantService {
                 .etudiantEmail(e.getEmail()).filiere(e.getFiliere())
                 .moyenneGenerale(e.getMoyenneGenerale()).action(action).build();
     }
+    @Override
+    public List<ParticipationDTO> getParticipationsByEtudiant(Long etudiantId) {
+        return examenClient.getParticipationsByEtudiant(etudiantId);
+    }
+
+
 }

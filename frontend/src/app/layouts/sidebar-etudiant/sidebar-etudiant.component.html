@@ -1,0 +1,45 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <i class="ti ti-school"></i>
+        <span>EduNet</span>
+      </div>
+      <div class="brand-sub">Espace étudiant</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/etudiant/dashboard" routerLinkActive="active">
+        <i class="ti ti-layout-dashboard"></i>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/etudiant/resultats" routerLinkActive="active">
+        <i class="ti ti-chart-bar"></i>
+        <span>Mes résultats</span>
+      </a>
+      <a routerLink="/etudiant/inscription" routerLinkActive="active">
+        <i class="ti ti-file-plus"></i>
+        <span>Inscriptions</span>
+      </a>
+      <a routerLink="/etudiant/enseignants" routerLinkActive="active">
+        <i class="ti ti-chalkboard"></i>
+        <span>Mes enseignants</span>
+      </a>
+      <a routerLink="/etudiant/profil" routerLinkActive="active">
+        <i class="ti ti-user-circle"></i>
+        <span>Mon profil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <i class="ti ti-user"></i>
+        <span>Étudiant</span>
+      </div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

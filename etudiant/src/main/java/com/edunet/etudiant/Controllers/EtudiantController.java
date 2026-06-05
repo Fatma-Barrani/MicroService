@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/etudiants")
-@CrossOrigin(origins = "*")
 public class EtudiantController {
 
     @Autowired
@@ -46,6 +45,7 @@ public class EtudiantController {
                 .collect(Collectors.toList());
         return new ResponseEntity<>(responseDTOs, HttpStatus.OK);
     }
+
     @GetMapping("/getEtudiantById/{id}")
     public ResponseEntity<EtudiantResponseDTO> getEtudiantById(@PathVariable Long id) {
         Etudiant etudiant = etudiantService.getEtudiantById(id);
@@ -56,10 +56,11 @@ public class EtudiantController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
     /**
      * POST /etudiants/addEtudiant
-     *  ASYNC 1 : publie automatiquement sur etudiant.queue → consommé par Arwa
-     *  ASYNC 2 : publie automatiquement sur notif.enseignant.queue → consommé par Fatma
+     * ASYNC 1 : publie automatiquement sur etudiant.queue → consommé par Arwa
+     * ASYNC 2 : publie automatiquement sur notif.enseignant.queue → consommé par Fatma
      */
     @PostMapping("/addEtudiant")
     public ResponseEntity<EtudiantResponseDTO> addEtudiant(@RequestBody EtudiantRequestDTO requestDTO) {
@@ -87,11 +88,16 @@ public class EtudiantController {
     }
 
     @DeleteMapping("/deleteEtudiant/{id}")
-    public ResponseEntity<String> deleteEtudiant(@PathVariable Long id) {
-        String result = etudiantService.deleteEtudiant(id);
-        return new ResponseEntity<>(result, HttpStatus.OK);
-    }
+    public ResponseEntity<Void> deleteEtudiant(@PathVariable Long id) {
+        etudiantService.deleteEtudiant(id);
+        return ResponseEntity.noContent().build();  // 204 — Angular accepte sans parser JSON
 
+    }
+    @GetMapping("/filieres")
+    public ResponseEntity<List<String>> getAllFilieres() {
+        List<String> filieres = etudiantService.getAllFilieres();
+        return ResponseEntity.ok(filieres);
+    }
 
     @GetMapping("/by-filiere/{filiere}")
     public ResponseEntity<List<Etudiant>> getByFiliere(@PathVariable String filiere) {
@@ -100,6 +106,7 @@ public class EtudiantController {
                 HttpStatus.OK);
     }
 // ──────────── ✅ SYNC 1 — Feign → MS Examen () ──────────────────
+
     /**
      * Inscrire un étudiant à un examen
      * → Appel Feign : POST /api/examens/participer chez Arwa
@@ -118,6 +125,7 @@ public class EtudiantController {
     }
 
     // ──────────── ✅ SYNC 2 — Feign → MS Enseignant (Fatma) ─────────────
+
     /**
      * Assigner un examen à un enseignant
      * → Appel Feign : PUT /api/enseignants/{ensId}/assignExamen/{examId} chez Fatma
@@ -135,10 +143,11 @@ public class EtudiantController {
         }
     }
 // ──────────── ✅ ASYNC 2 — RabbitMQ → MS Enseignant (Fatma) — test manuel
+
     /**
      * Déclenche manuellement l'envoi d'une notification vers Enseignant MS
      * (déjà automatique dans addEtudiant/updateEtudiant, mais cet endpoint
-     *  permet de tester indépendamment pour la validation prof)
+     * permet de tester indépendamment pour la validation prof)
      */
     @PostMapping("/{id}/notif-enseignant")
     public ResponseEntity<String> notifEnseignant(@PathVariable Long id,
@@ -160,6 +169,7 @@ public class EtudiantController {
             return ResponseEntity.status(500).body("❌ [ASYNC 2] RabbitMQ : " + ex.getMessage());
         }
     }
+
     // ──────────── Proxy Feign : liste enseignants pour le front ──────────
     @GetMapping("/enseignants-feign")
     public ResponseEntity<?> getEnseignants() {
@@ -180,6 +190,18 @@ public class EtudiantController {
     @GetMapping("/statsParMatiere/{matiere}")
     public ResponseEntity<Map<String, Object>> getStatsByMatiere(@PathVariable String matiere) {
         return ResponseEntity.ok(etudiantService.getStatistiquesParMatiere(matiere));
+    }
+
+    // ──────────── Récupération des participations (notes) d'un étudiant ──────────
+    @GetMapping("/{etudiantId}/participations")
+    public ResponseEntity<List<ParticipationDTO>> getParticipations(@PathVariable Long etudiantId) {
+        try {
+            List<ParticipationDTO> participations = etudiantService.getParticipationsByEtudiant(etudiantId);
+            return ResponseEntity.ok(participations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body(null);
+        }
     }
 }
 

@@ -2,6 +2,7 @@ package tn.esprit.spring.microserviceproject.Services;
 
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
+import tn.esprit.spring.microserviceproject.Config.RabbitMQConfig;
 import java.util.Map;
 
 /**
@@ -24,7 +25,7 @@ import java.util.Map;
 @Component
 public class EtudiantNotifConsumer {
 
-    @RabbitListener(queues = "notif.enseignant.queue")
+    @RabbitListener(queues = RabbitMQConfig.NOTIF_ENSEIGNANT_QUEUE)
     public void recevoirNotifEtudiant(Map<String, Object> event) {
         System.out.println("==========================================================");
         System.out.println("📩 [ENSEIGNANT MS] Notification reçue depuis MS Étudiant !");
