@@ -169,13 +169,6 @@
           <span class="err-msg" *ngIf="isInvalid('role')">{{ getError('role') }}</span>
         </div>
 
-        <!-- Conditional: Student ID -->
-        <!-- FIX: shown only when role = ETUDIANT -->
-        
-
-        <!-- Conditional: Teacher ID -->
-      
-
         <!-- Password -->
         <div class="fg" [class.is-valid]="isValid('password')" [class.has-error]="isInvalid('password')">
           <label for="password">Password</label>
@@ -188,6 +181,7 @@
               {{ showPassword ? '🙈' : '👁' }}
             </button>
           </div>
+
           <!-- Strength meter -->
           <div class="pw-str" *ngIf="signupForm.get('password')?.value">
             <div class="str-bars">

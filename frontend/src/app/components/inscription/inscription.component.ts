@@ -11,6 +11,7 @@ import {
 } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
+import { Router } from '@angular/router';
 
 // ── Custom validator: passwords must match ────────────────────────────────────
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
@@ -46,7 +47,7 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
   private pwSub!: Subscription;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
   // ── Lifecycle ───────────────────────────────────────────────────────────────
 
@@ -128,63 +129,67 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
   // ── Submit ───────────────────────────────────────────────────────────────────
 
- onSubmit(): void {
-  this.submitted = true;
+  onSubmit(): void {
+    this.submitted = true;
 
-  this.successMessage = '';
-  this.errorMessage = '';
+    this.successMessage = '';
+    this.errorMessage = '';
 
-  this.signupForm.markAllAsTouched();
+    this.signupForm.markAllAsTouched();
 
-  if (this.signupForm.invalid) {
-    this.errorMessage = 'Please fix the errors in the form.';
-    return;
-  }
-
-  const formValue = this.signupForm.value;
-
-  const payload: any = {
-    username: formValue.username,
-    email: formValue.email,
-    password: formValue.password,
-    role: formValue.role,
-  };
-
-  if (formValue.role === 'ETUDIANT' && formValue.idEtudiant) {
-    payload.idEtudiant = formValue.idEtudiant;
-  }
-
-  if (formValue.role === 'ENSEIGNANT' && formValue.idEnseignant) {
-    payload.idEnseignant = formValue.idEnseignant;
-  }
-
-  this.isLoading = true;
-
-  this.authService.register(payload).subscribe({
-    next: (res) => {
-      this.isLoading = false;
-
-      // ✅ SUCCESS MESSAGE
-      this.successMessage =
-        res?.message || '🎉 Account created successfully! You can now log in.';
-
-      this.signupForm.reset({
-        role: 'ETUDIANT',
-        terms: false
-      });
-
-      this.submitted = false;
-    },
-
-    error: (err) => {
-      this.isLoading = false;
-
-      // ❌ ERROR MESSAGE (backend or fallback)
-      this.errorMessage =
-        err?.error?.message ||
-        err?.error?.error ||
-        '❌ Signup failed. Please try again later.';
+    if (this.signupForm.invalid) {
+      this.errorMessage = 'Please fix the errors in the form.';
+      return;
     }
-  });
-}
+
+    const formValue = this.signupForm.value;
+
+    const payload: any = {
+      username: formValue.username,
+      email: formValue.email,
+      password: formValue.password,
+      role: formValue.role,
+    };
+
+    if (formValue.role === 'ETUDIANT' && formValue.idEtudiant) {
+      payload.idEtudiant = formValue.idEtudiant;
+    }
+
+    if (formValue.role === 'ENSEIGNANT' && formValue.idEnseignant) {
+      payload.idEnseignant = formValue.idEnseignant;
+    }
+
+    this.isLoading = true;
+
+    this.authService.register(payload).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+
+        this.successMessage =
+          res?.message || '🎉 Account created successfully! You can now log in.';
+
+        this.signupForm.reset({
+          role: 'ETUDIANT',
+          terms: false
+        });
+
+        this.submitted = false;
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 2000);
+      },
+
+      error: (err) => {
+        this.isLoading = false;
+
+        // ❌ ERROR MESSAGE (backend or fallback)
+        this.errorMessage =
+          err?.error?.message ||
+          err?.error?.error ||
+          '❌ Signup failed. Please try again later.';
+      }
+    });
+  }
 }
