@@ -11,7 +11,7 @@ export class EnseignantService {
   // ✅ USE API GATEWAY PORT HERE
   private apiUrl = 'http://localhost:8956/api/enseignants';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // GET ALL
   getAll(): Observable<Enseignant[]> {
@@ -63,6 +63,13 @@ export class EnseignantService {
     return this.http.put(
       `${this.apiUrl}/${enseignantId}/assignExamenAsync/${examenId}`,
       {}
+    );
+  }
+
+  // COUNT enseignants
+  getCount(): Observable<number> {
+    return this.http.get<number>(
+      `${this.apiUrl}/countEnseignant`
     );
   }
 }

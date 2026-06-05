@@ -11,5 +11,4 @@ public interface ParticipationRepository extends JpaRepository<Participation, Lo
 
     Optional<Participation> findByEtudiantIdAndExamenId(Long etudiantId, Long examenId);
     List<Participation> findByExamenId(Long examenId);
-    List<Participation> findByEtudiantId(Long etudiantId);
 }

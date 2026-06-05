@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { SidebarComponent } from "../../layouts/sidebar/sidebar.component";
+import { EnseignantService } from '../../services/enseignant.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -11,8 +13,9 @@ import { SidebarComponent } from "../../layouts/sidebar/sidebar.component";
 })
 export class AdminDashboardComponent {
 
+  constructor(private enseignantService: EnseignantService,   private router: Router) { }
   // STATIC DATA
-  totalEnseignants = 24;
+  totalEnseignants = 0;
 
   totalEtudiants = 320;
 
@@ -22,6 +25,25 @@ export class AdminDashboardComponent {
 
   totalCours = 45;
 
+  ngOnInit(): void {
+    this.loadEnseignantCount();
+  }
+
+  loadEnseignantCount(): void {
+  this.enseignantService.getCount().subscribe({
+    next: (count) => {
+      this.totalEnseignants = count;
+    },
+    error: (err) => {
+      console.error('Error loading enseignants count', err);
+      this.totalEnseignants = 0;
+    }
+  });
+}
+
+goToAddEnseignant(): void {
+  this.router.navigate(['/enseignants']);
+}
   // ✅ ADD THIS
   recentActivity = [
     {

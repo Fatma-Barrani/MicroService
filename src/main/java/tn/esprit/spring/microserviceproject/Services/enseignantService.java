@@ -23,4 +23,6 @@ public interface enseignantService {
     void assignExamenAsync(Long enseignantId, Long examenId);
 
    enseignantResponseDto getEnseignantByExamen(Long examenId);
+
+   long countEnseignants();
 }

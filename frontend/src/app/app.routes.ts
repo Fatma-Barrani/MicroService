@@ -5,30 +5,38 @@ import { ExamenEditComponent } from './components/client/examen-edit/examen-edit
 import { ExamenAddComponent } from './components/client/examen-add/examen-add.component';
 import { EnseignantLayoutComponent } from './layouts/enseignant-layout/enseignant-layout.component';
 import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
-import { EtudiantManagementComponent } from './components/admin/etudiant-management/etudiant-management.component';
-import { SidebarEtudiantComponent } from './layouts/sidebar-etudiant/sidebar-etudiant.component';
-import { EtudiantDashboardComponent } from './components/etudiant-portal/etudiant-dashboard/etudiant-dashboard.component';
-import { MonProfilComponent } from './components/etudiant-portal/mon-profil/mon-profil.component';
-import { MesResultatsComponent } from './components/etudiant-portal/mes-resultats/mes-resultats.component';
-import { InscriptionExamenComponent } from './components/etudiant-portal/inscription-examen/inscription-examen.component';
-import { MesEnseignantsComponent } from './components/etudiant-portal/mes-enseignants/mes-enseignants.component';
-import { AdminStatistiquesComponent } from './components/admin/admin-statistiques/admin-statistiques.component';
+
+import { InscriptionComponent } from './components/inscription/inscription.component';
+import { LoginComponent } from './components/login/login.component';
+
+import { CoursListComponent } from './components/cours/cours-list/cours-list.component';
+import { CoursAddComponent } from './components/cours/cours-add/cours-add.component';
+import { CoursEditComponent } from './components/cours/cours-edit/cours-edit.component';
+
 
 export const routes: Routes = [
 
-  // 👉 enseignants
   {
     path: 'enseignants',
     component: EnseignantTableComponent
   },
 
-  // 👉 admin dashboard
   {
     path: 'dashboard',
     component: AdminDashboardComponent
   },
 
-  // 👉 layout enseignant avec sous-routes examens
+
+    {
+    path: 'inscription',
+    component: InscriptionComponent
+  },
+
+     {
+    path: 'login',
+    component: LoginComponent},
+
+
   {
     path: '',
     component: EnseignantLayoutComponent,
@@ -36,31 +44,11 @@ export const routes: Routes = [
       { path: 'listExamen', component: ExamenListComponent },
       { path: 'examens/edit/:id', component: ExamenEditComponent },
       { path: 'examens/add', component: ExamenAddComponent },
+      { path: 'cours', component: CoursListComponent },
+      { path: 'cours/add', component: CoursAddComponent },
+      { path: 'cours/edit/:id', component: CoursEditComponent },
       { path: '', redirectTo: 'listExamen', pathMatch: 'full' }
     ]
-  }
-  ,
-  // admin: gestion etudiants
-  {
-    path: 'admin/etudiants',
-    component: EtudiantManagementComponent
-  },
-  {
-    path: 'admin/statistiques',
-    component: AdminStatistiquesComponent
-  },
 
-  // etudiant portal (layout + children)
-  {
-    path: 'etudiant',
-    component: SidebarEtudiantComponent,
-    children: [
-      { path: 'dashboard', component: EtudiantDashboardComponent },
-      { path: 'profil', component: MonProfilComponent },
-      { path: 'resultats', component: MesResultatsComponent },
-      { path: 'inscription', component: InscriptionExamenComponent },
-      { path: 'enseignants', component: MesEnseignantsComponent },
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
-    ]
   }
 ];

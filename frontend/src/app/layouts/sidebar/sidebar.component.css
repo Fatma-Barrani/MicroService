@@ -135,3 +135,34 @@
   }
 }
 
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;          /* match nav gap */
+  width: 100%;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 12px 14px; /* match nav padding */
+  border-radius: var(--radius-md);
+  color: #94a3b8;     /* match nav default color */
+  font-size: 14px;    /* match .nav-label */
+  font-weight: 500;   /* match nav font-weight */
+  transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+.logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  transform: translateX(3px); /* match nav hover */
+}
+@media (max-width: 900px) {
+  .logout-btn {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  .sidebar-footer .nav-label {
+    display: none;
+  }
+}

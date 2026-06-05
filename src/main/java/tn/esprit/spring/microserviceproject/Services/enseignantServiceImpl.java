@@ -174,7 +174,8 @@ public class enseignantServiceImpl implements enseignantService {
 
         examenProducer.sendAssignExamen(event);
     }
-     //filtre
+
+    // filtre
     @Override
     public enseignantResponseDto getEnseignantByExamen(Long examenId) {
 
@@ -189,4 +190,8 @@ public class enseignantServiceImpl implements enseignantService {
         return mapper.toDTO(ens);
     }
 
+    @Override
+    public long countEnseignants() {
+        return repository.count();
+    }
 }

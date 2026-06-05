@@ -108,14 +108,14 @@
         <div class="card-header">
           <div class="card-title-group">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" />
             </svg>
             <span class="card-title">Actions rapides</span>
           </div>
           <span class="card-action">Voir tout</span>
         </div>
         <div class="quick-actions">
-          <button class="action-btn">
+          <button class="action-btn" (click)="goToAddEnseignant()">
             <i class="ti ti-user-plus"></i>
             Ajouter Enseignant
           </button>
@@ -131,14 +131,6 @@
             <i class="ti ti-chart-pie"></i>
             Voir Rapports
           </button>
-          <a class="action-btn" routerLink="/admin/etudiants">
-            <i class="ti ti-user-graduate"></i>
-            Gérer Étudiants
-          </a>
-          <a class="action-btn" routerLink="/admin/statistiques">
-            <i class="ti ti-chart-bar"></i>
-            Statistiques avancées
-          </a>
         </div>
       </div>
 
@@ -147,7 +139,8 @@
         <div class="card-header">
           <div class="card-title-group">
             <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
             </svg>
             <span class="card-title">Activité récente</span>
           </div>

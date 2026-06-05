@@ -1,6 +1,16 @@
 import { RenderMode, ServerRoute } from '@angular/ssr';
 
 export const serverRoutes: ServerRoute[] = [
-  { path: 'examens/edit/:id', renderMode: RenderMode.Server },  // ← plus de slash au début
-  { path: '**', renderMode: RenderMode.Prerender }
+  {
+    path: 'examens/edit/:id',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: 'cours/edit/:id',
+    renderMode: RenderMode.Client
+  },
+  {
+    path: '**',
+    renderMode: RenderMode.Prerender
+  }
 ];

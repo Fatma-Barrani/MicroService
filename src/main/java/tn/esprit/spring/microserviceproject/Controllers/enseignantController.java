@@ -61,7 +61,6 @@ public class enseignantController {
         return examenClient.getExamenById(id);
     }
 
-
     // =====================================
     // 🔵 SYNCHRONE (Feign)
     // =====================================
@@ -73,7 +72,7 @@ public class enseignantController {
         return service.assignExamen(enseignantId, examenId);
     }
 
-     // =====================================
+    // =====================================
     // 🟢 ASYNCHRONE (RabbitMQ)
     // =====================================
     @PutMapping("/{enseignantId}/assignExamenAsync/{examenId}")
@@ -91,5 +90,8 @@ public class enseignantController {
         return service.getEnseignantByExamen(examenId);
     }
 
+    @GetMapping("/countEnseignant")
+    public long countEnseignants() {
+        return service.countEnseignants();
+    }
 }
-

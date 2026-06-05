@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Etudiant } from '../models/etudiant.model';
+import {Cours} from '../models/cours.model';
 
 @Injectable({
   providedIn: 'root'
@@ -63,4 +64,14 @@ export class EtudiantService {
         catchError(() => of(mockParticipations))
       );
   }
+
+  getAllCours(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/cours/all`);
+  }
+
+// Rechercher par catégorie
+  searchCoursByCategorie(categorie: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/cours/search?categorie=${categorie}`);
+  }
+
 }

@@ -1,176 +1,168 @@
 package com.edunet.etudiant.Services;
 
-import com.edunet.etudiant.Dtos.*;
+import com.edunet.etudiant.Dtos.CoursDTO;
+import com.edunet.etudiant.Dtos.EtudiantEventDTO;
+import com.edunet.etudiant.Dtos.ExamenDTO;
 import com.edunet.etudiant.Entities.Etudiant;
 import com.edunet.etudiant.Repositories.EtudiantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.stream.Collectors;
 
-/**
- *
- *  communications réelles :
- *  SYNC 1  : inscrireAExamen()        → Feign POST /api/examens/participer
- *  SYNC 2  : assignerExamen()         → Feign PUT  /api/enseignants/{id}/assignExamen/{id}
- *  ASYNC 1 : sendEtudiantEvent()      → etudiant.queue
- *  ASYNC 2 : sendNotifEnseignant()    → notif.enseignant.queue
- */
 @Service
 public class EtudiantServiceImpl implements EtudiantService {
 
-    @Autowired private EtudiantRepository etudiantRepository;
-    @Autowired private ExamenClient       examenClient;
-    @Autowired private EnseignantClient   enseignantClient;
-    @Autowired private EtudiantProducer   etudiantProducer;
+    @Autowired
+    private EtudiantRepository etudiantRepository;
+    // Injection du client Feign pour appeler le microservice Examen
+    @Autowired
+    private ExamenClient examenClient;
 
-    // ── CRUD ──────────────────────────────────────────────────────────────
+    @Autowired
+    private EtudiantProducer etudiantProducer; //RabbitProducer
+    @Autowired
+    private CoursClient coursClient;
 
+
+    // ==================== CRUD ====================
     @Override
     public Etudiant addEtudiant(Etudiant etudiant) {
         Etudiant saved = etudiantRepository.save(etudiant);
-
-        // ✅ ASYNC 1 → etudiant.queue → consommé par EtudiantConsumer chez Arwa
         try {
-            EtudiantEventDTO ev = toEvent(saved, "INSCRIPTION");
-            etudiantProducer.sendEtudiantEvent(ev);
-            System.out.println("📤 [ASYNC 1 → Examen MS] etudiant.queue : " + saved.getNom());
+        // SCÉNARIO communication ASYNCHRONE : publier l'événement dans RabbitMQ
+        etudiantProducer.sendEtudiantEvent(toEventDTO(saved));
         } catch (Exception e) {
-            System.err.println("⚠️ ASYNC 1 indisponible : " + e.getMessage());
+            System.err.println("Erreur asynchrone (RabbitMQ) : " + e.getMessage());
         }
-
-        // ✅ ASYNC 2 → notif.enseignant.queue → consommé par EtudiantNotifConsumer
-        try {
-            etudiantProducer.sendNotifEnseignant(toNotif(saved, "INSCRIPTION"));
-            System.out.println("📤 [ASYNC 2 → Enseignant MS] notif.enseignant.queue : " + saved.getNom());
-        } catch (Exception e) {
-            System.err.println("⚠️ ASYNC 2 indisponible : " + e.getMessage());
-        }
-
         return saved;
     }
 
+
     @Override
-    public Etudiant updateEtudiant(Long id, Etudiant n) {
-        return etudiantRepository.findById(id).map(e -> {
-            e.setNom(n.getNom()); e.setPrenom(n.getPrenom()); e.setEmail(n.getEmail());
-            e.setFiliere(n.getFiliere()); e.setAnneeInscription(n.getAnneeInscription());
-            e.setMoyenneGenerale(n.getMoyenneGenerale());
-            Etudiant updated = etudiantRepository.save(e);
+    public List<Etudiant> getAllEtudiants() {
+        return etudiantRepository.findAll();
+    }
 
-            // ASYNC 1 + ASYNC 2 aussi sur update
-            try { etudiantProducer.sendEtudiantEvent(toEvent(updated, "MISE_A_JOUR")); } catch (Exception ex) { /* ignore */ }
-            try { etudiantProducer.sendNotifEnseignant(toNotif(updated, "MISE_A_JOUR_NOTE")); } catch (Exception ex) { /* ignore */ }
+    @Override
+    public Etudiant getEtudiantById(Long id) {
+        return etudiantRepository.findById(id).orElse(null);
+    }
 
+    @Override
+    public Etudiant updateEtudiant(Long id, Etudiant newEtudiant) {
+        return etudiantRepository.findById(id).map(existing -> {
+            existing.setNom(newEtudiant.getNom());
+            existing.setPrenom(newEtudiant.getPrenom());
+            existing.setEmail(newEtudiant.getEmail());
+            existing.setFiliere(newEtudiant.getFiliere());
+            existing.setAnneeInscription(newEtudiant.getAnneeInscription());
+            existing.setMoyenneGenerale(newEtudiant.getMoyenneGenerale());
+            Etudiant updated = etudiantRepository.save(existing);
+
+            // SCÉNARIO Asynchrone : publier l'événement de mise à jour
+            etudiantProducer.sendEtudiantEvent(toEventDTO(updated));
             return updated;
         }).orElse(null);
     }
 
-    @Override
-    public List<Etudiant> getAllEtudiants() { return etudiantRepository.findAll(); }
-
-    @Override
-    public Etudiant getEtudiantById(Long id) { return etudiantRepository.findById(id).orElse(null); }
-
+    private EtudiantEventDTO toEventDTO(Etudiant e) {
+        EtudiantEventDTO dto = new EtudiantEventDTO();
+        dto.setId(e.getId());
+        dto.setNom(e.getNom());
+        dto.setPrenom(e.getPrenom());
+        dto.setEmail(e.getEmail());
+        dto.setFiliere(e.getFiliere());
+        dto.setAnneeInscription(e.getAnneeInscription());
+        dto.setMoyenneGenerale(e.getMoyenneGenerale());
+        return dto;
+    }
     @Override
     public String deleteEtudiant(Long id) {
-        if (etudiantRepository.existsById(id)) { etudiantRepository.deleteById(id); return "Étudiant supprimé"; }
-        return "Étudiant non trouvé";
+        if (etudiantRepository.findById(id).isPresent()) {
+            etudiantRepository.deleteById(id);
+            return "Étudiant supprimé";
+        } else {
+            return "Étudiant non trouvé";
+        }
     }
+
 
     @Override
     public List<Etudiant> findByFiliere(String filiere) {
-        List<Etudiant> res = etudiantRepository.findByFiliere(filiere.trim().toLowerCase());
-        return res != null ? res : List.of();
+
+        // 1️⃣ Validate input
+        if (filiere == null || filiere.trim().isEmpty()) {
+            throw new IllegalArgumentException("Filiere must not be empty");
+        }
+
+        // 2️⃣ Normalize input (avoid case issues)
+        String normalizedFiliere = filiere.trim().toLowerCase();
+
+        // 3️⃣ Fetch data
+        List<Etudiant> etudiants = etudiantRepository.findByFiliere(normalizedFiliere);
+
+        // 4️⃣ Safe fallback (never return null)
+        return etudiants != null ? etudiants : List.of();
     }
 
-    // ── ✅ SYNC 1 — Feign → MS Examen (Arwa) ─────────────────────────────
-    // Inscrire un étudiant à un examen
-    // → appelle POST /api/examens/participer chez Arwa
-    // → crée une Participation en base chez Arwa
-    @Override
-    public ParticipationDTO inscrireAExamen(Long etudiantId, Long examenId) {
-        Etudiant e = etudiantRepository.findById(etudiantId)
-                .orElseThrow(() -> new RuntimeException("Étudiant introuvable : " + etudiantId));
-        System.out.println("🔵 Inscription " + e.getNom() + " à examen #" + examenId);
-        ParticipationDTO p = examenClient.inscrireEtudiantAExamen(etudiantId, examenId);
-        System.out.println(" Participation créée ID=" + p.getId());
-        return p;
-    }
+    // ==================== STATISTIQUES AVEC APPEL SYNCHRONE (Feign) ====================
 
-    // ── ✅ SYNC 2 — Feign → MS Enseignant  ────────────────────────
-    // Assigner un examen à un enseignant
-    // → appelle PUT /api/enseignants/{ensId}/assignExamen/{examId}
-    // → met à jour enseignant.examensIds
-    @Override
-    public EnseignantDTO assignerExamen(Long enseignantId, Long examenId) {
-        System.out.println("🔵  Assigner examen #" + examenId + " → enseignant #" + enseignantId);
-        EnseignantDTO result = enseignantClient.assignerExamen(enseignantId, examenId);
-        System.out.println("✅ Enseignant mis à jour chez Fatma");
-        return result;
-    }
 
-    // ── FONCTIONNALITE AVANCEE :STATISTIQUES ──────────────────────────────────────────────────────
     @Override
     public Map<String, Object> getStatistiques() {
         Map<String, Object> stats = new HashMap<>();
-        List<Etudiant> all = etudiantRepository.findAll();
-        stats.put("totalEtudiants", all.size());
-        stats.put("moyenneGlobale", all.stream().mapToDouble(Etudiant::getMoyenneGenerale).average().orElse(0));
-        stats.put("repartitionParFiliere", all.stream()
-                .collect(Collectors.groupingBy(Etudiant::getFiliere, Collectors.counting())));
+        List<Etudiant> etudiants = etudiantRepository.findAll();
+
+        // Statistiques sur les étudiants
+        double moyenneGlobale = etudiants.stream()
+                .mapToDouble(Etudiant::getMoyenneGenerale)
+                .average().orElse(0.0);
+        stats.put("moyenneGlobale", moyenneGlobale);
+        stats.put("totalEtudiants", etudiants.size());
+
+        Map<String, Long> parFiliere = etudiants.stream()
+                .collect(Collectors.groupingBy(Etudiant::getFiliere, Collectors.counting()));
+        stats.put("repartitionParFiliere", parFiliere);
+
+        // Appel synchrone vers le microservice Examen (OpenFeign)
         try {
-            List<ExamenDTO> ex = examenClient.getAllExamens();
-            stats.put("totalExamens", ex.size());
-            stats.put("coefficientMoyenExamens", ex.stream().mapToDouble(ExamenDTO::getCoefficient).average().orElse(0));
-        } catch (Exception e) { stats.put("examenServiceError", "Service Examen indisponible"); }
-        try {
-            stats.put("totalEnseignants", enseignantClient.getAllEnseignants().size());
-        } catch (Exception e) { stats.put("enseignantServiceError", "Service Enseignant indisponible"); }
+            List<ExamenDTO> examens = examenClient.getAllExamens();
+            stats.put("totalExamens", examens.size());
+            double coeffMoyen = examens.stream()
+                    .mapToDouble(ExamenDTO::getCoefficient)
+                    .average().orElse(0.0);
+            stats.put("coefficientMoyenExamens", coeffMoyen);
+        } catch (Exception e) {
+            stats.put("examenServiceError", "Service des examens indisponible");
+        }
+
         return stats;
     }
-//
+
+    // ==================== STATISTIQUES PAR MATIÈRE ====================
     @Override
     public Map<String, Object> getStatistiquesParMatiere(String matiere) {
         Map<String, Object> stats = new HashMap<>();
         try {
-            List<ExamenDTO> ex = examenClient.getExamensByMatiere(matiere);
-            stats.put("examens", ex); stats.put("totalExamens", ex.size());
-            stats.put("coefficientMoyen", ex.stream().mapToDouble(ExamenDTO::getCoefficient).average().orElse(0));
-        } catch (Exception e) { stats.put("error", "Service Examen indisponible pour : " + matiere); }
+            // Appel Feign vers l'endpoint /filter du microservice Examen
+            List<ExamenDTO> examens = examenClient.getExamensByMatiere(matiere);
+            stats.put("examens", examens);
+            stats.put("totalExamens", examens.size());
+            double coeffMoyen = examens.stream()
+                    .mapToDouble(ExamenDTO::getCoefficient)
+                    .average().orElse(0.0);
+            stats.put("coefficientMoyenExamens", coeffMoyen);
+        } catch (Exception e) {
+            stats.put("error", "Service des examens indisponible pour la matière " + matiere);
+        }
         return stats;
     }
 
-    @Override
-    public List<EnseignantDTO> getAllEnseignants() {
-        return enseignantClient.getAllEnseignants();
+    // ===== COMMUNICATION SYNC AVEC COURS (via Feign) =====
+    public List<CoursDTO> getAllCours() {
+        return coursClient.getAllCours();
     }
-
-    @Override
-    public List<String> getAllFilieres() {
-        return etudiantRepository.findAll().stream()
-                .map(Etudiant::getFiliere)
-                .distinct()
-                .collect(Collectors.toList());
-    }
-
-    // ── HELPERS ───────────────────────────────────────────────────────────
-    private EtudiantEventDTO toEvent(Etudiant e, String action) {
-        return EtudiantEventDTO.builder()
-                .id(e.getId()).nom(e.getNom()).prenom(e.getPrenom()).email(e.getEmail())
-                .filiere(e.getFiliere()).anneeInscription(e.getAnneeInscription())
-                .moyenneGenerale(e.getMoyenneGenerale()).action(action).build();
-    }
-    private NotifEnseignantEvent toNotif(Etudiant e, String action) {
-        return NotifEnseignantEvent.builder()
-                .etudiantId(e.getId()).etudiantNom(e.getNom()).etudiantPrenom(e.getPrenom())
-                .etudiantEmail(e.getEmail()).filiere(e.getFiliere())
-                .moyenneGenerale(e.getMoyenneGenerale()).action(action).build();
-    }
-    @Override
-    public List<ParticipationDTO> getParticipationsByEtudiant(Long etudiantId) {
-        return examenClient.getParticipationsByEtudiant(etudiantId);
-    }
-
-
 }

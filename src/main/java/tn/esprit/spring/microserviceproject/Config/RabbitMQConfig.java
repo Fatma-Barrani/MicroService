@@ -12,13 +12,8 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
 
     public static final String QUEUE = "assign_examen_queue";
-    public static final String EXCHANGE = "examen.exchange"; // MODIFIÉ: aligné avec MS Examen
-    public static final String ROUTING_KEY = "examen.affecte"; // MODIFIÉ: aligné avec MS Examen
-
-    // AJOUTÉ: queue et binding pour notifications envoyées par le MS Etudiant
-    public static final String NOTIF_ENSEIGNANT_QUEUE = "notif.enseignant.queue"; // AJOUTÉ
-    public static final String EDUNET_EXCHANGE = "edunet.exchange"; // AJOUTÉ: exchange partagé
-    public static final String NOTIF_ENSEIGNANT_KEY = "notif.enseignant"; // AJOUTÉ
+    public static final String EXCHANGE = "examen_exchange";
+    public static final String ROUTING_KEY = "assign_examen_key";
 
     @Bean
     public Queue queue() {
@@ -35,26 +30,6 @@ public class RabbitMQConfig {
         return BindingBuilder.bind(queue)
                 .to(exchange)
                 .with(ROUTING_KEY);
-    }
-
-    // AJOUTÉ: queue pour recevoir les notifications provenant du MS Etudiant
-    @Bean
-    public Queue notifEnseignantQueue() {
-        return new Queue(NOTIF_ENSEIGNANT_QUEUE, true);
-    }
-
-    // AJOUTÉ: exchange partagé utilisé par le MS Etudiant
-    @Bean
-    public TopicExchange edunetExchange() {
-        return new TopicExchange(EDUNET_EXCHANGE);
-    }
-
-    // AJOUTÉ: binding pour la notification enseignant
-    @Bean
-    public Binding notifEnseignantBinding() {
-        return BindingBuilder.bind(notifEnseignantQueue())
-                .to(edunetExchange())
-                .with(NOTIF_ENSEIGNANT_KEY);
     }
 
     @Bean
