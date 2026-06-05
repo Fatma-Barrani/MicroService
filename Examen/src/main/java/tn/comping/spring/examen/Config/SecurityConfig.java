@@ -1,4 +1,4 @@
-package tn.esprit.spring.microserviceproject.Config;
+package tn.comping.spring.examen.Config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/enseignants/**").permitAll()
+                        .requestMatchers("/api/examens/public/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2

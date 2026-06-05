@@ -1,744 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>EduNet — Create Account</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet"/>
- 
-<style>
-/* ── Tokens ── */
-:root {
-  --navy:        #0B1729;
-  --navy-2:      #122040;
-  --navy-3:      #1A2E56;
-  --blue:        #1D6FE8;
-  --blue-h:      #3B82F6;
-  --cyan:        #38BDF8;
-  --gold:        #F59E0B;
-  --white:       #FFFFFF;
-  --sky:         #EEF4FF;
-  --sky-2:       #D8E6FF;
-  --ink:         #0B1729;
-  --ink-2:       #2D4270;
-  --ink-3:       #6B80A8;
-  --danger:      #EF4444;
-  --success:     #22C55E;
-  --r:           12px;
-  --r-sm:        8px;
-}
- 
-*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
-body { font-family: 'Syne', sans-serif; background: var(--sky); }
- 
-/* ── Layout ── */
-.wrap {
-  display: flex;
-  min-height: 100vh;
-}
- 
-/* ══════════════ LEFT PANEL ══════════════ */
-.lp {
-  position: relative;
-  width: 46%;
-  background: var(--navy);
-  padding: 44px 52px;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  color: #fff;
-}
- 
-/* Mesh gradient blobs */
-.lp::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(ellipse 55% 45% at 90% 10%, rgba(29,111,232,0.32) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 10% 90%, rgba(56,189,248,0.14) 0%, transparent 70%);
-  pointer-events: none;
-}
- 
-/* Diagonal accent line */
-.lp::after {
-  content: '';
-  position: absolute;
-  top: 0; right: 0; bottom: 0;
-  width: 3px;
-  background: linear-gradient(180deg, transparent, var(--blue) 40%, var(--cyan) 70%, transparent);
-  opacity: 0.5;
-}
- 
-/* ── Brand ── */
-.brand { margin-bottom: 60px; position: relative; z-index: 1; }
- 
-.logo-mark {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
- 
-.logo-icon {
-  width: 42px;
-  height: 42px;
-  background: linear-gradient(135deg, var(--blue), var(--cyan));
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  position: relative;
-  overflow: hidden;
-}
- 
-.logo-icon::before {
-  content: '';
-  position: absolute;
-  width: 26px; height: 26px;
-  border: 3px solid rgba(255,255,255,0.9);
-  border-radius: 50%;
-  top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-}
- 
-.logo-icon::after {
-  content: '';
-  position: absolute;
-  width: 0; height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-bottom: 14px solid rgba(255,255,255,0.95);
-  top: 50%; left: 50%;
-  transform: translate(-50%, -60%);
-}
- 
-.logo-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1;
-}
- 
-.logo-name {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.5px;
-}
- 
-.logo-tagline {
-  font-size: 10px;
-  color: var(--cyan);
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-top: 2px;
-}
- 
-/* ── Hero ── */
-.hero { flex: 1; display: flex; flex-direction: column; justify-content: center; position: relative; z-index: 1; }
- 
-.hero-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  background: rgba(29,111,232,0.25);
-  border: 1px solid rgba(56,189,248,0.3);
-  border-radius: 99px;
-  padding: 5px 14px;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--cyan);
-  letter-spacing: 1.2px;
-  text-transform: uppercase;
-  margin-bottom: 22px;
-  width: fit-content;
-}
- 
-.hero-label span { width: 6px; height: 6px; background: var(--cyan); border-radius: 50%; display: inline-block; }
- 
-.hero-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: clamp(38px, 4vw, 58px);
-  line-height: 1.07;
-  letter-spacing: -1.2px;
-  color: #fff;
-  margin-bottom: 22px;
-}
- 
-.hero-h1 em {
-  font-style: italic;
-  background: linear-gradient(90deg, var(--cyan), var(--blue-h));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
- 
-.hero-p {
-  font-size: 14.5px;
-  line-height: 1.75;
-  color: rgba(255,255,255,0.5);
-  max-width: 350px;
-  margin-bottom: 40px;
-  font-weight: 400;
-}
- 
-/* ── Stats ── */
-.stats {
-  display: flex;
-  gap: 0;
-  margin-bottom: 44px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--r);
-  overflow: hidden;
-}
- 
-.stat {
-  flex: 1;
-  padding: 20px 18px;
-  border-right: 1px solid rgba(255,255,255,0.08);
-  text-align: center;
-}
- 
-.stat:last-child { border-right: none; }
- 
-.stat-n {
-  font-family: 'Playfair Display', serif;
-  font-size: 26px;
-  font-weight: 700;
-  color: var(--cyan);
-  letter-spacing: -0.5px;
-  line-height: 1;
-  margin-bottom: 4px;
-}
- 
-.stat-l {
-  font-size: 10px;
-  color: rgba(255,255,255,0.38);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-}
- 
-/* ── Feature pills ── */
-.features {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 40px;
-}
- 
-.feat-pill {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.1);
-  border-radius: 99px;
-  padding: 7px 14px;
-  font-size: 12px;
-  color: rgba(255,255,255,0.7);
-  font-weight: 500;
-}
- 
-.feat-icon {
-  width: 16px; height: 16px;
-  background: linear-gradient(135deg, var(--blue), var(--cyan));
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8px;
-  color: #fff;
-  font-weight: 800;
-  flex-shrink: 0;
-}
- 
-/* ── Testimonial ── */
-.tcard {
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(56,189,248,0.18);
-  border-radius: var(--r);
-  padding: 26px 28px 22px;
-  position: relative;
-  z-index: 1;
-}
- 
-.tcard::before {
-  content: '"';
-  position: absolute;
-  top: -14px;
-  left: 28px;
-  font-family: 'Playfair Display', serif;
-  font-size: 80px;
-  color: var(--blue);
-  line-height: 1;
-  opacity: 0.6;
-}
- 
-.tcard-text {
-  font-size: 13.5px;
-  line-height: 1.75;
-  color: rgba(255,255,255,0.68);
-  margin-bottom: 18px;
-  font-weight: 400;
-  margin-top: 8px;
-}
- 
-.tcard-author {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
- 
-.av {
-  width: 38px; height: 38px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--blue), var(--cyan));
-  color: #fff;
-  font-size: 12px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  border: 2px solid rgba(56,189,248,0.3);
-}
- 
-.av-name { font-size: 13px; font-weight: 600; color: #fff; }
-.av-role { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 1px; }
- 
-/* ── Stars ── */
-.stars { display: flex; gap: 2px; margin-bottom: 6px; }
-.star { color: var(--gold); font-size: 12px; }
- 
-/* ══════════════ RIGHT PANEL ══════════════ */
-.rp {
-  flex: 1;
-  background: var(--sky);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 28px;
-  overflow-y: auto;
-}
- 
-.fc {
-  width: 100%;
-  max-width: 486px;
-}
- 
-/* ── Form header ── */
-.fh { margin-bottom: 30px; }
- 
-.fh-badge {
-  display: inline-block;
-  background: rgba(29,111,232,0.1);
-  color: var(--blue);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-  padding: 4px 12px;
-  border-radius: 99px;
-  margin-bottom: 12px;
-  border: 1px solid rgba(29,111,232,0.2);
-}
- 
-.fh-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 33px;
-  letter-spacing: -0.8px;
-  color: var(--ink);
-  margin-bottom: 6px;
-  line-height: 1.1;
-}
- 
-.fh-sub {
-  font-size: 14px;
-  color: var(--ink-3);
-  font-weight: 400;
-  line-height: 1.5;
-}
- 
-/* ── OAuth ── */
-.oauths {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  margin-bottom: 22px;
-}
- 
-.oauth-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 11px 14px;
-  border: 1.5px solid var(--sky-2);
-  border-radius: var(--r-sm);
-  background: var(--white);
-  font-family: 'Syne', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ink);
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
-}
- 
-.oauth-btn:hover {
-  border-color: var(--blue);
-  box-shadow: 0 3px 14px rgba(29,111,232,0.14);
-  transform: translateY(-1px);
-}
- 
-/* ── Divider ── */
-.divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 26px;
-  color: var(--ink-3);
-  font-size: 12px;
-  font-weight: 500;
-}
- 
-.divider::before, .divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--sky-2);
-}
- 
-/* ── Form fields ── */
-.form { display: flex; flex-direction: column; gap: 15px; }
- 
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
- 
-.fg { display: flex; flex-direction: column; gap: 5px; }
- 
-.fg label {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink-2);
-  text-transform: uppercase;
-  letter-spacing: 0.8px;
-}
- 
-.iw { position: relative; }
- 
-.iw input,
-.iw select {
-  width: 100%;
-  padding: 12px 42px 12px 14px;
-  border: 1.5px solid var(--sky-2);
-  border-radius: var(--r-sm);
-  background: var(--white);
-  font-family: 'Syne', sans-serif;
-  font-size: 14px;
-  color: var(--ink);
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  appearance: none;
-  -webkit-appearance: none;
-}
- 
-.iw input::placeholder { color: var(--ink-3); font-weight: 400; }
- 
-.iw input:focus, .iw select:focus {
-  border-color: var(--blue);
-  box-shadow: 0 0 0 3px rgba(29,111,232,0.12);
-}
- 
-.fg.is-valid .iw input,
-.fg.is-valid .iw select { border-color: var(--success); }
- 
-.fg.has-error .iw input,
-.fg.has-error .iw select {
-  border-color: var(--danger);
-  background: #fff5f5;
-}
- 
-.vi {
-  position: absolute;
-  right: 12px; top: 50%;
-  transform: translateY(-50%);
-  font-size: 13px;
-  color: var(--success);
-  font-weight: 700;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s;
-}
- 
-.fg.is-valid .vi { opacity: 1; }
-.fg.has-error .vi { display: none; }
- 
-.tog-btn {
-  position: absolute;
-  right: 10px; top: 50%;
-  transform: translateY(-50%);
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 15px;
-  line-height: 1;
-  padding: 2px;
-  color: var(--ink-3);
-}
- 
-.sel-arr {
-  position: absolute;
-  right: 12px; top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--ink-3);
-  font-size: 11px;
-}
- 
-.err-msg {
-  font-size: 11.5px;
-  color: var(--danger);
-  font-weight: 600;
-  padding-left: 2px;
-  animation: fadeUp 0.15s ease;
-}
- 
-@keyframes fadeUp {
-  from { opacity: 0; transform: translateY(-4px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
- 
-/* ── Password strength ── */
-.pw-str {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 6px;
-}
- 
-.str-bars { display: flex; gap: 4px; flex: 1; }
- 
-.bar {
-  height: 3px;
-  flex: 1;
-  border-radius: 99px;
-  background: var(--sky-2);
-  transition: background 0.3s;
-}
- 
-.bar.active.l1 { background: var(--danger); }
-.bar.active.l2 { background: #F97316; }
-.bar.active.l3 { background: var(--blue); }
-.bar.active.l4 { background: var(--success); }
- 
-.str-lbl {
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--ink-3);
-  min-width: 44px;
-}
- 
-/* ── Checkbox ── */
-.cb-group { display: flex; flex-direction: column; gap: 4px; }
- 
-.cb-label {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--ink-2);
-  cursor: pointer;
-  line-height: 1.55;
-}
- 
-.cb-label input[type="checkbox"] { display: none; }
- 
-.cb-box {
-  width: 18px; height: 18px;
-  border: 1.5px solid var(--sky-2);
-  border-radius: 4px;
-  background: var(--white);
-  flex-shrink: 0;
-  margin-top: 1px;
-  position: relative;
-  transition: background 0.2s, border-color 0.2s;
-}
- 
-.cb-box::after {
-  content: '';
-  display: none;
-  position: absolute;
-  left: 4px; top: 1px;
-  width: 6px; height: 10px;
-  border: 2px solid var(--white);
-  border-top: none;
-  border-left: none;
-  transform: rotate(45deg);
-}
- 
-.cb-label input[type="checkbox"]:checked + .cb-box {
-  background: var(--blue);
-  border-color: var(--blue);
-}
- 
-.cb-label input[type="checkbox"]:checked + .cb-box::after { display: block; }
- 
-/* ── Link ── */
-.link {
-  color: var(--blue);
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: rgba(29,111,232,0.3);
-}
- 
-.link:hover { text-decoration-color: var(--blue); }
- 
-/* ── Submit ── */
-.sub-btn {
-  margin-top: 6px;
-  width: 100%;
-  padding: 15px;
-  background: linear-gradient(135deg, var(--blue) 0%, #1e88e5 100%);
-  color: var(--white);
-  border: none;
-  border-radius: var(--r-sm);
-  font-family: 'Syne', sans-serif;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: 0.3px;
-  transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 54px;
-  position: relative;
-  overflow: hidden;
-}
- 
-.sub-btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(56,189,248,0.2), transparent);
-  opacity: 0;
-  transition: opacity 0.3s;
-}
- 
-.sub-btn:hover:not(:disabled)::before { opacity: 1; }
- 
-.sub-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 28px rgba(29,111,232,0.38);
-}
- 
-.sub-btn:active:not(:disabled) { transform: translateY(0); }
-.sub-btn:disabled { opacity: 0.6; cursor: not-allowed; }
- 
-/* ── Spinner ── */
-.spinner {
-  width: 20px; height: 20px;
-  border: 2.5px solid rgba(255,255,255,0.3);
-  border-top-color: var(--white);
-  border-radius: 50%;
-  animation: spin 0.7s linear infinite;
-}
- 
-@keyframes spin { to { transform: rotate(360deg); } }
- 
-/* ── Success ── */
-.success-msg {
-  text-align: center;
-  padding: 16px;
-  background: #F0FDF4;
-  border: 1px solid #BBF7D0;
-  border-radius: var(--r-sm);
-  color: #15803d;
-  font-size: 14px;
-  font-weight: 600;
-  animation: fadeUp 0.35s ease;
-}
- 
-/* ── Bottom ── */
-.login-link {
-  text-align: center;
-  font-size: 13.5px;
-  color: var(--ink-3);
-  margin-top: 22px;
-}
- 
-/* ── Progress dots ── */
-.progress-dots {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 24px;
-}
- 
-.dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--sky-2);
-  transition: all 0.3s;
-}
- 
-.dot.active {
-  background: var(--blue);
-  width: 24px;
-  border-radius: 99px;
-}
- 
-/* ── Perks bar ── */
-.perks {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 28px;
-  padding: 14px 18px;
-  background: var(--white);
-  border-radius: var(--r-sm);
-  border: 1px solid var(--sky-2);
-  flex-wrap: wrap;
-}
- 
-.perk {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: var(--ink-2);
-  font-weight: 500;
-}
- 
-.perk-icon { font-size: 14px; }
- 
-/* ── Responsive ── */
-@media (max-width: 920px) { .lp { display: none; } }
-@media (max-width: 600px) {
-  .form-row { grid-template-columns: 1fr; }
-  .oauths   { grid-template-columns: 1fr; }
-  .rp       { padding: 32px 16px; align-items: flex-start; }
-}
-</style>
-</head>
-<body>
- 
+<!-- inscription.component.html -->
 <div class="wrap">
- 
+
   <!-- ══════════════ LEFT PANEL ══════════════ -->
   <div class="lp">
- 
+
     <!-- Brand -->
     <div class="brand">
       <div class="logo-mark">
@@ -749,20 +15,20 @@ body { font-family: 'Syne', sans-serif; background: var(--sky); }
         </div>
       </div>
     </div>
- 
+
     <!-- Hero -->
     <div class="hero">
       <div class="hero-label">
         <span></span>Now enrolling 2025–2026
       </div>
       <h1 class="hero-h1">
-        Master skills<br/>that <em>matter</em><br/>for tomorrow.
+        Master skills<br />that <em>matter</em><br />for tomorrow.
       </h1>
       <p class="hero-p">
         EduNet delivers expert-led courses, live mentorship, and
         career pathways for learners in 150+ countries. Your future starts here.
       </p>
- 
+
       <!-- Stats -->
       <div class="stats">
         <div class="stat">
@@ -782,7 +48,7 @@ body { font-family: 'Syne', sans-serif; background: var(--sky); }
           <div class="stat-l">Countries</div>
         </div>
       </div>
- 
+
       <!-- Feature pills -->
       <div class="features">
         <div class="feat-pill"><div class="feat-icon">✓</div> Lifetime access</div>
@@ -792,11 +58,12 @@ body { font-family: 'Syne', sans-serif; background: var(--sky); }
         <div class="feat-pill"><div class="feat-icon">✓</div> Mobile app included</div>
       </div>
     </div>
- 
+
     <!-- Testimonial -->
     <div class="tcard">
       <div class="stars">
-        <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        <span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        <span class="star">★</span><span class="star">★</span>
       </div>
       <p class="tcard-text">
         EduNet's structured learning paths helped me land a senior data engineering role
@@ -811,18 +78,18 @@ body { font-family: 'Syne', sans-serif; background: var(--sky); }
       </div>
     </div>
   </div>
- 
+
   <!-- ══════════════ RIGHT PANEL ══════════════ -->
   <div class="rp">
     <div class="fc">
- 
+
       <!-- Header -->
       <div class="fh">
         <div class="fh-badge">Free account</div>
         <h2 class="fh-title">Start your journey</h2>
         <p class="fh-sub">No credit card required. Instant access to 500+ free courses.</p>
       </div>
- 
+
       <!-- Perks -->
       <div class="perks">
         <div class="perk"><span class="perk-icon">🎓</span> Free certificate</div>
@@ -830,15 +97,15 @@ body { font-family: 'Syne', sans-serif; background: var(--sky); }
         <div class="perk"><span class="perk-icon">🌐</span> Multi-language</div>
         <div class="perk"><span class="perk-icon">📱</span> Mobile & desktop</div>
       </div>
- 
-      <!-- Progress -->
+
+      <!-- Progress dots -->
       <div class="progress-dots">
-        <div class="dot active" id="d1"></div>
-        <div class="dot" id="d2"></div>
-        <div class="dot" id="d3"></div>
+        <div class="dot active"></div>
+        <div class="dot" [class.active]="passwordStrength >= 2"></div>
+        <div class="dot" [class.active]="passwordStrength >= 4"></div>
       </div>
- 
-      <!-- OAuth -->
+
+      <!-- OAuth buttons -->
       <div class="oauths">
         <button class="oauth-btn" type="button">
           <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
@@ -856,274 +123,142 @@ body { font-family: 'Syne', sans-serif; background: var(--sky); }
           GitHub
         </button>
       </div>
- 
+
       <!-- Divider -->
       <div class="divider"><span>or sign up with email</span></div>
- 
-      <!-- FORM -->
-      <form class="form" id="signupForm" novalidate>
- 
-        <!-- Row: names -->
-        <div class="form-row">
-          <div class="fg" id="fg-firstName">
-            <label for="firstName">First Name</label>
-            <div class="iw">
-              <input id="firstName" type="text" placeholder="Karim" autocomplete="given-name"/>
-              <span class="vi" aria-hidden="true">✓</span>
-            </div>
-            <span class="err-msg" id="err-firstName" style="display:none"></span>
-          </div>
-          <div class="fg" id="fg-lastName">
-            <label for="lastName">Last Name</label>
-            <div class="iw">
-              <input id="lastName" type="text" placeholder="Aïssaoui" autocomplete="family-name"/>
-              <span class="vi" aria-hidden="true">✓</span>
-            </div>
-            <span class="err-msg" id="err-lastName" style="display:none"></span>
-          </div>
-        </div>
- 
-        <!-- Email -->
-        <div class="fg" id="fg-email">
-          <label for="email">Email Address</label>
+
+      <!-- ══ FORM ══ -->
+      <!-- FIX: [formGroup] binding added, (ngSubmit) wired to onSubmit() -->
+      <form class="form" [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
+
+        <!-- Username -->
+        <div class="fg" [class.is-valid]="isValid('username')" [class.has-error]="isInvalid('username')">
+          <label for="username">Username</label>
           <div class="iw">
-            <input id="email" type="email" placeholder="karim@example.com" autocomplete="email"/>
+            <!-- FIX: formControlName used correctly inside [formGroup] -->
+            <input id="username" type="text" formControlName="username"
+                   placeholder="e.g. karim123" autocomplete="username" />
             <span class="vi" aria-hidden="true">✓</span>
           </div>
-          <span class="err-msg" id="err-email" style="display:none"></span>
+          <span class="err-msg" *ngIf="isInvalid('username')">{{ getError('username') }}</span>
         </div>
- 
+
+        <!-- Email -->
+        <div class="fg" [class.is-valid]="isValid('email')" [class.has-error]="isInvalid('email')">
+          <label for="email">Email Address</label>
+          <div class="iw">
+            <input id="email" type="email" formControlName="email"
+                   placeholder="karim@example.com" autocomplete="email" />
+            <span class="vi" aria-hidden="true">✓</span>
+          </div>
+          <span class="err-msg" *ngIf="isInvalid('email')">{{ getError('email') }}</span>
+        </div>
+
         <!-- Role -->
-        <div class="fg" id="fg-role">
+        <div class="fg" [class.is-valid]="isValid('role')" [class.has-error]="isInvalid('role')">
           <label for="role">I am a…</label>
-          <div class="iw" style="position:relative;">
-            <select id="role">
-              <option value="" disabled selected>Select your role</option>
-              <option value="student">Student</option>
-              <option value="professional">Working Professional</option>
-              <option value="educator">Educator / Instructor</option>
-              <option value="team">Team / Organization</option>
+          <div class="iw">
+            <!-- FIX: formControlName on select, no standalone [value] needed since enum strings match -->
+            <select id="role" formControlName="role">
+              <option value="ETUDIANT">Student (Étudiant)</option>
+              <option value="ENSEIGNANT">Teacher (Enseignant)</option>
+              <option value="ADMIN">Admin</option>
             </select>
             <span class="sel-arr" aria-hidden="true">▾</span>
           </div>
-          <span class="err-msg" id="err-role" style="display:none">Please select a role.</span>
+          <span class="err-msg" *ngIf="isInvalid('role')">{{ getError('role') }}</span>
         </div>
- 
+
+        <!-- Conditional: Student ID -->
+        <!-- FIX: shown only when role = ETUDIANT -->
+        
+
+        <!-- Conditional: Teacher ID -->
+      
+
         <!-- Password -->
-        <div class="fg" id="fg-password">
+        <div class="fg" [class.is-valid]="isValid('password')" [class.has-error]="isInvalid('password')">
           <label for="password">Password</label>
           <div class="iw">
-            <input id="password" type="password" placeholder="Min. 8 characters" autocomplete="new-password"/>
-            <button type="button" class="tog-btn" id="togPw" aria-label="Show password">👁</button>
+            <!-- FIX: [type] binding toggles visibility via showPassword flag -->
+            <input id="password" [type]="showPassword ? 'text' : 'password'"
+                   formControlName="password"
+                   placeholder="Min. 8 characters" autocomplete="new-password" />
+            <button type="button" class="tog-btn" (click)="togglePassword()" aria-label="Toggle password">
+              {{ showPassword ? '🙈' : '👁' }}
+            </button>
           </div>
-          <!-- Strength -->
-          <div class="pw-str" id="pwStrength" style="display:none;">
+          <!-- Strength meter -->
+          <div class="pw-str" *ngIf="signupForm.get('password')?.value">
             <div class="str-bars">
-              <div class="bar" id="b1"></div>
-              <div class="bar" id="b2"></div>
-              <div class="bar" id="b3"></div>
-              <div class="bar" id="b4"></div>
+              <div [class]="barClass(1)"></div>
+              <div [class]="barClass(2)"></div>
+              <div [class]="barClass(3)"></div>
+              <div [class]="barClass(4)"></div>
             </div>
-            <span class="str-lbl" id="strLbl"></span>
+            <span class="str-lbl">{{ strengthLabel }}</span>
           </div>
-          <span class="err-msg" id="err-password" style="display:none"></span>
+          <span class="err-msg" *ngIf="isInvalid('password')">{{ getError('password') }}</span>
         </div>
- 
-        <!-- Confirm -->
-        <div class="fg" id="fg-confirm">
+
+        <!-- Confirm Password -->
+        <!-- FIX: mismatch error uses showMismatchError getter from component -->
+        <div class="fg"
+             [class.is-valid]="isValid('confirmPassword') && !showMismatchError"
+             [class.has-error]="isInvalid('confirmPassword') || showMismatchError">
           <label for="confirmPassword">Confirm Password</label>
           <div class="iw">
-            <input id="confirmPassword" type="password" placeholder="Repeat your password" autocomplete="new-password"/>
-            <button type="button" class="tog-btn" id="togCf" aria-label="Show password">👁</button>
+            <input id="confirmPassword" [type]="showConfirm ? 'text' : 'password'"
+                   formControlName="confirmPassword"
+                   placeholder="Repeat your password" autocomplete="new-password" />
+            <button type="button" class="tog-btn" (click)="toggleConfirm()" aria-label="Toggle confirm password">
+              {{ showConfirm ? '🙈' : '👁' }}
+            </button>
           </div>
-          <span class="err-msg" id="err-confirm" style="display:none">Passwords do not match.</span>
+          <span class="err-msg" *ngIf="isInvalid('confirmPassword') && !showMismatchError">
+            {{ getError('confirmPassword') }}
+          </span>
+          <span class="err-msg" *ngIf="showMismatchError">Passwords do not match.</span>
         </div>
- 
+
         <!-- Terms -->
         <div class="cb-group">
           <label class="cb-label">
-            <input type="checkbox" id="terms"/>
+            <!-- FIX: formControlName on checkbox -->
+            <input type="checkbox" formControlName="terms" id="terms" />
             <span class="cb-box"></span>
-            <span>I agree to the <a href="#" class="link">Terms of Service</a> and <a href="#" class="link">Privacy Policy</a></span>
+            <span>
+              I agree to the <a href="#" class="link">Terms of Service</a> and
+              <a href="#" class="link">Privacy Policy</a>
+            </span>
           </label>
-          <span class="err-msg" id="err-terms" style="display:none">You must accept the terms.</span>
+          <!-- FIX: terms error checked via form control -->
+          <span class="err-msg"
+                *ngIf="signupForm.get('terms')?.invalid && (signupForm.get('terms')?.touched || submitted)">
+            You must accept the terms.
+          </span>
         </div>
- 
+
         <!-- Submit -->
-        <button type="submit" class="sub-btn" id="submitBtn">
-          <span id="btnLabel">Create Free Account →</span>
-          <span class="spinner" id="btnSpinner" style="display:none;"></span>
+        <button type="submit" class="sub-btn" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Create Free Account →</span>
+          <span class="spinner" *ngIf="isLoading"></span>
         </button>
- 
-        <!-- Success -->
-        <div class="success-msg" id="successMsg" style="display:none;">
-          🎉 Welcome to EduNet! Check your email to verify your account.
+
+        <!-- Success message -->
+        <div class="success-msg" *ngIf="successMessage">
+          {{ successMessage }}
         </div>
- 
+
+        <!-- Error message -->
+        <div class="error-msg" *ngIf="errorMessage">
+          ⚠️ {{ errorMessage }}
+        </div>
+
       </form>
- 
-      <p class="login-link">Already have an account? <a href="#" class="link">Sign in</a></p>
- 
+
+      <p class="login-link">Already have an account? <a href="login" class="link">Sign in</a></p>
+
     </div>
   </div>
 </div>
- 
-<script>
-/* ── Helpers ── */
-const $ = id => document.getElementById(id);
-const fg = id => $('fg-' + id);
-const err = id => $('err-' + id);
- 
-function setValid(id, yes) {
-  const g = fg(id);
-  g.classList.toggle('is-valid', yes);
-  g.classList.toggle('has-error', !yes && g.classList.contains('has-error'));
-}
- 
-function showErr(id, msg) {
-  const g = fg(id), e = err(id);
-  g.classList.remove('is-valid');
-  g.classList.add('has-error');
-  e.textContent = msg;
-  e.style.display = 'block';
-}
- 
-function clearField(id) {
-  const g = fg(id), e = err(id);
-  g.classList.remove('is-valid','has-error');
-  e.style.display = 'none';
-}
- 
-/* ── Password toggle ── */
-$('togPw').addEventListener('click', () => {
-  const pw = $('password');
-  const show = pw.type === 'password';
-  pw.type = show ? 'text' : 'password';
-  $('togPw').textContent = show ? '🙈' : '👁';
-});
- 
-$('togCf').addEventListener('click', () => {
-  const cf = $('confirmPassword');
-  const show = cf.type === 'password';
-  cf.type = show ? 'text' : 'password';
-  $('togCf').textContent = show ? '🙈' : '👁';
-});
- 
-/* ── Password strength ── */
-function calcStrength(pw) {
-  let s = 0;
-  if (pw.length >= 8) s++;
-  if (/[A-Z]/.test(pw)) s++;
-  if (/[0-9]/.test(pw)) s++;
-  if (/[^A-Za-z0-9]/.test(pw)) s++;
-  return s;
-}
- 
-$('password').addEventListener('input', () => {
-  const val = $('password').value;
-  const str = $('pwStrength');
-  if (!val) { str.style.display = 'none'; return; }
-  str.style.display = 'flex';
-  const level = calcStrength(val);
-  const labels = ['','Weak','Fair','Good','Strong'];
-  $('strLbl').textContent = labels[level];
-  for (let i = 1; i <= 4; i++) {
-    const b = $('b' + i);
-    b.className = 'bar';
-    if (i <= level) { b.classList.add('active', 'l' + level); }
-  }
- 
-  /* update progress dots */
-  $('d1').className = 'dot active';
-  $('d2').className = level >= 2 ? 'dot active' : 'dot';
-  $('d3').className = level >= 4 ? 'dot active' : 'dot';
-});
- 
-/* ── Live validation ── */
-function validateField(id) {
-  const v = $(id).value.trim();
-  if (id === 'firstName' || id === 'lastName') {
-    if (!v) { showErr(id, 'This field is required.'); return false; }
-    if (v.length < 2) { showErr(id, 'At least 2 characters.'); return false; }
-    clearField(id); setValid(id, true); return true;
-  }
-  if (id === 'email') {
-    if (!v) { showErr(id, 'Email is required.'); return false; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)) { showErr(id, 'Enter a valid email address.'); return false; }
-    clearField(id); setValid(id, true); return true;
-  }
-  if (id === 'role') {
-    if (!v) { showErr(id, 'Please select a role.'); return false; }
-    clearField(id); setValid(id, true); return true;
-  }
-  if (id === 'password') {
-    if (!v) { showErr(id, 'Password is required.'); return false; }
-    if (v.length < 8) { showErr(id, 'Minimum 8 characters required.'); return false; }
-    clearField(id); setValid(id, true); return true;
-  }
-  if (id === 'confirm') {
-    const pw = $('password').value;
-    if (!$(id + 'Password').value) { showErr(id, 'Please confirm your password.'); return false; }
-    if ($(id + 'Password').value !== pw) { showErr(id, 'Passwords do not match.'); return false; }
-    clearField(id); setValid(id, true); return true;
-  }
-  return true;
-}
- 
-['firstName','lastName','email','role','password'].forEach(id => {
-  const el = $(id);
-  if (el) el.addEventListener('blur', () => validateField(id));
-});
- 
-$('confirmPassword').addEventListener('blur', () => {
-  const pw = $('password').value;
-  const cf = $('confirmPassword').value;
-  const g = fg('confirm'), e = err('confirm');
-  if (!cf) { g.classList.add('has-error'); e.style.display = 'block'; return; }
-  if (cf !== pw) { g.classList.add('has-error'); g.classList.remove('is-valid'); e.style.display = 'block'; return; }
-  g.classList.remove('has-error'); g.classList.add('is-valid'); e.style.display = 'none';
-});
- 
-/* ── Submit ── */
-$('signupForm').addEventListener('submit', e => {
-  e.preventDefault();
- 
-  const fields = ['firstName','lastName','email','role','password'];
-  let ok = fields.every(id => validateField(id));
- 
-  /* confirm */
-  const pw = $('password').value, cf = $('confirmPassword').value;
-  const cg = fg('confirm'), ce = err('confirm');
-  if (!cf || cf !== pw) {
-    cg.classList.add('has-error'); cg.classList.remove('is-valid');
-    ce.style.display = 'block'; ok = false;
-  } else {
-    cg.classList.remove('has-error'); cg.classList.add('is-valid');
-    ce.style.display = 'none';
-  }
- 
-  /* terms */
-  const termsErr = $('err-terms');
-  if (!$('terms').checked) { termsErr.style.display = 'block'; ok = false; }
-  else termsErr.style.display = 'none';
- 
-  if (!ok) return;
- 
-  /* simulate loading */
-  const btn = $('submitBtn');
-  btn.disabled = true;
-  $('btnLabel').style.display = 'none';
-  $('btnSpinner').style.display = 'block';
- 
-  setTimeout(() => {
-    btn.disabled = false;
-    $('btnLabel').style.display = 'block';
-    $('btnSpinner').style.display = 'none';
-    $('successMsg').style.display = 'block';
-    $('d1').className = $('d2').className = $('d3').className = 'dot active';
-  }, 1800);
-});
-</script>
- 
-</body>
-</html>
