@@ -188,4 +188,10 @@ public class ExamenServiceImpl implements ExamenService {
         return examenRepository.countByStatut(statut);
     }
 
+    @Override
+    public Long countTotal() {
+        return examenRepository.count();
+    }
+
+
 }
