@@ -9,7 +9,7 @@ import { Examen } from '../models/examen';
 export class ExamenService {
 
  
-  private apiUrl = 'http://localhost:8956/api/examens';
+  private apiUrl = 'http://api-gateway:8956/api/examens';
 
   constructor(private http: HttpClient) { }
 

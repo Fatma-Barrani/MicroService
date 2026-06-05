@@ -9,7 +9,7 @@ import { Enseignant } from '../models/enseignant.model';
 export class EnseignantService {
 
   // ✅ USE API GATEWAY PORT HERE
-  private apiUrl = 'http://localhost:8956/api/enseignants';
+  private apiUrl = 'http://api-gateway:8956/api/enseignants';
 
   constructor(private http: HttpClient) { }
 
