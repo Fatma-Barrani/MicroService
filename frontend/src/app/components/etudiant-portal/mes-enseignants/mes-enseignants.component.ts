@@ -13,7 +13,7 @@ import { SelectedEtudiantService } from '../../../services/selected-etudiant.ser
 })
 export class MesEnseignantsComponent implements OnInit {
   enseignants: any[] = [];
-  selectedEtudiant: any = null;
+  isLoading = true;
 
   constructor(
     private etuService: EtudiantService,
@@ -36,16 +36,24 @@ export class MesEnseignantsComponent implements OnInit {
   }
 
   loadEnseignants() {
+    this.isLoading = true;
     // Utiliser le proxy Feign du MS Étudiant pour obtenir la liste des enseignants
     this.etuService.getEnseignants().subscribe({
       next: (data: any[]) => {
         this.enseignants = data || [];
+        this.isLoading = false;
       },
       error: () => {
         // Fallback : appeler directement le service Enseignant
         this.ensService.getAll().subscribe({
-          next: (data: any[]) => this.enseignants = data || [],
-          error: () => this.enseignants = []
+          next: (data: any[]) => {
+            this.enseignants = data || [];
+            this.isLoading = false;
+          },
+          error: () => {
+            this.enseignants = [];
+            this.isLoading = false;
+          }
         });
       }
     });

@@ -17,6 +17,7 @@ export class MonProfilComponent implements OnInit {
   isEditing = false;
   editModel: Etudiant = this.emptyEtudiant();
   message = '';
+  isLoading = false;
 
   constructor(
     private sel: SelectedEtudiantService,
@@ -24,20 +25,19 @@ export class MonProfilComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Forcer une sélection par défaut si aucun étudiant n'est sélectionné
     this.etu.getAll().subscribe((students: Etudiant[]) => {
       if (students.length > 0 && !this.sel.getSelected()) {
         this.sel.setSelected(students[0]);
       }
     });
 
-    // S'abonner aux changements de l'étudiant sélectionné
     this.sel.selected$.subscribe((s: Etudiant | null) => {
       this.etudiant = s;
       if (s) {
         this.editModel = { ...s };
       }
       this.isEditing = false;
+      this.message = '';
     });
   }
 
@@ -59,8 +59,7 @@ export class MonProfilComponent implements OnInit {
       return;
     }
 
-    // ✅ La moyenne ne peut pas être modifiée par l'étudiant
-    // On force la valeur originale avant d'envoyer
+    this.isLoading = true;
     const payload: Etudiant = {
       ...this.editModel,
       moyenneGenerale: this.etudiant!.moyenneGenerale
@@ -71,10 +70,12 @@ export class MonProfilComponent implements OnInit {
         this.sel.setSelected(updated);
         this.message = '✅ Profil mis à jour avec succès !';
         this.isEditing = false;
+        this.isLoading = false;
         setTimeout(() => this.message = '', 3000);
       },
       error: () => {
         this.message = '❌ Erreur lors de la mise à jour.';
+        this.isLoading = false;
       }
     });
   }

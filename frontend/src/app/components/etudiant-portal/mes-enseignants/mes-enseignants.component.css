@@ -1,9 +1,217 @@
-.enseignants-container { padding: 24px; background: #f8fafc; min-height: 100vh; }
-.page-header { margin-bottom: 28px; }
-.enseignants-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-.enseignant-card { background: white; border-radius: 16px; padding: 20px; display: flex; gap: 16px; align-items: center; border: 1px solid #e2e8f0; transition: 0.2s; }
-.enseignant-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-.avatar { width: 60px; height: 60px; background: #2563eb; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 24px; }
-.info h3 { margin: 0 0 4px; font-size: 18px; }
-.specialite { color: #2563eb; font-weight: 500; margin: 0; font-size: 14px; }
-.email, .tel { color: #64748b; margin: 4px 0 0; font-size: 13px; }
+/* ========== DESIGN SYSTEM ========== */
+:host {
+  --primary: #2563eb;
+  --primary-light: #eff6ff;
+  --gray-50: #f9fafb;
+  --gray-100: #f3f4f6;
+  --gray-200: #e5e7eb;
+  --gray-500: #6b7280;
+  --gray-700: #374151;
+  --gray-900: #111827;
+  --radius-lg: 16px;
+  --radius-md: 12px;
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --transition: all 0.2s ease;
+}
+
+.enseignants-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px;
+  background: var(--gray-50);
+  min-height: 100vh;
+}
+
+/* ========== EN-TÊTE ========== */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin: 0 0 4px 0;
+}
+
+.subtitle {
+  font-size: 14px;
+  color: var(--gray-500);
+  margin: 0;
+}
+
+.badge {
+  background: white;
+  padding: 6px 16px;
+  border-radius: 40px;
+  border: 1px solid var(--gray-200);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+}
+
+/* ========== GRILLE ========== */
+.enseignants-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+/* ========== CARTE ENSEIGNANT ========== */
+.enseignant-card {
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  transition: var(--transition);
+}
+
+.enseignant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: transparent;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, var(--primary), #1e40af);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 600;
+  font-size: 24px;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
+}
+
+.info {
+  flex: 1;
+}
+
+.info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--gray-900);
+  margin: 0 0 6px 0;
+}
+
+.specialite {
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 13px;
+  margin: 0 0 12px 0;
+  display: inline-block;
+  background: var(--primary-light);
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--gray-500);
+}
+
+.contact-item svg {
+  stroke: var(--gray-500);
+  flex-shrink: 0;
+}
+
+/* ========== ÉTAT DE CHARGEMENT ========== */
+.loading-state {
+  text-align: center;
+  padding: 60px 24px;
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--gray-200);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* ========== ÉTAT VIDE ========== */
+.empty-state {
+  text-align: center;
+  padding: 60px 24px;
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state p {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin: 0 0 8px 0;
+}
+
+.empty-state span {
+  font-size: 14px;
+  color: var(--gray-500);
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 700px) {
+  .enseignants-container {
+    padding: 20px;
+  }
+  .enseignants-grid {
+    grid-template-columns: 1fr;
+  }
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .enseignant-card {
+    padding: 16px;
+    gap: 14px;
+  }
+  .avatar {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+  }
+}

@@ -1,64 +1,129 @@
-<div class="dashboard-container">
-  <!-- En-tête avec bienvenue -->
-  <div class="welcome-header">
-    <h1>Tableau de bord étudiant</h1>
-    <p *ngIf="selected">Bienvenue, {{ selected.prenom }} {{ selected.nom }} !</p>
-  </div>
-
-  <!-- Cartes de statistiques personnelles -->
-  <div class="stats-grid" *ngIf="selected">
-    <div class="stat-card">
-      <div class="stat-value">{{ selected.moyenneGenerale }}</div>
-      <div class="stat-label">Moyenne générale</div>
+<div class="dashboard">
+  <!-- Hero section -->
+  <div class="hero">
+    <div class="hero-content">
+      <h1>Tableau de bord</h1>
+      <p class="welcome" *ngIf="selected">Bonjour, {{ selected.prenom }} {{ selected.nom }}</p>
     </div>
-    <div class="stat-card">
-      <div class="stat-value">{{ rank }}<span class="small">/{{ allStudents.length }}</span></div>
-      <div class="stat-label">Classement</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">{{ selected.filiere }}</div>
-      <div class="stat-label">Filière</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">{{ selected.anneeInscription }}</div>
-      <div class="stat-label">Année d'inscription</div>
+    <div class="student-badge">
+      <div class="avatar">{{ selected?.prenom?.[0] }}{{ selected?.nom?.[0] }}</div>
+      <span>Étudiant</span>
     </div>
   </div>
 
-  <!-- Graphique comparatif -->
-  <div class="chart-card" *ngIf="selected">
-    <h3>Comparaison avec la promotion</h3>
-    <div class="chart-wrapper">
+  <!-- KPI Cards -->
+  <div class="kpi-grid" *ngIf="selected">
+    <div class="kpi-card">
+      <div class="kpi-icon">📊</div>
+      <div class="kpi-value">{{ selected.moyenneGenerale }}</div>
+      <div class="kpi-label">Moyenne générale</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🏆</div>
+      <div class="kpi-value">{{ rank }}<span class="small">/{{ allStudents.length }}</span></div>
+      <div class="kpi-label">Classement</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">🎓</div>
+      <div class="kpi-value">{{ selected.filiere }}</div>
+      <div class="kpi-label">Filière</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon">📅</div>
+      <div class="kpi-value">{{ selected.anneeInscription }}</div>
+      <div class="kpi-label">Promotion</div>
+    </div>
+  </div>
+
+  <!-- Comparaison graphique -->
+  <div class="card chart-card" *ngIf="selected">
+    <div class="card-header">
+      <h3>📈 Comparaison avec la promotion</h3>
+      <div class="legend">
+        <span><span class="dot blue"></span> Ma moyenne</span>
+        <span><span class="dot gray"></span> Moyenne promo</span>
+      </div>
+    </div>
+    <div class="chart-container">
       <canvas #chart></canvas>
     </div>
   </div>
 
-  <!-- Liste des examens disponibles avec inscription -->
-  <div class="exam-section" *ngIf="selected">
-    <h3>Examens disponibles</h3>
-    <div class="exam-grid">
-      <div class="exam-card" *ngFor="let ex of examens">
-        <div class="exam-header">
-          <span class="exam-matiere">{{ ex.matiere }}</span>
-          <span class="exam-status">{{ ex.statut }}</span>
+  <!-- Cours -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📚 Mes cours</h3>
+      <div class="filters">
+        <div class="search-wrapper">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" placeholder="Rechercher un cours" [(ngModel)]="searchTerm" (input)="filterCours()">
         </div>
-        <div class="exam-title">{{ ex.titre }}</div>
-        <div class="exam-details">
-          <span><i class="ti ti-calendar"></i> {{ ex.dateExamen | date:'dd/MM/yyyy' }}</span>
-          <span><i class="ti ti-clock"></i> {{ ex.duree }} min</span>
-          <span><i class="ti ti-award"></i> Coeff. {{ ex.coefficient }}</span>
-        </div>
-        <button class="btn-inscrire" (click)="inscrire(ex.id!)">S'inscrire</button>
+        <select [(ngModel)]="selectedCategorie" (change)="filterCours()">
+          <option value="">Toutes catégories</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
       </div>
-      <div *ngIf="examens.length === 0" class="empty-state">Aucun examen programmé pour le moment.</div>
+    </div>
+    <div class="cours-grid">
+      <div class="cours-card" *ngFor="let cours of filteredCours">
+        <div class="cours-badge">{{ cours.categorie }}</div>
+        <h4 class="cours-title">{{ cours.titre }}</h4>
+        <p class="cours-desc">{{ cours.description | slice:0:80 }}{{ cours.description?.length > 80 ? '…' : '' }}</p>
+        <div class="cours-footer">
+          <div class="cours-meta">
+            <span>⏱️ {{ cours.dureeHeures }}h</span>
+            <span>📈 {{ cours.niveau }}</span>
+          </div>
+          <div class="cours-enseignant" *ngIf="cours.enseignantNom">
+            <div class="enseignant-avatar">{{ cours.enseignantPrenom?.[0] }}{{ cours.enseignantNom?.[0] }}</div>
+            <span>{{ cours.enseignantPrenom }} {{ cours.enseignantNom }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="filteredCours.length === 0 && !isLoadingCours">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+          <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+        </svg>
+        <p>Aucun cours trouvé</p>
+      </div>
+    </div>
+    <div class="loading-skeleton" *ngIf="isLoadingCours">
+      <div class="skeleton-card" *ngFor="let _ of [1,2,3]"></div>
     </div>
   </div>
 
-  <!-- Message si aucun étudiant sélectionné -->
-  <div *ngIf="!selected && allStudents.length > 0" class="empty-card">
-    Veuillez sélectionner un étudiant depuis l'espace admin.
-  </div>
-  <div *ngIf="!selected && allStudents.length === 0" class="empty-card">
-    Aucun étudiant trouvé. Veuillez d'abord ajouter des étudiants.
+  <!-- Examens -->
+  <div class="card">
+    <div class="card-header">
+      <h3>📝 Examens disponibles</h3>
+      <span class="badge">{{ examens.length }} examen(s)</span>
+    </div>
+    <div class="examens-list">
+      <div class="examen-row" *ngFor="let ex of examens">
+        <div class="examen-infos">
+          <strong>{{ ex.titre }}</strong>
+          <span>{{ ex.matiere }} • Coeff. {{ ex.coefficient }}</span>
+          <span class="date">{{ ex.dateExamen | date:'dd/MM/yyyy' }} • {{ ex.duree }} min</span>
+        </div>
+        <button class="btn-inscrire" (click)="inscrire(ex.id!)">
+          <span>S'inscrire</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <polyline points="19 12 12 19 5 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="empty-state" *ngIf="examens.length === 0">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M22 12c0 5.523-4.477 10-10 10S2 17.523 2 12 6.477 2 12 2s10 4.477 10 10z"/>
+          <path d="M8 8h.01M16 8h.01M12 16c1.5 0 2.5-1 3-2"/>
+        </svg>
+        <p>Aucun examen disponible</p>
+      </div>
+    </div>
   </div>
 </div>

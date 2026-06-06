@@ -1,7 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Chart } from 'chart.js/auto';
 import { EtudiantService } from '../../../services/etudiant.service';
+import { ExamenService } from '../../../services/examen.service';
+import { SelectedEtudiantService } from '../../../services/selected-etudiant.service';
+import { Etudiant } from '../../../models/etudiant.model';
 import { Cours } from '../../../models/cours.model';
 
 @Component({
@@ -11,34 +15,57 @@ import { Cours } from '../../../models/cours.model';
   templateUrl: './etudiant-dashboard.component.html',
   styleUrls: ['./etudiant-dashboard.component.css']
 })
-export class EtudiantDashboardComponent implements OnInit {
+export class EtudiantDashboardComponent implements OnInit, AfterViewInit {
+  // ========== COURS ==========
   coursList: Cours[] = [];
   filteredCours: Cours[] = [];
   searchTerm: string = '';
   selectedCategorie: string = '';
   categories: string[] = [];
-  isLoading = true;
-  errorMessage = '';
+  isLoadingCours = true;
+  errorMessageCours = '';
 
-  constructor(private etudiantService: EtudiantService) {}
+  // ========== STATS & EXAMENS ==========
+  selected: Etudiant | null = null;
+  allStudents: Etudiant[] = [];
+  examens: any[] = [];
+  rank: number = 0;
+  generalAverage: number = 0;
+
+  @ViewChild('chart') chartRef!: ElementRef<HTMLCanvasElement>;
+  private chart: Chart | null = null;
+
+  constructor(
+    private etudiantService: EtudiantService,
+    private examenService: ExamenService,
+    private selectedService: SelectedEtudiantService
+  ) {}
 
   ngOnInit(): void {
     this.loadCours();
+    this.loadExamens();
+    this.loadStudents();
+    this.subscribeToSelectedStudent();
   }
 
+  ngAfterViewInit(): void {
+    this.buildChart();
+  }
+
+  // ========== COURS ==========
   loadCours(): void {
-    this.isLoading = true;
+    this.isLoadingCours = true;
     this.etudiantService.getAllCours().subscribe({
       next: (data) => {
         this.coursList = data;
         this.filteredCours = data;
-        this.categories = [...new Set(data.map(c => c.categorie).filter(c => c))];
-        this.isLoading = false;
+        this.categories = [...new Set(data.map((c: any) => c.categorie).filter((c: string) => c))];
+        this.isLoadingCours = false;
       },
       error: (err) => {
         console.error('Erreur chargement cours', err);
-        this.errorMessage = 'Impossible de charger les cours. Veuillez réessayer plus tard.';
-        this.isLoading = false;
+        this.errorMessageCours = 'Impossible de charger les cours.';
+        this.isLoadingCours = false;
       }
     });
   }
@@ -56,5 +83,79 @@ export class EtudiantDashboardComponent implements OnInit {
       temp = temp.filter(c => c.categorie === this.selectedCategorie);
     }
     this.filteredCours = temp;
+  }
+
+  // ========== EXAMENS ==========
+  loadExamens(): void {
+    this.examenService.getExamens().subscribe({
+      next: (data) => this.examens = data || [],
+      error: () => this.examens = []
+    });
+  }
+
+  inscrire(examenId: number): void {
+    if (!this.selected?.id) {
+      alert('Aucun étudiant sélectionné');
+      return;
+    }
+    this.etudiantService.inscrireExamen(this.selected.id, examenId).subscribe({
+      next: () => alert('✅ Inscription réussie !'),
+      error: () => alert('❌ Erreur lors de l\'inscription')
+    });
+  }
+
+  // ========== STATISTIQUES ==========
+  loadStudents(): void {
+    this.etudiantService.getAll().subscribe({
+      next: (data: Etudiant[]) => {
+        const uniqueMap = new Map<number, Etudiant>();
+        data.forEach(e => { if (e.id) uniqueMap.set(e.id, e); });
+        this.allStudents = Array.from(uniqueMap.values());
+        this.generalAverage = this.computeGeneralAverage(this.allStudents);
+        if (this.allStudents.length > 0 && !this.selectedService.getSelected()) {
+          this.selectedService.setSelected(this.allStudents[0]);
+        }
+      },
+      error: err => console.error(err)
+    });
+  }
+
+  subscribeToSelectedStudent(): void {
+    this.selectedService.selected$.subscribe((student: Etudiant | null) => {
+      this.selected = student;
+      if (student && this.allStudents.length) {
+        this.rank = this.allStudents.findIndex(e => e.id === student.id) + 1;
+      }
+      this.buildChart();
+    });
+  }
+
+  computeGeneralAverage(students: Etudiant[]): number {
+    if (!students.length) return 0;
+    const total = students.reduce((sum, s) => sum + (s.moyenneGenerale || 0), 0);
+    return Math.round((total / students.length) * 100) / 100;
+  }
+
+  buildChart(): void {
+    if (!this.chartRef || !this.selected || !this.allStudents.length) return;
+
+    if (this.chart) this.chart.destroy();
+
+    this.chart = new Chart(this.chartRef.nativeElement, {
+      type: 'bar',
+      data: {
+        labels: ['Ma moyenne', 'Moyenne promo'],
+        datasets: [{
+          label: 'Moyenne /20',
+          data: [this.selected.moyenneGenerale, this.generalAverage],
+          backgroundColor: ['#2563eb', '#94a3b8'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        scales: { y: { beginAtZero: true, max: 20 } }
+      }
+    });
   }
 }

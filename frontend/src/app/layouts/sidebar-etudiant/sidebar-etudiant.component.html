@@ -8,6 +8,12 @@
       <div class="brand-sub">Espace étudiant</div>
     </div>
 
+    <div class="user-profile" *ngIf="prenom || nom">
+      <div class="user-avatar">{{ (prenom?.[0] || '') + (nom?.[0] || '') }}</div>
+      <div class="user-name">{{ prenom }} {{ nom }}</div>
+      <div class="user-role">Étudiant</div>
+    </div>
+
     <nav class="sidebar-nav">
       <a routerLink="/etudiant/dashboard" routerLinkActive="active">
         <i class="ti ti-layout-dashboard"></i>
@@ -32,10 +38,10 @@
     </nav>
 
     <div class="sidebar-footer">
-      <div class="user-info">
-        <i class="ti ti-user"></i>
-        <span>Étudiant</span>
-      </div>
+      <button class="logout-btn" (click)="logout()">
+        <i class="ti ti-logout"></i>
+        <span>Déconnexion</span>
+      </button>
     </div>
   </aside>
 

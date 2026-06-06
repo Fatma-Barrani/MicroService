@@ -24,17 +24,12 @@ export class InscriptionExamenComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Charger les examens
     this.examenService.getExamens().subscribe((data: any[]) => this.examens = data || []);
-
-    // Charger les étudiants et forcer une sélection par défaut si besoin
     this.etuService.getAll().subscribe((students: Etudiant[]) => {
       if (students.length > 0 && !this.sel.getSelected()) {
         this.sel.setSelected(students[0]);
       }
     });
-
-    // S'abonner aux changements de sélection
     this.sel.selected$.subscribe((s: Etudiant | null) => {
       this.selectedEtudiant = s;
     });
@@ -46,13 +41,13 @@ export class InscriptionExamenComponent implements OnInit {
       return;
     }
     this.etuService.inscrireExamen(this.selectedEtudiant.id, examenId).subscribe({
-      next: (_: any) => {
+      next: () => {
         this.message = 'Inscription réussie !';
         setTimeout(() => this.message = '', 3000);
       },
-      error: (err: any) => {
+      error: () => {
         this.message = 'Erreur lors de l\'inscription.';
-        console.error(err);
+        setTimeout(() => this.message = '', 3000);
       }
     });
   }

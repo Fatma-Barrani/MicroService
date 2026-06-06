@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Etudiant } from '../../../models/etudiant.model';
 import { SelectedEtudiantService } from '../../../services/selected-etudiant.service';
 import { EtudiantService } from '../../../services/etudiant.service';
-import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-etudiant-management',
@@ -24,8 +24,8 @@ export class EtudiantManagementComponent implements OnInit {
   message = '';
   searchTerm = '';
   isLoading = false;
-  isSaving = false;   // ✅ protection anti-double-clic sur Ajouter/Modifier
-  isDeleting = false; // ✅ protection anti-double-clic sur Supprimer
+  isSaving = false;
+  isDeleting = false;
 
   constructor(
     private etudiantService: EtudiantService,
@@ -40,7 +40,6 @@ export class EtudiantManagementComponent implements OnInit {
     this.isLoading = true;
     this.etudiantService.getAll().subscribe({
       next: (data: Etudiant[]) => {
-        // Déduplication basée sur l'id
         const uniqueMap = new Map<number, Etudiant>();
         data.forEach(e => { if (e.id) uniqueMap.set(e.id, e); });
         this.etudiants = Array.from(uniqueMap.values());
@@ -112,8 +111,6 @@ export class EtudiantManagementComponent implements OnInit {
       this.message = 'Veuillez remplir Nom, Prénom et Email';
       return;
     }
-
-    // ✅ bloquer les doubles clics
     if (this.isSaving) return;
     this.isSaving = true;
 
@@ -134,7 +131,7 @@ export class EtudiantManagementComponent implements OnInit {
     } else {
       this.etudiantService.create(this.currentEtudiant).subscribe({
         next: () => {
-          this.closeModal();  // ✅ fermer le modal AVANT load() pour éviter double soumission
+          this.closeModal();
           this.load();
           this.message = '✅ Étudiant créé';
           setTimeout(() => this.message = '', 3000);
@@ -150,9 +147,8 @@ export class EtudiantManagementComponent implements OnInit {
 
   remove(e: Etudiant) {
     if (!e.id) return;
-    if (this.isDeleting) return; // ✅ anti-double-clic
+    if (this.isDeleting) return;
     if (!confirm(`Supprimer ${e.nom} ${e.prenom} ?`)) return;
-
     this.isDeleting = true;
     this.etudiantService.delete(e.id).subscribe({
       next: () => {
@@ -164,7 +160,7 @@ export class EtudiantManagementComponent implements OnInit {
       error: (err) => {
         this.isDeleting = false;
         this.message = '❌ Erreur suppression';
-        console.error('Détail erreur suppression :', err);
+        console.error(err);
       }
     });
   }
@@ -186,10 +182,10 @@ export class EtudiantManagementComponent implements OnInit {
   }
 
   getMoyenneBadgeClass(value: number | undefined): string {
-    if (value === undefined || value === null) return 'badge badge-secondary';
-    if (value >= 14) return 'badge badge-success';
-    if (value >= 10) return 'badge badge-warning';
-    return 'badge badge-danger';
+    if (value === undefined || value === null) return 'badge-secondary';
+    if (value >= 14) return 'badge-success';
+    if (value >= 10) return 'badge-warning';
+    return 'badge-danger';
   }
 
   private emptyEtudiant(): Etudiant {

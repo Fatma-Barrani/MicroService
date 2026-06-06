@@ -33,14 +33,12 @@ export class MesResultatsComponent implements OnInit, AfterViewInit {
   generalAverage = 0;
   moyennePersonnelle = 0;
 
-  // Filtres
   filterMatiere = '';
   filterNoteMin: number | null = null;
   filterNoteMax: number | null = null;
   matieresList: string[] = [];
-  // Toggle demo data source: true = mock, false = live backend
   useMock = environment.mockParticipations;
-  // Mock data kept for development only
+
   private mockParticipations: Participation[] = [
     { id: 1, examenId: 1, titre: 'Examen Java', matiere: 'Java', date: '2025-01-15', note: 15.5, coefficient: 2 },
     { id: 2, examenId: 2, titre: 'Examen Spring', matiere: 'Spring', date: '2025-02-10', note: 12.0, coefficient: 1.5 },
@@ -85,16 +83,13 @@ export class MesResultatsComponent implements OnInit, AfterViewInit {
   }
 
   loadParticipations(etudiantId: number): void {
-
     if (this.useMock) {
-      // Safe demo: use mock data
       this.participations = [...this.mockParticipations];
       this.matieresList = [...new Set(this.participations.map(p => p.matiere))];
       this.applyFilters();
       return;
     }
 
-    // Live mode: request real data from backend
     this.etuService.getParticipationsByEtudiant(etudiantId).subscribe({
       next: (data: Participation[]) => {
         this.participations = data;
@@ -108,11 +103,6 @@ export class MesResultatsComponent implements OnInit, AfterViewInit {
         this.applyFilters();
       }
     });
-  }
-
-  toggleDataSource(): void {
-    this.useMock = !this.useMock;
-    if (this.selected?.id) this.loadParticipations(this.selected.id);
   }
 
   applyFilters(): void {
@@ -167,7 +157,7 @@ export class MesResultatsComponent implements OnInit, AfterViewInit {
         labels: ['<8', '8-10', '10-12', '12-14', '14+'],
         datasets: [{ label: "Nombre d'étudiants", data: bins, backgroundColor: '#2563eb', borderRadius: 8 }]
       },
-      options: { responsive: true, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+      options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
     });
 
     const filieresMap = new Map<string, number>();
@@ -183,7 +173,7 @@ export class MesResultatsComponent implements OnInit, AfterViewInit {
         labels: Array.from(filieresMap.keys()),
         datasets: [{ data: Array.from(filieresMap.values()), backgroundColor: ['#2563eb','#3b82f6','#60a5fa','#93c5fd'] }]
       },
-      options: { responsive: true, plugins: { legend: { position: 'right' } } }
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
     });
   }
 

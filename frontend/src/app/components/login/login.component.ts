@@ -56,64 +56,72 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
   }
 
-onSubmit(): void {
+  onSubmit(): void {
 
-  this.loginForm.markAllAsTouched();
+    this.loginForm.markAllAsTouched();
 
-  if (this.loginForm.invalid) {
-    return;
+    if (this.loginForm.invalid) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.loginError = '';
+    this.submitted = false;
+
+    this.authService.login(this.loginForm.value)
+      .subscribe({
+
+        next: (response) => {
+
+          this.isLoading = false;
+          this.submitted = true;
+
+          // ✅ Save token
+          localStorage.setItem('token', response.access_token);
+
+          // ✅ Save user
+          localStorage.setItem('user', JSON.stringify(response.user));
+
+          console.log('Login successful', response);
+
+          // ─────────────────────────────
+          // ✅ ROLE-BASED REDIRECTION
+          // ─────────────────────────────
+
+          const role = response?.user?.role;
+
+          if (role === 'ADMIN') {
+            this.router.navigate(['/dashboard']);
+          }
+
+          else if (role === 'ENSEIGNANT') {
+            this.router.navigate(['/listExamen']);
+          }
+
+          else {
+            // default (ETUDIANT or others)
+            this.router.navigate(['/listExamen']);
+          }
+
+          // ==================================================
+          // ✅ AJOUT POUR MICROSERVICE ÉTUDIANT (sans modifier le code existant)
+          // ==================================================
+          if (role === 'ETUDIANT') {
+            this.router.navigate(['/etudiant/dashboard']);
+          }
+
+        },
+
+
+        error: (err) => {
+
+          this.isLoading = false;
+          this.submitted = false;
+
+          this.loginError =
+            err?.error?.message ||
+            'Invalid username or password';
+        }
+      });
   }
-
-  this.isLoading = true;
-  this.loginError = '';
-  this.submitted = false;
-
-  this.authService.login(this.loginForm.value)
-    .subscribe({
-
-      next: (response) => {
-
-        this.isLoading = false;
-        this.submitted = true;
-
-        // ✅ Save token
-        localStorage.setItem('token', response.access_token);
-
-        // ✅ Save user
-        localStorage.setItem('user', JSON.stringify(response.user));
-
-        console.log('Login successful', response);
-
-        // ─────────────────────────────
-        // ✅ ROLE-BASED REDIRECTION
-        // ─────────────────────────────
-
-        const role = response?.user?.role;
-
-        if (role === 'ADMIN') {
-          this.router.navigate(['/dashboard']);
-        }
-
-        else if (role === 'ENSEIGNANT') {
-          this.router.navigate(['/listExamen']);
-        }
-
-        else {
-          // default (ETUDIANT or others)
-          this.router.navigate(['/listExamen']);
-        }
-      },
-      
-
-      error: (err) => {
-
-        this.isLoading = false;
-        this.submitted = false;
-
-        this.loginError =
-          err?.error?.message ||
-          'Invalid username or password';
-      }
-    });
-}
 }

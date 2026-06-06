@@ -1,85 +1,124 @@
 <div class="results-container">
+  <!-- En-tête -->
   <div class="page-header">
-    <h1>Mes résultats</h1>
-    <p class="subtitle">Performance académique</p>
+    <div>
+      <h1>Mes résultats</h1>
+      <p class="subtitle">Suivi de vos performances académiques</p>
+    </div>
+    <div class="stats-badge" *ngIf="selected">
+      <span>{{ selected.prenom }} {{ selected.nom }}</span>
+    </div>
   </div>
 
   <!-- Cartes personnelles -->
-  <div class="personal-stats" *ngIf="selected">
+  <div class="stats-grid" *ngIf="selected">
     <div class="stat-card">
+      <div class="stat-icon">📊</div>
       <div class="stat-value">{{ moyennePersonnelle }}</div>
       <div class="stat-label">Ma moyenne générale</div>
     </div>
     <div class="stat-card">
+      <div class="stat-icon">🏆</div>
       <div class="stat-value">{{ studentRank }}<span class="small">/{{ allStudents.length }}</span></div>
       <div class="stat-label">Mon classement</div>
     </div>
     <div class="stat-card">
+      <div class="stat-icon">🎓</div>
       <div class="stat-value">{{ selected.filiere }}</div>
       <div class="stat-label">Filière</div>
     </div>
     <div class="stat-card">
+      <div class="stat-icon">📈</div>
       <div class="stat-value">{{ generalAverage }}</div>
       <div class="stat-label">Moyenne de la promo</div>
     </div>
   </div>
 
   <!-- Tableau des notes avec filtres -->
-  <div class="notes-section" *ngIf="selected">
-    <h3>Mes examens et notes</h3>
+  <div class="card notes-card" *ngIf="selected">
+    <div class="card-header">
+      <h3>📝 Mes examens et notes</h3>
+      <span class="badge">{{ filteredParticipations.length }} résultat(s)</span>
+    </div>
     <div class="filters">
-      <select [(ngModel)]="filterMatiere" (change)="onFilterChange()">
-        <option value="">Toutes matières</option>
-        <option *ngFor="let m of matieresList" [value]="m">{{ m }}</option>
-      </select>
-      <input type="number" placeholder="Note min" [(ngModel)]="filterNoteMin" (input)="onFilterChange()" step="0.5">
-      <input type="number" placeholder="Note max" [(ngModel)]="filterNoteMax" (input)="onFilterChange()" step="0.5">
+      <div class="filter-group">
+        <label>Matière</label>
+        <select [(ngModel)]="filterMatiere" (change)="onFilterChange()">
+          <option value="">Toutes</option>
+          <option *ngFor="let m of matieresList" [value]="m">{{ m }}</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <label>Note min</label>
+        <input type="number" placeholder="0" [(ngModel)]="filterNoteMin" (input)="onFilterChange()" step="0.5">
+      </div>
+      <div class="filter-group">
+        <label>Note max</label>
+        <input type="number" placeholder="20" [(ngModel)]="filterNoteMax" (input)="onFilterChange()" step="0.5">
+      </div>
       <button class="btn-reset" (click)="resetFilters()">Réinitialiser</button>
     </div>
     <div class="table-responsive">
       <table class="notes-table">
         <thead>
-          <tr>
-            <th>Matière</th>
-            <th>Examen</th>
-            <th>Date</th>
-            <th>Note /20</th>
-            <th>Coefficient</th>
-          </tr>
+        <tr>
+          <th>Matière</th>
+          <th>Examen</th>
+          <th>Date</th>
+          <th>Note /20</th>
+          <th>Coefficient</th>
+        </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let p of filteredParticipations">
-            <td>{{ p.matiere }}</td>
-            <td>{{ p.titre }}</td>
-            <td>{{ p.date | date:'dd/MM/yyyy' }}</td>
-            <td><span [class]="getBadgeClass(p.note)">{{ formatNote(p.note) }}</span></td>
-            <td>{{ p.coefficient }}</td>
-          </tr>
-          <tr *ngIf="filteredParticipations.length === 0">
-            <td colspan="5" class="empty-row">Aucun examen trouvé</td>
-          </tr>
+        <tr *ngFor="let p of filteredParticipations">
+          <td><span class="matiere-badge">{{ p.matiere }}</span></td>
+          <td>{{ p.titre }}</td>
+          <td>{{ p.date | date:'dd/MM/yyyy' }}</td>
+          <td><span [class]="getBadgeClass(p.note)">{{ formatNote(p.note) }}</span></td>
+          <td>{{ p.coefficient }}</td>
+        </tr>
+        <tr *ngIf="filteredParticipations.length === 0">
+          <td colspan="5" class="empty-row">Aucun examen trouvé</td>
+        </tr>
         </tbody>
       </table>
     </div>
   </div>
 
-  <!-- Graphiques globaux (anonymes) -->
+  <!-- Graphiques globaux -->
   <div class="charts-grid">
-    <div class="chart-card">
-      <h3>Distribution des moyennes (promotion)</h3>
-      <canvas #histChart></canvas>
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>📊 Distribution des moyennes</h3>
+        <span class="badge">Promotion</span>
+      </div>
+      <div class="chart-container">
+        <canvas #histChart></canvas>
+      </div>
     </div>
-    <div class="chart-card">
-      <h3>Répartition par filière</h3>
-      <canvas #donutChart></canvas>
+    <div class="card chart-card">
+      <div class="card-header">
+        <h3>🥧 Répartition par filière</h3>
+        <span class="badge">Promotion</span>
+      </div>
+      <div class="chart-container">
+        <canvas #donutChart></canvas>
+      </div>
     </div>
   </div>
 
+  <!-- Note de confidentialité -->
   <div class="info-note">
-    <i class="ti ti-shield"></i> Conformément à la politique de confidentialité, les données individuelles des autres étudiants ne sont pas affichées.
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
+    <span>Conformément à la politique de confidentialité, les données individuelles des autres étudiants ne sont pas affichées.</span>
   </div>
 
-  <div *ngIf="!selected" class="empty-card">
-    Veuillez sélectionner un étudiant depuis l'espace admin.
+  <!-- État vide si aucun étudiant sélectionné -->
+  <div *ngIf="!selected" class="empty-state">
+    <div class="empty-icon">👤</div>
+    <p>Aucun étudiant sélectionné</p>
+    <span>Veuillez sélectionner un étudiant depuis l'espace administration.</span>
   </div>
 </div>

@@ -1,21 +1,51 @@
 <div class="enseignants-container">
+  <!-- En-tête -->
   <div class="page-header">
-    <h1>Mes enseignants</h1>
-    <p class="subtitle">Équipe pédagogique de votre filière</p>
+    <div>
+      <h1>Mes enseignants</h1>
+      <p class="subtitle">Équipe pédagogique de votre filière</p>
+    </div>
+    <div class="badge">{{ enseignants.length }} enseignant(s)</div>
   </div>
 
-  <div class="enseignants-grid" *ngIf="enseignants.length > 0">
+  <!-- Grille des cartes -->
+  <div class="enseignants-grid" *ngIf="!isLoading && enseignants.length > 0">
     <div class="enseignant-card" *ngFor="let ens of enseignants">
-      <div class="avatar">{{ (ens.nom[0] + ens.prenom[0]) | uppercase }}</div>
+      <div class="avatar">
+        {{ (ens.prenom?.[0] || '') + (ens.nom?.[0] || '') }}
+      </div>
       <div class="info">
-        <h3>{{ ens.nom }} {{ ens.prenom }}</h3>
-        <p class="specialite">{{ ens.specialite }}</p>
-        <p class="email">{{ ens.email }}</p>
-        <p class="tel">{{ ens.telephone }}</p>
+        <h3>{{ ens.prenom }} {{ ens.nom }}</h3>
+        <p class="specialite">{{ ens.specialite || 'Enseignant' }}</p>
+        <div class="contact">
+          <div class="contact-item" *ngIf="ens.email">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-10 7L2 7"/>
+            </svg>
+            <span>{{ ens.email }}</span>
+          </div>
+          <div class="contact-item" *ngIf="ens.telephone">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.362 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.338 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span>{{ ens.telephone }}</span>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-  <div *ngIf="enseignants.length === 0" class="empty-state">
-    Aucun enseignant trouvé.
+
+  <!-- État de chargement -->
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des enseignants...</p>
+  </div>
+
+  <!-- État vide -->
+  <div *ngIf="!isLoading && enseignants.length === 0" class="empty-state">
+    <div class="empty-icon">👩‍🏫</div>
+    <p>Aucun enseignant trouvé</p>
+    <span>Aucun enseignant n'est associé à votre filière pour le moment.</span>
   </div>
 </div>
