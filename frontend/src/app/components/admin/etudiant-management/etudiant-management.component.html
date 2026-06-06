@@ -1,0 +1,136 @@
+<div class="management-container">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div>
+      <h1>Gestion des étudiants</h1>
+      <p class="subtitle">Consultez, ajoutez, modifiez ou supprimez les étudiants</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn-secondary" routerLink="/dashboard">
+        ← Retour au dashboard
+      </button>
+      <button class="btn-primary" (click)="openAddModal()">
+        + Ajouter un étudiant
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistiques rapides -->
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div class="stat-value">{{ filteredEtudiants.length }}</div>
+      <div class="stat-label">Étudiants affichés</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-icon">📊</div>
+      <div class="stat-value">{{ moyenneGenerale }}</div>
+      <div class="stat-label">Moyenne générale</div>
+    </div>
+  </div>
+
+  <!-- Barre de recherche -->
+  <div class="search-section">
+    <div class="search-wrapper">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="text" placeholder="Rechercher par nom, prénom, email ou filière..." [(ngModel)]="searchTerm" (input)="onSearch()">
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div *ngIf="message" class="message" [class.success]="message.includes('✅')" [class.error]="message.includes('❌')">
+    {{ message }}
+  </div>
+  <div *ngIf="isLoading" class="loading-state">Chargement des étudiants...</div>
+
+  <!-- Tableau des étudiants -->
+  <div class="table-container">
+    <table class="student-table">
+      <thead>
+      <tr>
+        <th>#</th>
+        <th>Nom</th>
+        <th>Prénom</th>
+        <th>Email</th>
+        <th>Filière</th>
+        <th>Année</th>
+        <th>Moyenne</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr *ngFor="let e of filteredEtudiants; let i = index" class="student-row">
+        <td>{{ i+1 }}</td>
+        <td><strong>{{ e.nom }}</strong></td>
+        <td>{{ e.prenom }}</td>
+        <td>{{ e.email }}</td>
+        <td><span class="filiere-badge">{{ e.filiere }}</span></td>
+        <td>{{ e.anneeInscription }}</td>
+        <td>
+            <span [class]="getMoyenneBadgeClass(e.moyenneGenerale)">
+              {{ e.moyenneGenerale }}
+            </span>
+        </td>
+        <td class="actions-cell">
+          <button class="btn-icon edit" (click)="openEditModal(e)" title="Modifier">✏️</button>
+          <button class="btn-icon delete" (click)="remove(e)" title="Supprimer">🗑️</button>
+          <button class="btn-icon inscription" (click)="inscrire(e)" title="Inscrire à un examen">📝</button>
+          <button class="btn-icon select" (click)="selectAsCurrent(e)" title="Sélectionner pour le portail">⭐</button>
+        </td>
+      </tr>
+      <tr *ngIf="filteredEtudiants.length === 0 && !isLoading">
+        <td colspan="8" class="empty-row">Aucun étudiant trouvé</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- MODALE AJOUT / MODIFICATION -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>{{ isEditMode ? 'Modifier' : 'Ajouter' }} un étudiant</h3>
+      <button class="close-btn" (click)="closeModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nom *</label>
+          <input type="text" [(ngModel)]="currentEtudiant.nom" placeholder="Nom">
+        </div>
+        <div class="form-group">
+          <label>Prénom *</label>
+          <input type="text" [(ngModel)]="currentEtudiant.prenom" placeholder="Prénom">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" [(ngModel)]="currentEtudiant.email" placeholder="Email">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Filière</label>
+          <select [(ngModel)]="currentEtudiant.filiere">
+            <option *ngFor="let f of uniqueFilieres" [value]="f">{{ f }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Année d'inscription</label>
+          <input type="number" [(ngModel)]="currentEtudiant.anneeInscription">
+        </div>
+        <div class="form-group">
+          <label>Moyenne générale</label>
+          <input type="number" step="0.1" [(ngModel)]="currentEtudiant.moyenneGenerale">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+      <button class="btn-primary" (click)="saveEtudiant()">Enregistrer</button>
+    </div>
+  </div>
+</div>

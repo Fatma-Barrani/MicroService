@@ -1,5 +1,6 @@
 package com.edunet.etudiant.Services;
 
+import com.edunet.etudiant.Dtos.CoursDTO;
 import com.edunet.etudiant.Dtos.EtudiantEventDTO;
 import com.edunet.etudiant.Dtos.ExamenDTO;
 import com.edunet.etudiant.Entities.Etudiant;
@@ -22,6 +23,8 @@ public class EtudiantServiceImpl implements EtudiantService {
 
     @Autowired
     private EtudiantProducer etudiantProducer; //RabbitProducer
+    @Autowired
+    private CoursClient coursClient;
 
 
     // ==================== CRUD ====================
@@ -156,5 +159,10 @@ public class EtudiantServiceImpl implements EtudiantService {
             stats.put("error", "Service des examens indisponible pour la matière " + matiere);
         }
         return stats;
+    }
+
+    // ===== COMMUNICATION SYNC AVEC COURS (via Feign) =====
+    public List<CoursDTO> getAllCours() {
+        return coursClient.getAllCours();
     }
 }

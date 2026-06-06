@@ -1,5 +1,6 @@
 package com.edunet.etudiant.Services;
 
+import com.edunet.etudiant.Dtos.CoursDTO;
 import com.edunet.etudiant.Entities.Etudiant;
 
 import java.util.List;
@@ -22,5 +23,5 @@ public interface EtudiantService {
     Map<String, Object> getStatistiques();
 
     Map<String, Object> getStatistiquesParMatiere(String matiere);
-
+    List<CoursDTO> getAllCours();
 }

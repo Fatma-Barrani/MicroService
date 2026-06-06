@@ -1,0 +1,100 @@
+<div class="profile-card">
+  <div class="profile-header">
+    <div class="profile-avatar">
+      {{ (etudiant?.prenom?.[0] || '') + (etudiant?.nom?.[0] || '') }}
+    </div>
+    <div>
+      <h2>Mon profil</h2>
+      <p class="profile-subtitle">Consultez et modifiez vos informations personnelles</p>
+    </div>
+  </div>
+
+  <!-- État vide / non sélectionné -->
+  <div *ngIf="!etudiant" class="empty-state">
+    <div class="empty-icon">👤</div>
+    <p>Aucun étudiant sélectionné</p>
+    <span class="empty-hint">Veuillez sélectionner un étudiant depuis l'espace administration.</span>
+  </div>
+
+  <!-- Profil chargé -->
+  <div *ngIf="etudiant">
+    <!-- Grille d'informations -->
+    <div class="info-grid">
+      <div class="info-item">
+        <label>Nom complet</label>
+        <div class="info-value">{{ etudiant.prenom }} {{ etudiant.nom }}</div>
+      </div>
+      <div class="info-item">
+        <label>Email</label>
+        <div class="info-value">{{ etudiant.email }}</div>
+      </div>
+      <div class="info-item">
+        <label>Filière</label>
+        <div class="info-value">{{ etudiant.filiere }}</div>
+      </div>
+      <div class="info-item">
+        <label>Année d'inscription</label>
+        <div class="info-value">{{ etudiant.anneeInscription }}</div>
+      </div>
+      <div class="info-item">
+        <label>Moyenne générale</label>
+        <div class="info-value">{{ etudiant.moyenneGenerale }} / 20</div>
+      </div>
+    </div>
+
+    <!-- Bouton d'édition -->
+    <button class="btn-edit" (click)="startEdit()" *ngIf="!isEditing">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M17 3l4 4-7 7-4 1 1-4 6-6z"/>
+        <path d="M3 21h18"/>
+      </svg>
+      Modifier mon profil
+    </button>
+
+    <!-- Formulaire d'édition -->
+    <div class="edit-form" *ngIf="isEditing">
+      <h3>Modifier mes informations</h3>
+      <form (ngSubmit)="save()">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" [(ngModel)]="editModel.nom" name="nom" required>
+          </div>
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" [(ngModel)]="editModel.prenom" name="prenom" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" [(ngModel)]="editModel.email" name="email">
+        </div>
+        <div class="form-row">
+          <div class="form-group readonly">
+            <label>Filière (non modifiable)</label>
+            <input type="text" [value]="etudiant.filiere" readonly disabled>
+          </div>
+          <div class="form-group">
+            <label>Année d'inscription</label>
+            <input type="number" [(ngModel)]="editModel.anneeInscription" name="anneeInscription">
+          </div>
+        </div>
+        <div class="form-group readonly">
+          <label>Moyenne générale (calculée automatiquement)</label>
+          <input type="number" [value]="etudiant.moyenneGenerale" step="0.01" readonly disabled>
+        </div>
+        <div class="form-buttons">
+          <button type="submit" class="btn-primary" [disabled]="isLoading">
+            {{ isLoading ? 'Enregistrement...' : 'Enregistrer les modifications' }}
+          </button>
+          <button type="button" class="btn-secondary" (click)="cancelEdit()">Annuler</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Message de feedback -->
+    <div class="message" *ngIf="message" [class.success]="message.includes('succès')" [class.error]="message.includes('Erreur')">
+      {{ message }}
+    </div>
+  </div>
+</div>

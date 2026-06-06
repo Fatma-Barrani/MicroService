@@ -1,8 +1,10 @@
 package com.edunet.etudiant.Controllers;
 
+import com.edunet.etudiant.Dtos.CoursDTO;
 import com.edunet.etudiant.Dtos.EtudiantRequestDTO;
 import com.edunet.etudiant.Dtos.EtudiantResponseDTO;
 import com.edunet.etudiant.Entities.Etudiant;
+import com.edunet.etudiant.Services.CoursClient;
 import com.edunet.etudiant.Services.EtudiantService;
 import com.edunet.etudiant.Utils.EtudiantMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -96,6 +98,19 @@ public class EtudiantController {
     @GetMapping("/statsParMatiere/{matiere}")
     public ResponseEntity<Map<String, Object>> getStatsByMatiere(@PathVariable String matiere) {
         return ResponseEntity.ok(etudiantService.getStatistiquesParMatiere(matiere));
+    }
+    // ========== COMMUNICATION AVEC COURS (via Feign) ==========
+    @Autowired
+    private CoursClient coursClient;
+
+    @GetMapping("/cours/all")
+    public ResponseEntity<List<CoursDTO>> getTousLesCours() {
+        return ResponseEntity.ok(coursClient.getAllCours());
+    }
+
+    @GetMapping("/cours/search")
+    public ResponseEntity<List<CoursDTO>> rechercherCoursParCategorie(@RequestParam String categorie) {
+        return ResponseEntity.ok(coursClient.searchByCategorie(categorie));
     }
 }
 

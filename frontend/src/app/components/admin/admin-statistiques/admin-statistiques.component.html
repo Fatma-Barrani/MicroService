@@ -1,0 +1,103 @@
+<div class="stats-container">
+  <!-- En-tête -->
+  <div class="stats-header">
+    <h1>Statistiques avancées</h1>
+    <p class="subtitle">Vue globale des performances académiques</p>
+  </div>
+
+  <!-- Cartes KPI -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="ti ti-users"></i></div>
+      <div class="kpi-value">{{ totalEtudiants }}</div>
+      <div class="kpi-label">Étudiants</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="ti ti-chart-line"></i></div>
+      <div class="kpi-value">{{ moyenneGenerale | number:'1.1-2' }}</div>
+      <div class="kpi-label">Moyenne générale</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="ti ti-file-description"></i></div>
+      <div class="kpi-value">{{ totalExamens }}</div>
+      <div class="kpi-label">Examens</div>
+    </div>
+    <div class="kpi-card">
+      <div class="kpi-icon"><i class="ti ti-chalkboard"></i></div>
+      <div class="kpi-value">{{ totalEnseignants }}</div>
+      <div class="kpi-label">Enseignants</div>
+    </div>
+  </div>
+
+  <!-- Graphiques -->
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h3>Distribution des moyennes</h3>
+      <div class="chart-wrapper">
+        <canvas #histogramChart></canvas>
+      </div>
+    </div>
+    <div class="chart-card">
+      <h3>Répartition par filière</h3>
+      <div class="chart-wrapper">
+        <canvas #donutChart></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recherche et tableau -->
+  <div class="table-section">
+    <div class="table-toolbar">
+      <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input
+          type="text"
+          placeholder="Rechercher un étudiant (nom, prénom, filière)"
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+        />
+      </div>
+      <span class="count-badge">{{ filteredStudents.length }} étudiants</span>
+    </div>
+
+    <div class="table-responsive">
+      <table class="student-table">
+        <thead>
+          <tr>
+            <th (click)="onSort('id')" class="sortable">
+              Rang <i [class]="getSortIcon('id')"></i>
+            </th>
+            <th (click)="onSort('nom')" class="sortable">
+              Nom <i [class]="getSortIcon('nom')"></i>
+            </th>
+            <th (click)="onSort('prenom')" class="sortable">
+              Prénom <i [class]="getSortIcon('prenom')"></i>
+            </th>
+            <th (click)="onSort('filiere')" class="sortable">
+              Filière <i [class]="getSortIcon('filiere')"></i>
+            </th>
+            <th (click)="onSort('moyenneGenerale')" class="sortable">
+              Moyenne <i [class]="getSortIcon('moyenneGenerale')"></i>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of filteredStudents; let i = index" (click)="goToStudentManagement()">
+            <td>{{ i+1 }}</td>
+            <td>{{ e.nom }}</td>
+            <td>{{ e.prenom }}</td>
+            <td>{{ e.filiere }}</td>
+            <td>
+              <span [class]="getBadgeClass(e.moyenneGenerale)">
+                {{ e.moyenneGenerale }}
+              </span>
+            </td>
+          </tr>
+          <tr *ngIf="filteredStudents.length === 0">
+            <td colspan="5" class="empty-row">Aucun étudiant trouvé</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

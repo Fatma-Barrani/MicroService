@@ -171,10 +171,10 @@
 
         <!-- Conditional: Student ID -->
         <!-- FIX: shown only when role = ETUDIANT -->
-        
+
 
         <!-- Conditional: Teacher ID -->
-      
+
 
         <!-- Password -->
         <div class="fg" [class.is-valid]="isValid('password')" [class.has-error]="isInvalid('password')">
@@ -257,7 +257,7 @@
 
       </form>
 
-      <p class="login-link">Already have an account? <a href="login" class="link">Sign in</a></p>
+      <p class="login-link">Already have an account? <a routerLink="/login" class="link">Sign in</a></p>
 
     </div>
   </div>

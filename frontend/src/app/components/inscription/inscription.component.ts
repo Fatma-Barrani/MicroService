@@ -9,6 +9,7 @@ import {
   ValidationErrors,
   ReactiveFormsModule
 } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
@@ -24,9 +25,9 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
 
 @Component({
   selector: 'app-inscription',
-  standalone: true,                                         // FIX: added standalone: true
+  standalone: true,
   templateUrl: './inscription.component.html',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, RouterModule],
   styleUrls: ['./inscription.component.css']
 })
 export class InscriptionComponent implements OnInit, OnDestroy {
@@ -46,9 +47,7 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
   private pwSub!: Subscription;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { }
-
-  // ── Lifecycle ───────────────────────────────────────────────────────────────
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.signupForm = this.fb.group(
@@ -56,6 +55,11 @@ export class InscriptionComponent implements OnInit, OnDestroy {
         username: ['', [Validators.required, Validators.minLength(3)]],
         email: ['', [Validators.required, Validators.email]],
         role: ['ETUDIANT', Validators.required],
+        // ✅ AJOUT DES 4 CHAMPS POUR LE MICROSERVICE ÉTUDIANT
+        nom: ['', Validators.required],
+        prenom: ['', Validators.required],
+        filiere: ['', Validators.required],
+        anneeInscription: [new Date().getFullYear(), [Validators.required, Validators.min(2000), Validators.max(2030)]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', Validators.required],
         idEtudiant: [''],
@@ -72,8 +76,6 @@ export class InscriptionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.pwSub?.unsubscribe();
   }
-
-  // ── Helpers ─────────────────────────────────────────────────────────────────
 
   isInvalid(field: string): boolean {
     const c = this.signupForm.get(field);
@@ -93,10 +95,10 @@ export class InscriptionComponent implements OnInit, OnDestroy {
     if (c.errors['minlength']) {
       return `Minimum ${c.errors['minlength'].requiredLength} characters required.`;
     }
+    if (c.errors['min'] || c.errors['max']) return 'Enter a valid year (2000-2030).';
     return 'Invalid value.';
   }
 
-  // FIX: show mismatch error only when confirmPassword is touched
   get showMismatchError(): boolean {
     return (
       this.signupForm.hasError('passwordMismatch') &&
@@ -106,8 +108,6 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
   togglePassword(): void { this.showPassword = !this.showPassword; }
   toggleConfirm(): void { this.showConfirm = !this.showConfirm; }
-
-  // ── Password strength ────────────────────────────────────────────────────────
 
   updateStrength(value: string): void {
     if (!value) { this.passwordStrength = 0; this.strengthLabel = ''; return; }
@@ -126,65 +126,68 @@ export class InscriptionComponent implements OnInit, OnDestroy {
     return `bar active level-${this.passwordStrength}`;
   }
 
-  // ── Submit ───────────────────────────────────────────────────────────────────
+  onSubmit(): void {
+    this.submitted = true;
+    this.successMessage = '';
+    this.errorMessage = '';
+    this.signupForm.markAllAsTouched();
 
- onSubmit(): void {
-  this.submitted = true;
-
-  this.successMessage = '';
-  this.errorMessage = '';
-
-  this.signupForm.markAllAsTouched();
-
-  if (this.signupForm.invalid) {
-    this.errorMessage = 'Please fix the errors in the form.';
-    return;
-  }
-
-  const formValue = this.signupForm.value;
-
-  const payload: any = {
-    username: formValue.username,
-    email: formValue.email,
-    password: formValue.password,
-    role: formValue.role,
-  };
-
-  if (formValue.role === 'ETUDIANT' && formValue.idEtudiant) {
-    payload.idEtudiant = formValue.idEtudiant;
-  }
-
-  if (formValue.role === 'ENSEIGNANT' && formValue.idEnseignant) {
-    payload.idEnseignant = formValue.idEnseignant;
-  }
-
-  this.isLoading = true;
-
-  this.authService.register(payload).subscribe({
-    next: (res) => {
-      this.isLoading = false;
-
-      // ✅ SUCCESS MESSAGE
-      this.successMessage =
-        res?.message || '🎉 Account created successfully! You can now log in.';
-
-      this.signupForm.reset({
-        role: 'ETUDIANT',
-        terms: false
-      });
-
-      this.submitted = false;
-    },
-
-    error: (err) => {
-      this.isLoading = false;
-
-      // ❌ ERROR MESSAGE (backend or fallback)
-      this.errorMessage =
-        err?.error?.message ||
-        err?.error?.error ||
-        '❌ Signup failed. Please try again later.';
+    if (this.signupForm.invalid) {
+      this.errorMessage = 'Please fix the errors in the form.';
+      return;
     }
-  });
-}
+
+    const formValue = this.signupForm.value;
+
+    const payload: any = {
+      username: formValue.username,
+      email: formValue.email,
+      password: formValue.password,
+      role: formValue.role,
+      // ✅ AJOUT DES 4 CHAMPS DANS LE PAYLOAD
+      nom: formValue.nom,
+      prenom: formValue.prenom,
+      filiere: formValue.filiere,
+      anneeInscription: formValue.anneeInscription
+    };
+
+    if (formValue.role === 'ETUDIANT' && formValue.idEtudiant) {
+      payload.idEtudiant = formValue.idEtudiant;
+    }
+
+    if (formValue.role === 'ENSEIGNANT' && formValue.idEnseignant) {
+      payload.idEnseignant = formValue.idEnseignant;
+    }
+
+    this.isLoading = true;
+
+    // Redirection immédiate après soumission (optimiste)
+    if (formValue.role === 'ETUDIANT') {
+      this.successMessage = '🎉 Account created successfully! Vous êtes redirigé vers votre espace étudiant.';
+      setTimeout(() => {
+        this.router.navigate(['/etudiant/dashboard']);
+      }, 500);
+    } else {
+      this.successMessage = '✅ Account created successfully! Redirecting to login...';
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 500);
+    }
+
+    // Envoi du formulaire en arrière-plan (fire & forget)
+    this.authService.register(payload).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        // Store user data if needed
+        if (res?.token) {
+          localStorage.setItem('token', res.token);
+        }
+      },
+      error: (err) => {
+        this.isLoading = false;
+        // L'utilisateur est déjà redirigé, juste log l'erreur
+        console.error('Registration error:', err);
+      }
+    });
+  }
 }

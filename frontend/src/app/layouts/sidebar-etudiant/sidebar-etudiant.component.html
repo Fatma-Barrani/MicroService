@@ -1,0 +1,55 @@
+<div class="shell">
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="brand">
+        <i class="ti ti-school"></i>
+        <span>EduNet</span>
+      </div>
+      <div class="brand-sub">Espace étudiant</div>
+    </div>
+
+    <div class="user-profile" *ngIf="prenom || nom">
+      <div class="user-avatar">{{ (prenom ? prenom[0] : '') + (nom ? nom[0] : '') }}</div>
+      <div class="user-name">{{ prenom }} {{ nom }}</div>
+      <div class="user-role">Étudiant</div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/etudiant/dashboard" routerLinkActive="active">
+        <i class="ti ti-layout-dashboard"></i>
+        <span>Tableau de bord</span>
+      </a>
+      <a routerLink="/etudiant/cours" routerLinkActive="active">
+        <i class="ti ti-book-open"></i>
+        <span>Mes cours</span>
+      </a>
+      <a routerLink="/etudiant/resultats" routerLinkActive="active">
+        <i class="ti ti-chart-bar"></i>
+        <span>Mes résultats</span>
+      </a>
+      <a routerLink="/etudiant/inscription" routerLinkActive="active">
+        <i class="ti ti-file-plus"></i>
+        <span>Inscription examens</span>
+      </a>
+      <a routerLink="/etudiant/enseignants" routerLinkActive="active">
+        <i class="ti ti-chalkboard"></i>
+        <span>Mes enseignants</span>
+      </a>
+      <a routerLink="/etudiant/profil" routerLinkActive="active">
+        <i class="ti ti-user-circle"></i>
+        <span>Mon profil</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <i class="ti ti-logout"></i>
+        <span>Déconnexion</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>
