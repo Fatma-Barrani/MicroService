@@ -1,0 +1,7 @@
+.teachers{padding:16px;font-family:Inter,Segoe UI,Arial}
+.cards{display:flex;gap:12px;flex-wrap:wrap}
+.card{display:flex;gap:12px;align-items:center;background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,0.06);min-width:240px}
+.avatar{width:56px;height:56px;border-radius:8px;background:#0f172a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.info h3{margin:0 0 6px 0}
+
+@media (max-width:600px){.cards{flex-direction:column}}

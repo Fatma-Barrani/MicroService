@@ -10,7 +10,7 @@
   <!-- Informations étudiant -->
   <div class="student-card" *ngIf="selectedEtudiant">
     <div class="student-avatar">
-      {{ (selectedEtudiant.prenom?.[0] || '') + (selectedEtudiant.nom?.[0] || '') }}
+      {{ selectedEtudiant.prenom ? selectedEtudiant.prenom[0] : '' }}{{ selectedEtudiant.nom ? selectedEtudiant.nom[0] : '' }}
     </div>
     <div class="student-info">
       <div class="student-name">{{ selectedEtudiant.prenom }} {{ selectedEtudiant.nom }}</div>

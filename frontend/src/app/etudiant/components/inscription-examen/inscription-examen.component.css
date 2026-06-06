@@ -1,0 +1,6 @@
+.exams-panel{padding:16px;font-family:Inter,Segoe UI,Arial}
+.list{display:flex;flex-direction:column;gap:12px}
+.exam{display:flex;justify-content:space-between;align-items:center}
+.exam .title{font-weight:600}
+.exam .meta{color:#64748b}
+.primary{padding:8px 12px;background:#0f172a;color:#fff;border-radius:6px;border:none}

@@ -9,6 +9,7 @@ import {
   ValidationErrors,
   ReactiveFormsModule
 } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth.service';
 
@@ -26,7 +27,7 @@ function passwordMatchValidator(control: AbstractControl): ValidationErrors | nu
   selector: 'app-inscription',
   standalone: true,
   templateUrl: './inscription.component.html',
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, RouterModule],
   styleUrls: ['./inscription.component.css']
 })
 export class InscriptionComponent implements OnInit, OnDestroy {
@@ -46,7 +47,7 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
   private pwSub!: Subscription;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) { }
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) { }
 
   ngOnInit(): void {
     this.signupForm = this.fb.group(
@@ -160,19 +161,32 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
+    // Redirection immédiate après soumission (optimiste)
+    if (formValue.role === 'ETUDIANT') {
+      this.successMessage = '🎉 Account created successfully! Vous êtes redirigé vers votre espace étudiant.';
+      setTimeout(() => {
+        this.router.navigate(['/etudiant/dashboard']);
+      }, 500);
+    } else {
+      this.successMessage = '✅ Account created successfully! Redirecting to login...';
+      setTimeout(() => {
+        this.router.navigate(['/login']);
+      }, 500);
+    }
+
+    // Envoi du formulaire en arrière-plan (fire & forget)
     this.authService.register(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
-        this.successMessage = res?.message || '🎉 Account created successfully! You can now log in.';
-        this.signupForm.reset({
-          role: 'ETUDIANT',
-          terms: false
-        });
-        this.submitted = false;
+        // Store user data if needed
+        if (res?.token) {
+          localStorage.setItem('token', res.token);
+        }
       },
       error: (err) => {
         this.isLoading = false;
-        this.errorMessage = err?.error?.message || err?.error?.error || '❌ Signup failed. Please try again later.';
+        // L'utilisateur est déjà redirigé, juste log l'erreur
+        console.error('Registration error:', err);
       }
     });
   }

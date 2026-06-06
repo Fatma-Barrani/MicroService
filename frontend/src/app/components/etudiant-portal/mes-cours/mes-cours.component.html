@@ -1,0 +1,44 @@
+<div class="mes-cours-shell">
+  <div class="header-row">
+    <div>
+      <h2>Mes cours</h2>
+      <p>Recherchez et filtrez les cours proposés par les différents services.</p>
+    </div>
+  </div>
+
+  <div class="filters-card">
+    <div class="field">
+      <label>Rechercher</label>
+      <input type="text" placeholder="Titre ou description" [(ngModel)]="search" (input)="applyFilter()" />
+    </div>
+    <div class="field">
+      <label>Catégorie</label>
+      <select [(ngModel)]="categorie" (change)="applyFilter()">
+        <option value="">Toutes catégories</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="empty-state">Chargement des cours...</div>
+  <div *ngIf="error" class="empty-state error">{{ error }}</div>
+
+  <div class="courses-grid" *ngIf="!loading && !error">
+    <article class="course-card" *ngFor="let cours of filteredCours">
+      <div class="course-top">
+        <span class="tag">{{ cours.categorie || 'Général' }}</span>
+        <span class="hours">{{ cours.dureeHeures || '—' }}h</span>
+      </div>
+      <h3>{{ cours.titre }}</h3>
+      <p>{{ cours.description || 'Description indisponible.' }}</p>
+      <div class="course-meta">
+        <span>{{ cours.niveau || 'Niveau non renseigné' }}</span>
+        <span>{{ cours.enseignantNom ? cours.enseignantPrenom + ' ' + cours.enseignantNom : 'Enseignant inconnu' }}</span>
+      </div>
+    </article>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && !filteredCours.length && !error">
+    Aucun cours ne correspond à vos critères.
+  </div>
+</div>

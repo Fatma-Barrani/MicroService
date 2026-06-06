@@ -1,0 +1,7 @@
+.auth{display:flex;gap:16px;align-items:flex-start;padding:20px;font-family:Inter,Segoe UI,Arial}
+.card{background:#fff;padding:16px;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,0.06);min-width:320px}
+.card form{display:flex;flex-direction:column;gap:8px}
+.card input{padding:8px;border-radius:6px;border:1px solid #e6eef7}
+.card button{padding:10px;border-radius:6px;background:#0f172a;color:#fff;border:none}
+
+@media (max-width:900px){.auth{flex-direction:column}}

@@ -9,7 +9,7 @@
     </div>
 
     <div class="user-profile" *ngIf="prenom || nom">
-      <div class="user-avatar">{{ (prenom?.[0] || '') + (nom?.[0] || '') }}</div>
+      <div class="user-avatar">{{ (prenom ? prenom[0] : '') + (nom ? nom[0] : '') }}</div>
       <div class="user-name">{{ prenom }} {{ nom }}</div>
       <div class="user-role">Étudiant</div>
     </div>
@@ -19,13 +19,17 @@
         <i class="ti ti-layout-dashboard"></i>
         <span>Tableau de bord</span>
       </a>
+      <a routerLink="/etudiant/cours" routerLinkActive="active">
+        <i class="ti ti-book-open"></i>
+        <span>Mes cours</span>
+      </a>
       <a routerLink="/etudiant/resultats" routerLinkActive="active">
         <i class="ti ti-chart-bar"></i>
         <span>Mes résultats</span>
       </a>
       <a routerLink="/etudiant/inscription" routerLinkActive="active">
         <i class="ti ti-file-plus"></i>
-        <span>Inscriptions</span>
+        <span>Inscription examens</span>
       </a>
       <a routerLink="/etudiant/enseignants" routerLinkActive="active">
         <i class="ti ti-chalkboard"></i>

@@ -15,23 +15,23 @@
   <div class="kpi-grid" *ngIf="selected">
     <div class="kpi-card">
       <div class="kpi-icon">📊</div>
-      <div class="kpi-value">{{ selected.moyenneGenerale }}</div>
-      <div class="kpi-label">Moyenne générale</div>
+      <div class="kpi-value">{{ stats.moyenneGlobale ?? selected.moyenneGenerale }}</div>
+      <div class="kpi-label">Moyenne globale</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon">🏆</div>
-      <div class="kpi-value">{{ rank }}<span class="small">/{{ allStudents.length }}</span></div>
-      <div class="kpi-label">Classement</div>
+      <div class="kpi-value">{{ stats.totalEtudiants ?? allStudents.length }}<span class="small">étudiants</span></div>
+      <div class="kpi-label">Promo totale</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon">🎓</div>
-      <div class="kpi-value">{{ selected.filiere }}</div>
-      <div class="kpi-label">Filière</div>
+      <div class="kpi-value">{{ stats.totalExamens ?? examens.length }}</div>
+      <div class="kpi-label">Examens</div>
     </div>
     <div class="kpi-card">
       <div class="kpi-icon">📅</div>
-      <div class="kpi-value">{{ selected.anneeInscription }}</div>
-      <div class="kpi-label">Promotion</div>
+      <div class="kpi-value">{{ stats.coefficientMoyenExamens ? (stats.coefficientMoyenExamens | number:'1.1-1') : '—' }}</div>
+      <div class="kpi-label">Coefficient moyen</div>
     </div>
   </div>
 
@@ -71,15 +71,15 @@
       <div class="cours-card" *ngFor="let cours of filteredCours">
         <div class="cours-badge">{{ cours.categorie }}</div>
         <h4 class="cours-title">{{ cours.titre }}</h4>
-        <p class="cours-desc">{{ cours.description | slice:0:80 }}{{ cours.description?.length > 80 ? '…' : '' }}</p>
+        <p class="cours-desc">{{ cours.description | slice:0:80 }}{{ cours.description && cours.description.length > 80 ? '…' : '' }}</p>
         <div class="cours-footer">
           <div class="cours-meta">
             <span>⏱️ {{ cours.dureeHeures }}h</span>
             <span>📈 {{ cours.niveau }}</span>
           </div>
-          <div class="cours-enseignant" *ngIf="cours.enseignantNom">
-            <div class="enseignant-avatar">{{ cours.enseignantPrenom?.[0] }}{{ cours.enseignantNom?.[0] }}</div>
-            <span>{{ cours.enseignantPrenom }} {{ cours.enseignantNom }}</span>
+          <div class="cours-enseignant" *ngIf="cours.enseignantNom || cours.enseignantPrenom">
+            <div class="enseignant-avatar">{{ cours.enseignantPrenom ? cours.enseignantPrenom[0] : '' }}{{ cours.enseignantNom ? cours.enseignantNom[0] : '' }}</div>
+            <span>{{ cours.enseignantPrenom || '' }} {{ cours.enseignantNom || '' }}</span>
           </div>
         </div>
       </div>

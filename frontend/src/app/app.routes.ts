@@ -19,6 +19,7 @@ import { SidebarEtudiantComponent } from './layouts/sidebar-etudiant/sidebar-etu
 
 // ✅ COMPOSANTS ÉTUDIANTS
 import { EtudiantDashboardComponent } from './components/etudiant-portal/etudiant-dashboard/etudiant-dashboard.component';
+import { MesCoursComponent } from './components/etudiant-portal/mes-cours/mes-cours.component';
 import { MesResultatsComponent } from './components/etudiant-portal/mes-resultats/mes-resultats.component';
 import { MesEnseignantsComponent } from './components/etudiant-portal/mes-enseignants/mes-enseignants.component';
 import { MonProfilComponent } from './components/etudiant-portal/mon-profil/mon-profil.component';
@@ -72,6 +73,7 @@ export const routes: Routes = [
     component: SidebarEtudiantComponent,
     children: [
       { path: 'dashboard', component: EtudiantDashboardComponent },
+      { path: 'cours', component: MesCoursComponent },
       { path: 'resultats', component: MesResultatsComponent },
       { path: 'enseignants', component: MesEnseignantsComponent },
       { path: 'profil', component: MonProfilComponent },

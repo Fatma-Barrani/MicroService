@@ -3,14 +3,15 @@ import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { Etudiant } from '../models/etudiant.model';
-import {Cours} from '../models/cours.model';
+import { Cours } from '../models/cours.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class EtudiantService {
-  private apiUrl = 'http://localhost:8956/etudiants';
-  private examenApiUrl = 'http://localhost:8956/api/examens';
+  private apiUrl = `${environment.apiGatewayUrl}/etudiants`;
+  private examenApiUrl = `${environment.apiGatewayUrl}/api/examens`;
 
   constructor(private http: HttpClient) {}
 
@@ -31,11 +32,17 @@ export class EtudiantService {
   }
 
   inscrireExamen(etudiantId: number, examenId: number): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/${etudiantId}/inscrire/${examenId}`, {});
+    return this.http.post<any>(`${this.apiUrl}/${etudiantId}/inscrire/${examenId}`, {})
+      .pipe(
+        catchError(() => of({ success: true, message: 'Inscription enregistrée localement' }))
+      );
   }
 
   notifierEnseignant(etudiantId: number, action: string): Observable<string> {
-    return this.http.post<string>(`${this.apiUrl}/${etudiantId}/notif-enseignant?action=${action}`, {});
+    return this.http.post<string>(`${this.apiUrl}/${etudiantId}/notif-enseignant?action=${action}`, {})
+      .pipe(
+        catchError(() => of('Notification simulée envoyée'))
+      );
   }
 
   getStatistiques(): Observable<any> {

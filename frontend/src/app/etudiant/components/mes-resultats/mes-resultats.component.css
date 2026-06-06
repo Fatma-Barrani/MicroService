@@ -1,0 +1,11 @@
+.panel{padding:16px;font-family:Inter,Segoe UI,Arial}
+.controls{display:flex;gap:8px;margin-bottom:12px}
+.controls input{padding:8px;border-radius:6px;border:1px solid #e6eef7}
+.controls button{padding:8px 12px;border-radius:6px;background:#0f172a;color:#fff;border:none}
+.results-grid{display:grid;grid-template-columns:2fr 1fr;gap:12px}
+.card{background:#fff;padding:12px;border-radius:8px;box-shadow:0 1px 3px rgba(15,23,42,0.06)}
+.table table{width:100%;border-collapse:collapse}
+.table th,.table td{padding:8px;border-bottom:1px solid #f1f5f9;text-align:left}
+.placeholder{height:180px;display:flex;align-items:center;justify-content:center;color:#64748b}
+
+@media (max-width:900px){.results-grid{grid-template-columns:1fr}}

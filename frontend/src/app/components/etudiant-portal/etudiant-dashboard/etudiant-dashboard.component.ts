@@ -31,6 +31,7 @@ export class EtudiantDashboardComponent implements OnInit, AfterViewInit {
   examens: any[] = [];
   rank: number = 0;
   generalAverage: number = 0;
+  stats: any = {};
 
   @ViewChild('chart') chartRef!: ElementRef<HTMLCanvasElement>;
   private chart: Chart | null = null;
@@ -45,7 +46,19 @@ export class EtudiantDashboardComponent implements OnInit, AfterViewInit {
     this.loadCours();
     this.loadExamens();
     this.loadStudents();
+    this.loadStatistics();
     this.subscribeToSelectedStudent();
+  }
+
+  loadStatistics(): void {
+    this.etudiantService.getStatistiques().subscribe({
+      next: (data) => {
+        this.stats = data || {};
+      },
+      error: (err) => {
+        console.error('Erreur lors de la récupération des statistiques', err);
+      }
+    });
   }
 
   ngAfterViewInit(): void {

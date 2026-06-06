@@ -95,17 +95,14 @@ export class LoginComponent {
           }
 
           else if (role === 'ENSEIGNANT') {
-            this.router.navigate(['/listExamen']);
+            this.router.navigate(['/enseignant']);
           }
 
           else {
             // default (ETUDIANT or others)
-            this.router.navigate(['/listExamen']);
+            this.router.navigate(['/etudiant/dashboard']);
           }
 
-          // ==================================================
-          // ✅ AJOUT POUR MICROSERVICE ÉTUDIANT (sans modifier le code existant)
-          // ==================================================
           if (role === 'ETUDIANT') {
             this.router.navigate(['/etudiant/dashboard']);
           }
