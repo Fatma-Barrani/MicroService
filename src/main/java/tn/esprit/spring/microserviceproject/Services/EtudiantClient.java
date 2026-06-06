@@ -14,7 +14,7 @@ public class EtudiantClient {
 
     private final RestTemplate restTemplate;
 
-    private final String ETUDIANT_URL = "http://localhost:8081/etudiants/by-filiere/";
+    private final String ETUDIANT_URL = "http://api-gateway:8956/etudiants/by-filiere/";
 
     public List<EtudiantDto> getByFiliere(String filiere) {
 

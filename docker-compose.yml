@@ -82,6 +82,31 @@ services:
     networks:
       - micro-net
 
+
+  # =========================
+  # ETUDIANT SERVICE
+  # =========================
+  etudiant-service:
+    build:
+      context: ./etudiant
+      dockerfile: Dockerfile.etudiant
+    image: fatmabarrani/etudiant-service:latest     
+    container_name: etudiant-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+      - SPRING_DATASOURCE_URL=dbc:mysql://mysql:3306/etudiant_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - micro-net
+
   # =========================
   # EXAMEN SERVICE
   # =========================

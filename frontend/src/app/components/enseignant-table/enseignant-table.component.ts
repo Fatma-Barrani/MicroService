@@ -28,6 +28,9 @@ export class EnseignantTableComponent implements OnInit {
   showAddPopup = false;
   showEditPopup = false;
 
+  deleteMessage = '';
+  deleteError = '';
+
   constructor(private service: EnseignantService) { }
 
   ngOnInit(): void {
@@ -69,19 +72,23 @@ export class EnseignantTableComponent implements OnInit {
   delete(id?: number): void {
     if (!id) return;
 
+    const confirmDelete = confirm("⚠️ Are you sure you want to delete this enseignant ?");
+
+    if (!confirmDelete) {
+      return; // user cancelled
+    }
+
     this.service.delete(id).subscribe({
       next: () => {
         this.load();
-        console.log("Deleted successfully");
+        this.deleteMessage = "Enseignant deleted successfully";
+        this.deleteError = '';
+
+        setTimeout(() => this.deleteMessage = '', 3000);
       },
       error: (err) => {
-        console.error("Delete error details:", err);
-
-        if (err.status === 0) {
-          alert("Backend or Gateway is not reachable ❌");
-        } else {
-          alert("Delete failed: " + err.message);
-        }
+        this.deleteError = "Delete failed";
+        this.deleteMessage = '';
       }
     });
   }
