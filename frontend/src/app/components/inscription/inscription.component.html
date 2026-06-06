@@ -128,14 +128,12 @@
       <div class="divider"><span>or sign up with email</span></div>
 
       <!-- ══ FORM ══ -->
-      <!-- FIX: [formGroup] binding added, (ngSubmit) wired to onSubmit() -->
       <form class="form" [formGroup]="signupForm" (ngSubmit)="onSubmit()" novalidate>
 
         <!-- Username -->
         <div class="fg" [class.is-valid]="isValid('username')" [class.has-error]="isInvalid('username')">
           <label for="username">Username</label>
           <div class="iw">
-            <!-- FIX: formControlName used correctly inside [formGroup] -->
             <input id="username" type="text" formControlName="username"
                    placeholder="e.g. karim123" autocomplete="username" />
             <span class="vi" aria-hidden="true">✓</span>
@@ -154,11 +152,47 @@
           <span class="err-msg" *ngIf="isInvalid('email')">{{ getError('email') }}</span>
         </div>
 
+        <!-- ========== AJOUT : NOM, PRÉNOM, FILIÈRE, ANNÉE ========== -->
+        <div class="fg" [class.is-valid]="isValid('nom')" [class.has-error]="isInvalid('nom')">
+          <label for="nom">Nom</label>
+          <div class="iw">
+            <input id="nom" type="text" formControlName="nom" placeholder="Dupont" />
+            <span class="vi" aria-hidden="true">✓</span>
+          </div>
+          <span class="err-msg" *ngIf="isInvalid('nom')">{{ getError('nom') }}</span>
+        </div>
+
+        <div class="fg" [class.is-valid]="isValid('prenom')" [class.has-error]="isInvalid('prenom')">
+          <label for="prenom">Prénom</label>
+          <div class="iw">
+            <input id="prenom" type="text" formControlName="prenom" placeholder="Jean" />
+            <span class="vi" aria-hidden="true">✓</span>
+          </div>
+          <span class="err-msg" *ngIf="isInvalid('prenom')">{{ getError('prenom') }}</span>
+        </div>
+
+        <div class="fg" [class.is-valid]="isValid('filiere')" [class.has-error]="isInvalid('filiere')">
+          <label for="filiere">Filière</label>
+          <div class="iw">
+            <input id="filiere" type="text" formControlName="filiere" placeholder="Informatique, Génie civil, ..." />
+            <span class="vi" aria-hidden="true">✓</span>
+          </div>
+          <span class="err-msg" *ngIf="isInvalid('filiere')">{{ getError('filiere') }}</span>
+        </div>
+
+        <div class="fg" [class.is-valid]="isValid('anneeInscription')" [class.has-error]="isInvalid('anneeInscription')">
+          <label for="anneeInscription">Année d'inscription</label>
+          <div class="iw">
+            <input id="anneeInscription" type="number" formControlName="anneeInscription" placeholder="2025" />
+            <span class="vi" aria-hidden="true">✓</span>
+          </div>
+          <span class="err-msg" *ngIf="isInvalid('anneeInscription')">{{ getError('anneeInscription') }}</span>
+        </div>
+
         <!-- Role -->
         <div class="fg" [class.is-valid]="isValid('role')" [class.has-error]="isInvalid('role')">
           <label for="role">I am a…</label>
           <div class="iw">
-            <!-- FIX: formControlName on select, no standalone [value] needed since enum strings match -->
             <select id="role" formControlName="role">
               <option value="ETUDIANT">Student (Étudiant)</option>
               <option value="ENSEIGNANT">Teacher (Enseignant)</option>
@@ -169,18 +203,10 @@
           <span class="err-msg" *ngIf="isInvalid('role')">{{ getError('role') }}</span>
         </div>
 
-        <!-- Conditional: Student ID -->
-        <!-- FIX: shown only when role = ETUDIANT -->
-        
-
-        <!-- Conditional: Teacher ID -->
-      
-
         <!-- Password -->
         <div class="fg" [class.is-valid]="isValid('password')" [class.has-error]="isInvalid('password')">
           <label for="password">Password</label>
           <div class="iw">
-            <!-- FIX: [type] binding toggles visibility via showPassword flag -->
             <input id="password" [type]="showPassword ? 'text' : 'password'"
                    formControlName="password"
                    placeholder="Min. 8 characters" autocomplete="new-password" />
@@ -188,7 +214,6 @@
               {{ showPassword ? '🙈' : '👁' }}
             </button>
           </div>
-          <!-- Strength meter -->
           <div class="pw-str" *ngIf="signupForm.get('password')?.value">
             <div class="str-bars">
               <div [class]="barClass(1)"></div>
@@ -202,7 +227,6 @@
         </div>
 
         <!-- Confirm Password -->
-        <!-- FIX: mismatch error uses showMismatchError getter from component -->
         <div class="fg"
              [class.is-valid]="isValid('confirmPassword') && !showMismatchError"
              [class.has-error]="isInvalid('confirmPassword') || showMismatchError">
@@ -224,7 +248,6 @@
         <!-- Terms -->
         <div class="cb-group">
           <label class="cb-label">
-            <!-- FIX: formControlName on checkbox -->
             <input type="checkbox" formControlName="terms" id="terms" />
             <span class="cb-box"></span>
             <span>
@@ -232,7 +255,6 @@
               <a href="#" class="link">Privacy Policy</a>
             </span>
           </label>
-          <!-- FIX: terms error checked via form control -->
           <span class="err-msg"
                 *ngIf="signupForm.get('terms')?.invalid && (signupForm.get('terms')?.touched || submitted)">
             You must accept the terms.
@@ -245,19 +267,15 @@
           <span class="spinner" *ngIf="isLoading"></span>
         </button>
 
-        <!-- Success message -->
+        <!-- Success/Error messages -->
         <div class="success-msg" *ngIf="successMessage">
           {{ successMessage }}
         </div>
-
-        <!-- Error message -->
         <div class="error-msg" *ngIf="errorMessage">
           ⚠️ {{ errorMessage }}
         </div>
 
       </form>
-
-      <p class="login-link">Already have an account? <a routerLink="/login" class="link">Sign in</a></p>
 
     </div>
   </div>

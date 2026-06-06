@@ -9,9 +9,8 @@ import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
-
     // ✅ CONNEXION MONGODB
-    MongooseModule.forRoot('mongodb://localhost:27017/auth_db'),
+    MongooseModule.forRoot('mongodb://mongo:27017/auth_db'),
 
     AuthModule,
     UsersModule,

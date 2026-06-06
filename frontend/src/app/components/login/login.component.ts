@@ -76,48 +76,33 @@ export class LoginComponent {
           this.isLoading = false;
           this.submitted = true;
 
-          // ✅ Save token
-          localStorage.setItem('token', response.access_token);
+          if (response?.access_token) {
+            localStorage.setItem('token', response.access_token);
+          }
 
-          // ✅ Save user
-          localStorage.setItem('user', JSON.stringify(response.user));
+          if (response?.user) {
+            localStorage.setItem('user', JSON.stringify(response.user));
+          }
 
           console.log('Login successful', response);
-
-          // ─────────────────────────────
-          // ✅ ROLE-BASED REDIRECTION
-          // ─────────────────────────────
 
           const role = response?.user?.role;
 
           if (role === 'ADMIN') {
             this.router.navigate(['/dashboard']);
-          }
-
-          else if (role === 'ENSEIGNANT') {
-            this.router.navigate(['/enseignant']);
-          }
-
-          else {
-            // default (ETUDIANT or others)
+          } else if (role === 'ENSEIGNANT') {
+            this.router.navigate(['/enseignant/listExamen']);
+          } else if (role === 'ETUDIANT') {
             this.router.navigate(['/etudiant/dashboard']);
+          } else {
+            this.router.navigate(['/login']);
           }
-
-          if (role === 'ETUDIANT') {
-            this.router.navigate(['/etudiant/dashboard']);
-          }
-
         },
 
-
         error: (err) => {
-
           this.isLoading = false;
           this.submitted = false;
-
-          this.loginError =
-            err?.error?.message ||
-            'Invalid username or password';
+          this.loginError = err?.error?.message || 'Invalid username or password';
         }
       });
   }

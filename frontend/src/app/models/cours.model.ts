@@ -1,4 +1,3 @@
-// frontend/src/app/models/cours.model.ts
 export interface Cours {
   id?: number;
   titre: string;
@@ -10,4 +9,6 @@ export interface Cours {
   niveau?: string;
   enseignantNom?: string;
   enseignantPrenom?: string;
+  enseignantEmail?: string;
+  enseignantSpecialite?: string;
 }

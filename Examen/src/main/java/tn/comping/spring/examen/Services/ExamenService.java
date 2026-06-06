@@ -28,4 +28,7 @@ public interface ExamenService {
     List<ExamenResponseDTO> getExamensByEnseignant(Long enseignantId);
      void assignExamenToEnseignant(Long examenId, Long enseignantId);
     Long countByStatut(String statut);
-}
+    Long countTotal();}
+
+
+

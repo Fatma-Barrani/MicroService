@@ -1,0 +1,236 @@
+version: "3.9"
+
+services:
+
+  # =========================
+  # CONFIG SERVER (FIRST)
+  # =========================
+  config-server:
+    build:
+      context: ./ConfigServer
+      dockerfile: Dockerfile.configserver
+    image: fatmabarrani/config-server:latest
+    container_name: config-server
+    ports:
+      - "8889:8889"
+    depends_on:
+      - eureka-server
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka 
+    networks:
+      - micro-net
+
+  # =========================
+  # EUREKA SERVER (SECOND)
+  # =========================
+  eureka-server:
+    build:
+      context: ./appDistribuee
+      dockerfile: Dockerfile.eureka
+    image: fatmabarrani/eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    networks:
+      - micro-net
+
+  # =========================
+  # API GATEWAY
+  # =========================
+  api-gateway:
+    build:
+      context: ./ApiGateway2
+      dockerfile: Dockerfile.apigateway
+    image: fatmabarrani/api-gateway:latest
+    container_name: api-gateway
+    ports:
+      - "8956:8956"
+    depends_on:
+      - eureka-server
+      - config-server
+      - enseignant-service
+      - examen-service
+      - cours-service
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+   
+    networks:
+      - micro-net
+
+  # =========================
+  # ENSEIGNANT SERVICE
+  # =========================
+  enseignant-service:
+    build:
+      context: .
+      dockerfile: src/Dockerfile.microservice
+    image: fatmabarrani/enseignant-service:latest     
+    container_name: enseignant-service
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/educatif_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - micro-net
+
+  # =========================
+  # EXAMEN SERVICE
+  # =========================
+  examen-service:
+    build:
+      context: ./Examen
+      dockerfile: Dockerfile.examen
+    image: fatmabarrani/examen-service:latest
+    container_name: examen-service
+    ports:
+      - "8089:8089"
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/platformeeducative?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - micro-net
+
+  # =========================
+  # COURS SERVICE
+  # =========================
+  cours-service:
+    build:
+      context: ./cours
+      dockerfile: Dockerfile.cours
+    image: fatmabarrani/cours-service:latest
+    container_name: cours-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/cours_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - micro-net
+
+  # =========================
+  # ETUDIANT SERVICE
+  # =========================
+  etudiant-service:
+    build:
+      context: ./Etudiant
+      dockerfile: Dockerfile
+    image: fatmabarrani/etudiant-service:latest
+    container_name: etudiant-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+      - config-server
+      - mysql
+      - rabbitmq
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/etudiant_db?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=guest
+      - SPRING_RABBITMQ_PASSWORD=guest
+    networks:
+      - micro-net
+
+  # =========================
+  # NEST BACKEND
+  # =========================
+  nest-backend:
+    build:
+      context: ./Inscription/inscription-service
+      dockerfile: Dockerfile.inscription
+    image: fatmabarrani/nest-backend:latest
+    container_name: nest-backend
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/auth_db
+    ports:
+      - "3000:3000"
+    networks:
+      - micro-net
+
+  # =========================
+  # ANGULAR FRONTEND
+  # =========================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    image: fatmabarrani/frontend:latest
+    container_name: frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - micro-net
+
+  mongo:
+   image: mongo:6
+   container_name: mongo-db
+
+   ports:
+     - "27017:27017"
+
+   volumes:
+     - mongo-data:/data/db
+
+   networks:
+     - micro-net
+
+  mysql:
+   image: mysql:5.7
+   container_name: mysql-db
+   restart: unless-stopped
+   environment:
+     MYSQL_ROOT_PASSWORD: root
+   ports:
+    - "3306:3306"
+   networks:
+    - micro-net
+
+  rabbitmq:
+   image: rabbitmq:3-management
+   container_name: rabbitmq
+   ports:
+    - "5672:5672"
+    - "15672:15672"
+   environment:
+    RABBITMQ_DEFAULT_USER: guest
+    RABBITMQ_DEFAULT_PASS: guest
+   networks:
+    - micro-net
+
+networks:
+  micro-net:
+    driver: bridge
+
+volumes:
+  mongo-data:
+  mysql-data:

@@ -1,17 +1,17 @@
-import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private httpService: HttpService,
   ) {}
 
   async register(dto: any) {
@@ -23,36 +23,6 @@ export class AuthService {
         password: hashedPassword,
       });
 
-      // ==================================================
-      // CRÉATION AUTOMATIQUE DE L'ÉTUDIANT DANS LE MICROSERVICE ÉTUDIANT
-      // ==================================================
-      if (user.role === 'ETUDIANT') {
-        try {
-          const etudiantData = {
-            nom: dto.nom,
-            prenom: dto.prenom,
-            email: dto.email,
-            filiere: dto.filiere || 'Non définie',
-            anneeInscription: dto.anneeInscription || new Date().getFullYear(),
-            moyenneGenerale: 0.0
-          };
-
-          const response = await firstValueFrom(
-            this.httpService.post('http://localhost:8084/etudiants/addEtudiant', etudiantData)
-          );
-
-          if (response.data && response.data.id) {
-            user.idEtudiant = response.data.id;
-            await user.save();
-          }
-
-          console.log('✅ Étudiant créé dans le MS Étudiant, id=', response.data.id);
-        } catch (error) {
-          console.error('⚠️ Erreur appel MS Étudiant:', error.message);
-          // Ne pas bloquer l'inscription
-        }
-      }
-
       return {
         success: true,
         message: 'User registered successfully',
@@ -63,9 +33,8 @@ export class AuthService {
           idEtudiant: user.idEtudiant,
           idEnseignant: user.idEnseignant,
           username: user.username,
-        }
+        },
       };
-
     } catch (error: any) {
       const message =
         error?.response?.data?.message ||
@@ -83,10 +52,7 @@ export class AuthService {
       throw new UnauthorizedException('Username incorrect');
     }
 
-    const isMatch = await bcrypt.compare(
-      dto.password,
-      user.password
-    );
+    const isMatch = await bcrypt.compare(dto.password, user.password);
 
     if (!isMatch) {
       throw new UnauthorizedException('Password incorrect');

@@ -27,6 +27,12 @@ import { InscriptionExamenComponent } from './components/etudiant-portal/inscrip
 import { EtudiantManagementComponent } from './components/admin/etudiant-management/etudiant-management.component';
 import { AdminStatistiquesComponent } from './components/admin/admin-statistiques/admin-statistiques.component';
 
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
+
+// ✅ Composant ajouté par Fatma
+import { ListExamAdminComponent } from './components/list-exam-admin/list-exam-admin.component';
+
 export const routes: Routes = [
 
   // ========== AUTHENTIFICATION ==========
@@ -37,6 +43,8 @@ export const routes: Routes = [
   {
     path: 'enseignant',
     component: EnseignantLayoutComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ENSEIGNANT'] },
     children: [
       { path: 'listExamen', component: ExamenListComponent },
       { path: 'examens/edit/:id', component: ExamenEditComponent },
@@ -52,6 +60,8 @@ export const routes: Routes = [
   {
     path: '',
     component: SidebarComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ADMIN', 'ENSEIGNANT'] },
     children: [
       { path: 'enseignants', component: EnseignantTableComponent },
       { path: 'admin/etudiants', component: EtudiantManagementComponent },
@@ -63,6 +73,7 @@ export const routes: Routes = [
       { path: 'examens/add', component: ExamenAddComponent },
       { path: 'examens/edit/:id', component: ExamenEditComponent },
       { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'listExamenAdmin', component: ListExamAdminComponent }, // Ajout Fatma
       { path: '', redirectTo: 'enseignants', pathMatch: 'full' }
     ]
   },
@@ -71,6 +82,8 @@ export const routes: Routes = [
   {
     path: 'etudiant',
     component: SidebarEtudiantComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['ETUDIANT'] },
     children: [
       { path: 'dashboard', component: EtudiantDashboardComponent },
       { path: 'cours', component: MesCoursComponent },

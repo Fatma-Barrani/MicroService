@@ -4,9 +4,8 @@ import {
   Post,
   Get,
   UseGuards,
-  Request
+  Request,
 } from '@nestjs/common';
-
 
 import { AuthService } from './auth.service';
 import { RegisterDto } from '../DTO/RegisterDto';
@@ -20,7 +19,6 @@ import { Role } from './enums/role.enum';
 
 @Controller('auth')
 export class AuthController {
-
   constructor(private authService: AuthService) {}
 
   // =========================

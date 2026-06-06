@@ -130,6 +130,7 @@ export class InscriptionComponent implements OnInit, OnDestroy {
     this.submitted = true;
     this.successMessage = '';
     this.errorMessage = '';
+
     this.signupForm.markAllAsTouched();
 
     if (this.signupForm.invalid) {
@@ -182,11 +183,19 @@ export class InscriptionComponent implements OnInit, OnDestroy {
         if (res?.token) {
           localStorage.setItem('token', res.token);
         }
+        // Optionnel : reset form after success (mais la redirection a déjà eu lieu)
+        this.signupForm.reset({
+          role: 'ETUDIANT',
+          terms: false
+        });
+        this.submitted = false;
       },
       error: (err) => {
         this.isLoading = false;
         // L'utilisateur est déjà redirigé, juste log l'erreur
         console.error('Registration error:', err);
+        // On peut aussi afficher un message d'erreur (mais après redirection, peu visible)
+        this.errorMessage = err?.error?.message || '❌ Signup failed. Please try again later.';
       }
     });
   }

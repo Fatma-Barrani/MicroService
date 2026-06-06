@@ -4,7 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { Examen } from '../../../models/examen';
 import { ExamenService } from '../../../services/examen.service';
 import { Router } from '@angular/router';
-
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 @Component({
   selector: 'app-examen-list',
   standalone: true,
@@ -143,4 +144,91 @@ loadStats(): void {
       enseignantId: 1
     };
   }
+ exportPdf() {
+
+  const doc = new jsPDF();
+
+  // ===== TITRE =====
+  doc.setFontSize(22);
+  doc.setTextColor(40, 40, 40);
+
+  doc.text('EduNet - Liste des Examens', 14, 20);
+
+  // ===== DATE =====
+  doc.setFontSize(11);
+  doc.setTextColor(120);
+
+  const currentDate = new Date().toLocaleString('fr-FR');
+
+  doc.text(
+    `Document généré le : ${currentDate} · Total : ${this.examens.length} examen(s)`,
+    14,
+    30
+  );
+
+  // ===== DONNÉES =====
+  const tableData = this.examens.map(examen => [
+
+    examen.titre,
+
+    examen.matiere,
+
+    examen.niveau,
+
+    examen.statut.toUpperCase(),
+
+    new Date(examen.dateExamen).toLocaleString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    }),
+
+    `${examen.duree} min`,
+
+    examen.coefficient
+
+  ]);
+
+  // ===== TABLEAU =====
+  autoTable(doc, {
+
+    startY: 40,
+
+    head: [[
+      'Titre',
+      'Matière',
+      'Niveau',
+      'Statut',
+      'Date & Heure',
+      'Durée',
+      'Coeff.'
+    ]],
+
+    body: tableData,
+
+    theme: 'striped',
+
+    headStyles: {
+      fillColor: [79, 70, 229],
+      textColor: 255,
+      fontStyle: 'bold',
+      halign: 'left'
+    },
+
+    styles: {
+      fontSize: 10,
+      cellPadding: 5
+    },
+
+    alternateRowStyles: {
+      fillColor: [245, 245, 245]
+    }
+
+  });
+
+  // ===== SAVE =====
+  doc.save('liste-examens.pdf');
+}
 }

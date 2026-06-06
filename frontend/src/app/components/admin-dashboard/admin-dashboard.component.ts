@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { SidebarComponent } from "../../layouts/sidebar/sidebar.component";
 import { EnseignantService } from '../../services/enseignant.service';
 import { Router } from '@angular/router';
+import { ExamenService } from '../../services/examen.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,7 +14,9 @@ import { Router } from '@angular/router';
 })
 export class AdminDashboardComponent {
 
-  constructor(private enseignantService: EnseignantService,   private router: Router) { }
+  constructor(private enseignantService: EnseignantService,
+              private examenService: ExamenService,
+              private router: Router) { }
   // STATIC DATA
   totalEnseignants = 0;
 
@@ -21,29 +24,45 @@ export class AdminDashboardComponent {
 
   totalClasses = 18;
 
-  totalExamens = 12;
+  totalExamens = 0;
 
   totalCours = 45;
 
   ngOnInit(): void {
     this.loadEnseignantCount();
+    this.loadExamenCount();
   }
 
   loadEnseignantCount(): void {
-  this.enseignantService.getCount().subscribe({
-    next: (count) => {
-      this.totalEnseignants = count;
-    },
-    error: (err) => {
-      console.error('Error loading enseignants count', err);
-      this.totalEnseignants = 0;
-    }
-  });
-}
+    this.enseignantService.getCount().subscribe({
+      next: (count) => {
+        this.totalEnseignants = count;
+      },
+      error: (err) => {
+        console.error('Error loading enseignants count', err);
+        this.totalEnseignants = 0;
+      }
+    });
+  }
 
-goToAddEnseignant(): void {
-  this.router.navigate(['/enseignants']);
-}
+  loadExamenCount(): void {
+    this.examenService.getTotalExamens().subscribe({
+      next: (count) => this.totalExamens = count,
+      error: (err) => {
+        console.error('Erreur chargement examens :', err);
+        this.totalExamens = 0;
+      }
+    });
+  }
+
+  goToAddExamen(): void {
+    this.router.navigate(['/examens/add']);
+  }
+
+  goToAddEnseignant(): void {
+    this.router.navigate(['/enseignants']);
+  }
+
   // ✅ ADD THIS
   recentActivity = [
     {

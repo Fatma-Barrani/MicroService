@@ -138,4 +138,10 @@ public class ExamenController {
     public Long countExamensCorriges() {
         return service.countByStatut("TERMINE");
     }
+
+    @GetMapping("/count/total")
+    @PreAuthorize("hasRole('ENSEIGNANT')")
+    public Long countTotalExamens() {
+        return service.countTotal();
+    }
 }

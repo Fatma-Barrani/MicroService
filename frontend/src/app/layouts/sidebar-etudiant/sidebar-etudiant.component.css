@@ -24,8 +24,8 @@
 /* Sidebar */
 .sidebar {
   width: 280px;
-  background: white;
-  border-right: 1px solid var(--gray-200);
+  background: var(--white);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -176,13 +176,13 @@
 }
 
 .logout-btn:hover {
-  background: #fee2e2;
-  border-color: #fecaca;
-  color: #dc2626;
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .logout-btn:hover i {
-  color: #dc2626;
+  color: var(--primary);
 }
 
 /* Contenu principal */

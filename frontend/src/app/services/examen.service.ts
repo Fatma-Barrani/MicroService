@@ -9,7 +9,7 @@ import { Examen } from '../models/examen';
 export class ExamenService {
 
  
-  private apiUrl = 'http://localhost:8956/api/examens';
+  private apiUrl = 'http://api-gateway:8956/api/examens';
 
   constructor(private http: HttpClient) { }
 
@@ -41,5 +41,8 @@ getCountEnAttente(): Observable<number> {
 
 getCountCorrige(): Observable<number> {
   return this.http.get<number>(`${this.apiUrl}/count/terminee`);
+}
+getTotalExamens(): Observable<number> {
+  return this.http.get<number>(`${this.apiUrl}/count/total`);
 }
 }

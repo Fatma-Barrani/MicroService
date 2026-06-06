@@ -6,7 +6,6 @@ import { User, UserDocument } from './schemas/user.schema';
 
 @Injectable()
 export class UsersService {
-
   constructor(
     @InjectModel(User.name)
     private userModel: Model<UserDocument>,
@@ -20,6 +19,6 @@ export class UsersService {
     return this.userModel.findOne({ email });
   }
   async findByUsername(username: string) {
-  return this.userModel.findOne({ username });
-}
+    return this.userModel.findOne({ username });
+  }
 }
