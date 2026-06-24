@@ -1,4 +1,4 @@
-package com.edunet.etudiant.Controllers;
+package com.edunet.etudiant.controller;
 
 import com.edunet.etudiant.Dtos.CoursDTO;
 import com.edunet.etudiant.Dtos.EtudiantRequestDTO;
@@ -9,9 +9,16 @@ import com.edunet.etudiant.Services.EtudiantService;
 import com.edunet.etudiant.Utils.EtudiantMapper;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.edunet.etudiant.Dtos.ParticipationDTO;
+import com.edunet.etudiant.Services.ExamenClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 import java.util.List;
 import java.util.Map;
@@ -21,11 +28,17 @@ import java.util.stream.Collectors;
 @RequestMapping("/etudiants")
 public class EtudiantController {
 
+@Autowired
+private RabbitTemplate rabbitTemplate;
+
     @Autowired
     private EtudiantService etudiantService;
 
     @Autowired
     private EtudiantMapper etudiantMapper;
+
+    @Autowired
+    private ExamenClient examenClient;
 
     // Endpoint de test
     @GetMapping("/hello")
@@ -112,6 +125,32 @@ public class EtudiantController {
     public ResponseEntity<List<CoursDTO>> rechercherCoursParCategorie(@RequestParam String categorie) {
         return ResponseEntity.ok(coursClient.searchByCategorie(categorie));
     }
+
+    @GetMapping("/{id}/participations")
+public ResponseEntity<List<ParticipationDTO>> getParticipationsByEtudiant(
+        @PathVariable Long id) {
+    List<ParticipationDTO> participations = examenClient.getParticipationsByEtudiant(id);
+    return ResponseEntity.ok(participations);
+}
+@GetMapping("/{id}/notif-enseignant")
+public ResponseEntity<String> notifierEnseignant(
+        @PathVariable Long id,
+        @RequestParam String action) {
+    try {
+        // Créer le message
+        Map<String, String> message = new HashMap<>();
+        message.put("etudiantId", String.valueOf(id));
+        message.put("action", action);
+        message.put("timestamp", LocalDateTime.now().toString());
+        
+        // Envoyer via RabbitMQ
+        rabbitTemplate.convertAndSend("examen_exchange", "etudiant.notification", message);
+        
+        return ResponseEntity.ok("✅ Notification envoyée à l'enseignant pour l'action: " + action);
+    } catch (Exception e) {
+        return ResponseEntity.status(500).body("❌ Erreur: " + e.getMessage());
+    }
+}
 }
 
 

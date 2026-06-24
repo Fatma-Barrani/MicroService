@@ -162,17 +162,17 @@ export class InscriptionComponent implements OnInit, OnDestroy {
 
     this.isLoading = true;
 
-    // Redirection immédiate après soumission (optimiste)
+    // Redirection après soumission (2 secondes pour voir le message)
     if (formValue.role === 'ETUDIANT') {
-      this.successMessage = '🎉 Account created successfully! Vous êtes redirigé vers votre espace étudiant.';
+      this.successMessage = 'Inscription réussie! 🎉 Vous êtes redirigé vers votre espace étudiant.';
       setTimeout(() => {
         this.router.navigate(['/etudiant/dashboard']);
-      }, 500);
+      }, 2000);
     } else {
-      this.successMessage = '✅ Account created successfully! Redirecting to login...';
+      this.successMessage = 'Inscription réussie! ✅ Redirecting to login...';
       setTimeout(() => {
         this.router.navigate(['/login']);
-      }, 500);
+      }, 2000);
     }
 
     // Envoi du formulaire en arrière-plan (fire & forget)

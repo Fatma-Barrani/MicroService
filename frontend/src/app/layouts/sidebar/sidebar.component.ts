@@ -16,6 +16,10 @@ export class SidebarComponent {
     return this.authService.hasRole('ADMIN');
   }
 
+  isEnseignant(): boolean {
+    return this.authService.hasRole('ENSEIGNANT');
+  }
+
   logout(): void {
     // Clear auth data (adapt to your auth strategy)
     localStorage.removeItem('token');

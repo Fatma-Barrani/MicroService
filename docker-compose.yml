@@ -9,7 +9,7 @@ services:
     build:
       context: ./ConfigServer
       dockerfile: Dockerfile.configserver
-    image: fatmabarrani/config-server:latest
+    image: amalmelki/config-server:latest
     container_name: config-server
     ports:
       - "8889:8889"
@@ -27,7 +27,7 @@ services:
     build:
       context: ./appDistribuee
       dockerfile: Dockerfile.eureka
-    image: fatmabarrani/eureka-server:latest
+    image: amalmelki/eureka-server:latest
     container_name: eureka-server
     ports:
       - "8761:8761"
@@ -41,7 +41,7 @@ services:
     build:
       context: ./ApiGateway2
       dockerfile: Dockerfile.apigateway
-    image: fatmabarrani/api-gateway:latest
+    image: amalmelki/api-gateway:latest
     container_name: api-gateway
     ports:
       - "8956:8956"
@@ -51,9 +51,11 @@ services:
       - enseignant-service
       - examen-service
       - cours-service
+      - etudiant-service
     environment:
       - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eureka-server:8761/eureka
       - SPRING_CONFIG_IMPORT=optional:config-server:http://config-server:8889
+      - SERVER_PORT=8956
    
     networks:
       - micro-net
@@ -65,7 +67,7 @@ services:
     build:
       context: .
       dockerfile: src/Dockerfile.microservice
-    image: fatmabarrani/enseignant-service:latest     
+    image: amalmelki/enseignant-service:latest     
     container_name: enseignant-service
     ports:
       - "8083:8083"
@@ -89,7 +91,7 @@ services:
     build:
       context: ./Examen
       dockerfile: Dockerfile.examen
-    image: fatmabarrani/examen-service:latest
+    image: amalmelki/examen-service:latest
     container_name: examen-service
     ports:
       - "8089:8089"
@@ -113,7 +115,7 @@ services:
     build:
       context: ./cours
       dockerfile: Dockerfile.cours
-    image: fatmabarrani/cours-service:latest
+    image: amalmelki/cours-service:latest
     container_name: cours-service
     ports:
       - "8082:8082"
@@ -137,7 +139,7 @@ services:
     build:
       context: ./Etudiant
       dockerfile: Dockerfile
-    image: fatmabarrani/etudiant-service:latest
+    image: amalmelki/etudiant-service:latest
     container_name: etudiant-service
     ports:
       - "8081:8081"
@@ -166,7 +168,7 @@ services:
     build:
       context: ./Inscription/inscription-service
       dockerfile: Dockerfile.inscription
-    image: fatmabarrani/nest-backend:latest
+    image: amalmelki/nest-backend:latest
     container_name: nest-backend
     environment:
       - MONGO_URI=mongodb://mongo:27017/auth_db
@@ -182,7 +184,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile.frontend
-    image: fatmabarrani/frontend:latest
+    image: amalmelki/frontend:latest
     container_name: frontend
     ports:
       - "4200:80"
@@ -227,6 +229,53 @@ services:
    networks:
     - micro-net
 
+  # =========================
+  # KEYCLOAK (SECURITY)
+  # =========================
+  keycloak-db:
+    image: postgres:15-alpine
+    container_name: keycloak-db
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+    networks:
+      - micro-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U keycloak -d keycloak"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  keycloak:
+    image: keycloak/keycloak:latest
+    container_name: keycloak
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://keycloak-db:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY: "edge"
+    ports:
+      - "8080:8080"
+    depends_on:
+      keycloak-db:
+        condition: service_healthy
+    command: 
+      - "start-dev"
+      - "--import-realm"
+    volumes:
+      - ./keycloak-realm.json:/opt/keycloak/data/import/realm.json:ro
+    networks:
+      - micro-net
+
 networks:
   micro-net:
     driver: bridge
@@ -234,3 +283,4 @@ networks:
 volumes:
   mongo-data:
   mysql-data:
+  keycloak-db-data:

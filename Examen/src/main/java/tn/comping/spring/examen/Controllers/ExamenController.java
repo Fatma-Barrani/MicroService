@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.*;
 import tn.comping.spring.examen.Entites.Examen;
 import tn.comping.spring.examen.Entites.Participation;
 import tn.comping.spring.examen.Repositories.ExamenRepository;
+import tn.comping.spring.examen.Repositories.ParticipationRepository;
 import tn.comping.spring.examen.Services.ExamenService;
 import tn.comping.spring.examen.Services.ExportService;
 import tn.comping.spring.examen.dto.ExamenRequestDTO;
 import tn.comping.spring.examen.dto.ExamenResponseDTO;
+import tn.comping.spring.examen.dto.ParticipationDTO;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ public class ExamenController {
     private final ExamenService service;
     private final ExamenRepository examenRepository;
     private final ExportService exportService;
+    private final ParticipationRepository participationRepository;
 
     @PostMapping("/createExamen")
     @PreAuthorize("hasRole('ENSEIGNANT')")
@@ -144,4 +147,19 @@ public class ExamenController {
     public Long countTotalExamens() {
         return service.countTotal();
     }
+
+    @GetMapping("/participations/etudiant/{etudiantId}")
+public ResponseEntity<List<ParticipationDTO>> getParticipationsByEtudiant(
+        @PathVariable Long etudiantId) {
+    List<Participation> participations = participationRepository.findByEtudiantId(etudiantId);
+    List<ParticipationDTO> dtos = participations.stream()
+        .map(p -> new ParticipationDTO(
+            p.getId(),
+            p.getExamenId(),
+            p.getNote(),
+            (p.getNote() != null) ? "NOTÉ" : "NON_NOTÉ"
+        ))
+        .collect(java.util.stream.Collectors.toList());
+    return ResponseEntity.ok(dtos);
+}
 }

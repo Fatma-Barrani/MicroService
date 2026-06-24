@@ -193,6 +193,36 @@
 
       </form><!-- /login-form -->
 
+      <!-- Demo Login Buttons -->
+      <div style="margin-top:20px; padding:15px; border:1px solid #334155; border-radius:8px; background:#1e293b; text-align:center;">
+        <p style="color:#94a3b8; margin-bottom:12px; font-size:13px;">
+          🎓 Connexion rapide - Démonstration
+        </p>
+        <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+          <button type="button"
+            (click)="loginAs('etudiant1','password123')"
+            style="padding:8px 16px; background:#3b82f6; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px;">
+            👨‍🎓 Étudiant
+          </button>
+          <button type="button"
+            (click)="loginAs('enseignant1','password123')"
+            style="padding:8px 16px; background:#10b981; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px;">
+            👨‍🏫 Enseignant
+          </button>
+          <button type="button"
+            (click)="loginAs('admin','admin123')"
+            style="padding:8px 16px; background:#f59e0b; color:white; border:none; border-radius:6px; cursor:pointer; font-size:13px;">
+            👨‍💼 Admin
+          </button>
+        </div>
+        <div style="margin-top:10px;">
+          <a routerLink="/inscription"
+             style="color:#3b82f6; font-size:12px; text-decoration:none;">
+            Pas de compte ? S'inscrire
+          </a>
+        </div>
+      </div>
+
       <!-- Footer -->
       <p class="signup-link">
         Don't have an account? <a href="inscription" class="link">Create one free</a>

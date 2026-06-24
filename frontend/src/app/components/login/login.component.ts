@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
@@ -54,6 +54,26 @@ export class LoginComponent {
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  loginAs(username: string, password: string): void {
+    this.authService.login({ username, password }).subscribe({
+      next: (response: any) => {
+        localStorage.setItem('token', response.access_token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+        const role = response?.user?.role;
+        if (role === 'ADMIN')
+          this.router.navigate(['/dashboard']);
+        else if (role === 'ENSEIGNANT')
+          this.router.navigate(['/enseignant/listExamen']);
+        else if (role === 'ETUDIANT')
+          this.router.navigate(['/etudiant/dashboard']);
+        else this.router.navigate(['/login']);
+      },
+      error: () => {
+        alert('Erreur connexion - backend sur port 8956 ?');
+      }
+    });
   }
 
   onSubmit(): void {
